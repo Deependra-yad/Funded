@@ -1,0 +1,35 @@
+__pycache__/
+*.pyc
+*.pyo
+*.db
+*.sqlite3
+.env
+venv/
+.venv/
+*.log
+.DS_Store
+Thumbs.db
+*.egg-info/
+dist/
+build/
+
+# Temp fix scripts (not part of the app)
+fix_*.py
+update_*.py
+write_*.py
+rewrite_*.py
+terminal_fix.py
+import numpy*.py
+run.py
+
+# Old/unused files
+FundedDesk/
+cloudflared.exe
+config.yml
+start_public_tunnel.bat
+apk
+
+# Temp template fragments
+app/templates/trading_terminal_js1.html
+app/templates/trading_terminal_js2.html
+app/templates/trading_terminal_ui.html

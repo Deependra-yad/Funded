@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Passed Challenges & Certificates - FundedDesk{% endblock %}
+{% block breadcrumb %}Passed Challenges{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Passed Challenges & Certificates</h1>
+            <p class="text-slate-500 text-sm mt-0.5">Official verifiable credentials awarded for passing evaluation stages.</p>
+        </div>
+    </div>
+
+    <!-- Certificates Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for cert in certificates %}
+        <div class="bg-white rounded-2xl border-2 border-amber-200/80 p-6 shadow-sm relative overflow-hidden flex flex-col justify-between hover:shadow-md transition-all">
+            <!-- Decorative Gold Ribbon/Badge -->
+            <div class="flex items-center justify-between mb-4">
+                <div class="w-10 h-10 rounded-full bg-amber-500/10 border border-amber-300 flex items-center justify-center text-amber-600 text-lg font-black">
+                    🏆
+                </div>
+                <span class="text-[11px] font-extrabold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full">
+                    VERIFIED
+                </span>
+            </div>
+
+            <div>
+                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">{{ cert.cert_id }}</div>
+                <h3 class="text-lg font-black text-slate-900 mt-1">{{ cert.challenge_type }}</h3>
+                <p class="text-xs text-emerald-600 font-bold mt-0.5">{{ cert.phase_passed }}</p>
+                
+                <div class="bg-slate-50 rounded-xl p-3 my-4 border border-slate-100 space-y-1">
+                    <div class="flex justify-between text-xs">
+                        <span class="text-slate-500">Trader:</span>
+                        <span class="font-bold text-slate-900">{{ cert.trader_name }}</span>
+                    </div>
+                    <div class="flex justify-between text-xs">
+                        <span class="text-slate-500">Funded Capital:</span>
+                        <span class="font-bold text-slate-900 font-mono">₹{{ cert.account_size|inr }}</span>
+                    </div>
+                    <div class="flex justify-between text-xs">
+                        <span class="text-slate-500">Issue Date:</span>
+                        <span class="font-semibold text-slate-700">{{ cert.issue_date.strftime('%B %d, %Y') }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <a href="/certificate/{{ cert.cert_id }}" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 transition-colors">
+                <i data-lucide="eye" class="w-4 h-4"></i>
+                <span>View Full Certificate</span>
+            </a>
+        </div>
+        {% endfor %}
+
+        {% if certificates|length == 0 %}
+        <div class="col-span-full bg-white rounded-2xl border border-slate-200 p-12 text-center">
+            <div class="text-4xl mb-3">🎖️</div>
+            <p class="text-slate-700 font-bold text-base">No certificates earned yet.</p>
+            <p class="text-xs text-slate-500 mt-1">Complete your evaluation challenge profit targets to earn official certificates!</p>
+            <a href="/buy-challenge" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-5 rounded-xl text-xs mt-4 transition-all">
+                <span>Start Evaluation</span>
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

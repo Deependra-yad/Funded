@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block title %}Account {{ account.account_number }} - Analytics - FundedDesk{% endblock %}
+{% block breadcrumb %}<a href="/challenges" class="hover:underline">Challenges</a> / {{ account.account_number }}{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-6 pb-12">
+
+    <!-- Top Account Header -->
+    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="space-y-1">
+            <div class="flex items-center gap-3">
+                <h1 class="text-2xl font-black text-slate-900 font-mono">{{ account.account_number }}</h1>
+                <span class="text-xs font-bold px-3 py-1 rounded-full {% if account.status == 'ACTIVE' %}bg-blue-100 text-blue-700{% elif account.status == 'PASSED' %}bg-emerald-100 text-emerald-700{% else %}bg-rose-100 text-rose-700{% endif %}">
+                    {{ account.status }}
+                </span>
+                <span class="text-xs font-semibold px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg">
+                    {{ account.phase }}
+                </span>
+            </div>
+            <p class="text-xs text-slate-500">
+                ₹{{ account.initial_balance|inr }} {{ account.model_type }} Evaluation &middot; Platform: {{ account.platform }} &middot; Created: {{ account.created_at.strftime('%b %d, %Y') }}
+            </p>
+        </div>
+
+        <div class="flex items-center gap-3">
+            {% if account.status == 'ACTIVE' %}
+            <a href="/trading?account_id={{ account.id }}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-5 rounded-xl text-xs flex items-center gap-2 shadow-sm transition-all">
+                <i data-lucide="candlestick-chart" class="w-4 h-4"></i>
+                <span>Open Live Terminal</span>
+            </a>
+            {% endif %}
+            {% if account.status == 'PASSED' %}
+            <a href="/passed-challenges" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-5 rounded-xl text-xs flex items-center gap-2 shadow-sm transition-all">
+                <i data-lucide="award" class="w-4 h-4"></i>
+                <span>View Certificate</span>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Rule Evaluation Status Grid (4 Rule Cards) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <!-- 1. Profit Target -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+            <div class="flex items-center justify-between text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                <span>Profit Target</span>
+                <span class="text-emerald-600">{{ account.profit_target_pct }}% Target</span>
+            </div>
+            <div class="text-xl font-extrabold font-mono {% if account.current_profit >= 0 %}text-emerald-600{% else %}text-rose-600{% endif %}">
+                {{ "+₹" if account.current_profit >= 0 else "-₹" }}{{ account.current_profit|abs|inr(2) }}
+            </div>
+            <div class="text-xs text-slate-500 mt-1">
+                Goal: ₹{{ account.target_amount|inr(2) }} ({{ "{:.1f}".format(account.current_profit_pct) }}%)
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-2 mt-3 overflow-hidden">
+                {% set p_pct = (account.current_profit / account.target_amount * 100) if account.target_amount > 0 else 0 %}
+                <div class="bg-emerald-500 h-full rounded-full" style="width: {{ [[p_pct, 0]|max, 100]|min }}%"></div>
+            </div>
+        </div>
+
+        <!-- 2. Max Daily Loss -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+            <div class="flex items-center justify-between text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                <span>Max Daily Loss</span>
+                <span class="text-slate-600">{{ account.max_daily_loss_pct }}% Max</span>
+            </div>
+            <div class="text-xl font-extrabold font-mono text-slate-900">
+                ₹{{ account.daily_loss_amount|inr(2) }}
+            </div>
+            <div class="text-xs text-slate-500 mt-1">
+                Max Allowed: ₹{{ account.max_daily_loss_limit|inr(2) }} ({{ "{:.1f}".format(account.daily_loss_pct) }}%)
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-2 mt-3 overflow-hidden">
+                {% set d_pct = (account.daily_loss_pct / account.max_daily_loss_pct * 100) if account.max_daily_loss_pct > 0 else 0 %}
+                <div class="{% if d_pct > 80 %}bg-rose-500{% elif d_pct > 50 %}bg-amber-500{% else %}bg-blue-500{% endif %} h-full rounded-full" style="width: {{ [[d_pct, 0]|max, 100]|min }}%"></div>
+            </div>
+        </div>
+
+        <!-- 3. Max Overall Loss (Drawdown) -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+            <div class="flex items-center justify-between text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                <span>Max Drawdown</span>
+                <span class="text-slate-600">{{ account.max_total_loss_pct }}% Max</span>
+            </div>
+            <div class="text-xl font-extrabold font-mono text-slate-900">
+                ₹{{ account.total_loss_amount|inr(2) }}
+            </div>
+            <div class="text-xs text-slate-500 mt-1">
+                Max Allowed: ₹{{ account.max_total_loss_limit|inr(2) }} ({{ "{:.1f}".format(account.total_loss_pct) }}%)
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-2 mt-3 overflow-hidden">
+                {% set t_pct = (account.total_loss_pct / account.max_total_loss_pct * 100) if account.max_total_loss_pct > 0 else 0 %}
+                <div class="{% if t_pct > 80 %}bg-rose-500{% elif t_pct > 50 %}bg-amber-500{% else %}bg-blue-500{% endif %} h-full rounded-full" style="width: {{ [[t_pct, 0]|max, 100]|min }}%"></div>
+            </div>
+        </div>
+
+        <!-- 4. Min Trading Days -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+            <div class="flex items-center justify-between text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+                <span>Trading Days</span>
+                <span class="text-slate-600">Min {{ account.min_trading_days }} Days</span>
+            </div>
+            <div class="text-xl font-extrabold font-mono text-slate-900">
+                {{ account.days_traded }} / {{ account.min_trading_days }}
+            </div>
+            <div class="text-xs text-slate-500 mt-1">
+                {% if account.days_traded >= account.min_trading_days %}
+                <span class="text-emerald-600 font-bold">✓ Condition Met</span>
+                {% else %}
+                <span class="text-amber-600 font-semibold">{{ account.min_trading_days - account.days_traded }} day(s) remaining</span>
+                {% endif %}
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-2 mt-3 overflow-hidden">
+                {% set days_pct = (account.days_traded / account.min_trading_days * 100) if account.min_trading_days > 0 else 100 %}
+                <div class="bg-emerald-500 h-full rounded-full" style="width: {{ [[days_pct, 0]|max, 100]|min }}%"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Statistics Overview Grid -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-xs">
+            <div class="text-[11px] font-bold text-slate-400">Win Rate</div>
+            <div class="text-lg font-black text-slate-900 font-mono mt-0.5">{{ win_rate }}%</div>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-xs">
+            <div class="text-[11px] font-bold text-slate-400">Profit Factor</div>
+            <div class="text-lg font-black text-slate-900 font-mono mt-0.5">{{ profit_factor }}</div>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-xs">
+            <div class="text-[11px] font-bold text-slate-400">Total Trades</div>
+            <div class="text-lg font-black text-slate-900 font-mono mt-0.5">{{ total_trades }}</div>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-xs">
+            <div class="text-[11px] font-bold text-slate-400">Average Win</div>
+            <div class="text-lg font-black text-emerald-600 font-mono mt-0.5">₹{{ avg_win|inr(2) }}</div>
+        </div>
+        <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-xs">
+            <div class="text-[11px] font-bold text-slate-400">Average Loss</div>
+            <div class="text-lg font-black text-rose-600 font-mono mt-0.5">₹{{ avg_loss|inr(2) }}</div>
+        </div>
+    </div>
+
+    <!-- Trade Journal / History Table -->
+    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+        <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+            <h3 class="font-extrabold text-sm text-slate-900">Trade Journal & History ({{ trades|length }} Trades)</h3>
+            <span class="text-xs text-slate-400 font-medium font-mono">Live Sync</span>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs font-medium">
+                <thead class="bg-slate-50 text-slate-400 font-bold uppercase text-[10px] border-b border-slate-100">
+                    <tr>
+                        <th class="py-3 px-4">Ticket</th>
+                        <th class="py-3 px-4">Symbol</th>
+                        <th class="py-3 px-4">Type</th>
+                        <th class="py-3 px-4">Lots</th>
+                        <th class="py-3 px-4">Open Price</th>
+                        <th class="py-3 px-4">Close Price</th>
+                        <th class="py-3 px-4">Status</th>
+                        <th class="py-3 px-4">PnL (₹)</th>
+                        <th class="py-3 px-4">Time</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 font-mono">
+                    {% for t in trades %}
+                    <tr class="hover:bg-slate-50">
+                        <td class="py-3 px-4 font-semibold text-slate-600">{{ t.ticket }}</td>
+                        <td class="py-3 px-4 font-bold text-slate-900">{{ t.symbol }}</td>
+                        <td class="py-3 px-4 font-bold {% if t.order_type == 'BUY' %}text-emerald-600{% else %}text-rose-600{% endif %}">{{ t.order_type }}</td>
+                        <td class="py-3 px-4 text-slate-800">{{ t.volume_lots }}</td>
+                        <td class="py-3 px-4 text-slate-800">{{ t.open_price }}</td>
+                        <td class="py-3 px-4 text-slate-800">{{ t.close_price or t.current_price }}</td>
+                        <td class="py-3 px-4">
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded {% if t.status == 'OPEN' %}bg-blue-100 text-blue-700{% else %}bg-slate-100 text-slate-600{% endif %}">
+                                {{ t.status }}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 font-black {% if t.pnl >= 0 %}text-emerald-600{% else %}text-rose-600{% endif %}">
+                            {{ "+₹" if t.pnl >= 0 else "-₹" }}{{ t.pnl|abs|inr(2) }}
+                        </td>
+                        <td class="py-3 px-4 text-slate-400 font-sans text-[11px]">{{ t.open_time.strftime('%b %d, %H:%M') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% if trades|length == 0 %}
+            <div class="p-8 text-center text-xs text-slate-400">No trades recorded yet.</div>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+

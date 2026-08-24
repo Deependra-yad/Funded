@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Trader Profile & Security - FundedDesk{% endblock %}
+{% block breadcrumb %}Profile & Security{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6 pb-12">
+    <div>
+        <h1 class="text-3xl font-black text-slate-900 tracking-tight">Trader Profile & Security</h1>
+        <p class="text-slate-500 text-sm mt-0.5">Manage your identity verification, payout accounts, and credentials.</p>
+    </div>
+
+    <!-- Profile Info Card -->
+    <div class="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm">
+        <form action="/profile/update" method="POST" class="space-y-6">
+            <div class="flex items-center justify-between pb-6 border-b border-slate-100 flex-wrap gap-4">
+                <div class="flex items-center gap-5">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-emerald-500 text-white font-black text-2xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                        {{ user.avatar_text }}
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-black text-slate-900">{{ user.full_name }}</h2>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full">✓ Verified FundedDesk Trader</span>
+                            <span class="text-xs text-slate-400 font-mono">ID: #NXF-{{ user.id }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <a href="/logout" class="bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold text-xs py-2.5 px-4 rounded-xl flex items-center gap-1.5 transition-colors">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                        <span>Sign Out</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="text-xs font-bold text-slate-700 block mb-1">Full Legal Name</label>
+                    <input type="text" name="full_name" value="{{ user.full_name }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-900 focus:outline-blue-600">
+                </div>
+
+                <div>
+                    <label class="text-xs font-bold text-slate-700 block mb-1">Email Address</label>
+                    <input type="email" name="email" value="{{ user.email }}" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-900 focus:outline-blue-600">
+                </div>
+
+                <div>
+                    <label class="text-xs font-bold text-slate-700 block mb-1">Affiliate Referral Code</label>
+                    <input type="text" value="{{ user.referral_code }}" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-mono font-bold text-slate-600 cursor-not-allowed">
+                </div>
+
+                <div>
+                    <label class="text-xs font-bold text-slate-700 block mb-1">Preferred Payout Destination</label>
+                    <select class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-900 focus:outline-blue-600">
+                        <option value="BANK_INR">Direct Bank Transfer (IMPS / NEFT / UPI)</option>
+                        <option value="USDT">USDT (Crypto - TRC20 / ERC20)</option>
+                        <option value="WIRE_USD">International Bank Wire (USD)</option>
+                        <option value="SEPA_EUR">SEPA Transfer (EUR)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="pt-4 flex justify-end">
+                <button type="submit" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-95 text-white font-bold text-sm py-2.5 px-6 rounded-xl shadow-sm transition-all">
+                    Save Profile Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

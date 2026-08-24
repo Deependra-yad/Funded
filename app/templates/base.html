@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FundedDesk - Next-Gen Quantitative Prop Firm{% endblock %}</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Chart.js & Lightweight Charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
+
+    <!-- Razorpay Checkout SDK -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        fundeddesk: {
+                            blue: '#3B82F6',
+                            indigo: '#6366F1',
+                            green: '#10B981',
+                            dark: '#0B0F19',
+                            card: '#FFFFFF',
+                            border: '#E2E8F0'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #F8FAFC;
+            color: #0F172A;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #F1F5F9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-[#F8FAFC] text-slate-900 antialiased flex h-screen overflow-hidden">
+
+    <!-- Left Main Sidebar -->
+    <aside class="w-64 bg-white border-r border-slate-200 flex flex-col justify-between shrink-0 select-none">
+        <div>
+            <!-- Logo Section -->
+            <div class="px-6 py-5 border-b border-slate-100 flex items-center gap-3">
+                <a href="/dashboard" class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-emerald-400 flex items-center justify-center shadow-md shadow-blue-500/20 text-white font-black text-lg">
+                        ▲
+                    </div>
+                    <div>
+                        <div class="font-black text-slate-900 tracking-wider text-base leading-none">FundedDesk</div>
+                        <div class="text-[9px] tracking-widest uppercase font-bold text-emerald-600">Funded Traders</div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Start Evaluation Primary Action Button -->
+            <div class="px-4 py-4">
+                <a href="/buy-challenge" class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-2.5 px-4 rounded-xl shadow-sm transition-all duration-150 hover:shadow-blue-500/25 text-sm">
+                    <i data-lucide="zap" class="w-4 h-4 text-emerald-300"></i>
+                    <span>Start Evaluation</span>
+                </a>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="px-3 space-y-1 text-sm font-medium">
+                <a href="/dashboard" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {% if active_page == 'dashboard' %}bg-slate-100 text-slate-900 font-bold{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4 text-slate-500"></i>
+                    <span>Dashboard</span>
+                </a>
+                
+                <a href="/challenges" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {% if active_page == 'challenges' %}bg-slate-100 text-slate-900 font-bold{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+                    <i data-lucide="trophy" class="w-4 h-4 text-slate-500"></i>
+                    <span>My Challenges</span>
+                </a>
+
+                <a href="/passed-challenges" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {% if active_page == 'passed_challenges' %}bg-slate-100 text-slate-900 font-bold{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+                    <i data-lucide="award" class="w-4 h-4 text-slate-500"></i>
+                    <span>Passed Challenges</span>
+                </a>
+
+                <a href="/trading" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {% if active_page == 'trading' %}bg-blue-50 text-blue-700 font-bold{% else %}text-slate-700 hover:bg-slate-50{% endif %}">
+                    <i data-lucide="candlestick-chart" class="w-4 h-4 text-blue-600"></i>
+                    <span class="text-blue-600 font-bold">Trading Terminal</span>
+                    <span class="ml-auto text-[9px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded font-black tracking-wider">LIVE</span>
+                </a>
+
+                <a href="/socials" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {% if active_page == 'socials' %}bg-slate-100 text-slate-900 font-bold{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+                    <i data-lucide="share-2" class="w-4 h-4 text-slate-500"></i>
+                    <span>Community</span>
+                </a>
+
+                <a href="/ib-program" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {% if active_page == 'ib_program' %}bg-slate-100 text-slate-900 font-bold{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+                    <i data-lucide="users-round" class="w-4 h-4 text-slate-500"></i>
+                    <span>IB Affiliate</span>
+                </a>
+
+                <a href="/orders" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {% if active_page == 'orders' %}bg-slate-100 text-slate-900 font-bold{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+                    <i data-lucide="receipt" class="w-4 h-4 text-slate-500"></i>
+                    <span>Invoices</span>
+                </a>
+
+                <a href="/billing" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {% if active_page == 'billing' %}bg-slate-100 text-slate-900 font-bold{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+                    <i data-lucide="credit-card" class="w-4 h-4 text-slate-500"></i>
+                    <span>Razorpay Billing</span>
+                </a>
+
+                <a href="/profile" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {% if active_page == 'profile' %}bg-slate-100 text-slate-900 font-bold{% else %}text-slate-600 hover:bg-slate-50 hover:text-slate-900{% endif %}">
+                    <i data-lucide="user" class="w-4 h-4 text-slate-500"></i>
+                    <span>Profile & KYC</span>
+                </a>
+
+                <a href="/admin/simulator" class="flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors {% if active_page == 'admin_sim' %}bg-purple-100 text-purple-900 font-bold{% else %}text-purple-600 hover:bg-purple-50{% endif %}">
+                    <i data-lucide="flask-conical" class="w-4 h-4 text-purple-600"></i>
+                    <span>Sim Sandbox</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Sidebar Footer -->
+        <div class="p-4 border-t border-slate-100 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-xs font-bold text-slate-500">Feed Connected</span>
+            </div>
+            <a href="/logout" title="Sign Out" class="p-2 rounded-xl text-rose-500 hover:bg-rose-50 hover:text-rose-700 transition-colors">
+                <i data-lucide="log-out" class="w-4 h-4"></i>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        
+        <!-- Top Navbar -->
+        <header class="h-16 bg-white border-b border-slate-200 px-8 flex items-center justify-between shrink-0">
+            <!-- Left: Breadcrumb -->
+            <div class="flex items-center gap-2 text-sm text-slate-500 font-medium">
+                <span>FundedDesk</span>
+                <span>/</span>
+                <span class="font-bold text-slate-900 capitalize">{% block breadcrumb %}Dashboard{% endblock %}</span>
+            </div>
+
+            <!-- Right: Notifications & User Profile -->
+            <div class="flex items-center gap-4">
+                <div class="hidden md:flex items-center gap-1.5 bg-emerald-50 border border-emerald-200/80 px-2.5 py-1 rounded-full text-[11px] font-extrabold text-emerald-700 font-mono">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+                    <span>GATEWAY ACTIVE</span>
+                </div>
+
+                <a href="/contact" class="p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors relative">
+                    <i data-lucide="bell" class="w-5 h-5"></i>
+                    <span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-emerald-500"></span>
+                </a>
+                
+                <div class="h-6 w-px bg-slate-200"></div>
+
+                <div class="flex items-center gap-3">
+                    <a href="/profile" class="flex items-center gap-3 hover:opacity-90 transition-opacity">
+                        <div class="text-right">
+                            <div class="text-sm font-extrabold text-slate-900 leading-tight">{{ user.full_name if user else 'FundedDesk Trader' }}</div>
+                            <div class="text-[11px] text-emerald-600 font-bold">Verified Account</div>
+                        </div>
+                        <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-700 text-white font-extrabold text-xs flex items-center justify-center shadow-sm">
+                            {{ user.avatar_text if user else 'FD' }}
+                        </div>
+                    </a>
+                    <a href="/logout" class="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-slate-100 transition-colors" title="Sign Out">
+                        <i data-lucide="power" class="w-4 h-4"></i>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Scrollable Body -->
+        <main class="flex-1 overflow-y-auto custom-scrollbar p-8">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

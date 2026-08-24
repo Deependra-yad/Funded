@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}IB Affiliate Program - FundedDesk{% endblock %}
+{% block breadcrumb %}IB Program{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto space-y-6 pb-12">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Introducing Broker (IB) Program</h1>
+            <p class="text-slate-500 text-sm mt-0.5">Earn up to 15% lifetime commission on every trader you refer.</p>
+        </div>
+        <div class="flex items-center gap-2">
+            <span class="bg-amber-100 text-amber-800 text-xs font-black px-3 py-1.5 rounded-xl flex items-center gap-1.5">
+                <span>⭐</span> Silver Partner Tier (15%)
+            </span>
+        </div>
+    </div>
+
+    <!-- Referral Link Box -->
+    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-2xl p-6 shadow-md flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div class="space-y-1">
+            <div class="text-xs font-bold uppercase tracking-wider text-blue-200">Your Unique Referral Link</div>
+            <div class="text-lg font-mono font-black break-all" id="ref-url">https://fundeddeskfunded.com/?ref={{ user.referral_code }}</div>
+            <p class="text-xs text-blue-100">Share this link with your community or students to automatically earn commissions.</p>
+        </div>
+        <button onclick="navigator.clipboard.writeText('https://fundeddeskfunded.com/?ref={{ user.referral_code }}'); alert('Referral link copied to clipboard!');" class="bg-white hover:bg-slate-100 text-blue-700 font-extrabold text-xs py-3 px-6 rounded-xl shrink-0 transition-all flex items-center gap-2">
+            <i data-lucide="copy" class="w-4 h-4"></i>
+            <span>Copy Link</span>
+        </button>
+    </div>
+
+    <!-- Affiliate Stats Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+            <div class="text-xs font-bold text-slate-400 uppercase">Total Referrals</div>
+            <div class="text-2xl font-black text-slate-900 font-mono mt-1">{{ total_referrals }}</div>
+            <div class="text-[11px] text-emerald-600 font-semibold mt-0.5">+2 this week</div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+            <div class="text-xs font-bold text-slate-400 uppercase">Total Commissions</div>
+            <div class="text-2xl font-black text-slate-900 font-mono mt-1">₹{{ total_commission|inr(2) }}</div>
+            <div class="text-[11px] text-slate-400 font-semibold mt-0.5">Lifetime earned</div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+            <div class="text-xs font-bold text-slate-400 uppercase">Paid Out</div>
+            <div class="text-2xl font-black text-emerald-600 font-mono mt-1">₹{{ paid_commission|inr(2) }}</div>
+            <div class="text-[11px] text-slate-400 font-semibold mt-0.5">Bank / Crypto Transfer</div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+            <div class="text-xs font-bold text-slate-400 uppercase">Pending Payout</div>
+            <div class="text-2xl font-black text-blue-600 font-mono mt-1">₹{{ pending_commission|inr(2) }}</div>
+            <div class="text-[11px] text-slate-400 font-semibold mt-0.5">Next payout: Friday</div>
+        </div>
+    </div>
+
+    <!-- Referrals Table -->
+    <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+        <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+            <h3 class="font-extrabold text-sm text-slate-900">Referred Traders & Commissions</h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs font-medium">
+                <thead class="bg-slate-50 text-slate-400 font-bold uppercase text-[10px] border-b border-slate-100">
+                    <tr>
+                        <th class="py-3 px-4">Trader</th>
+                        <th class="py-3 px-4">Challenge Purchased</th>
+                        <th class="py-3 px-4">Order Value</th>
+                        <th class="py-3 px-4">Commission (15%)</th>
+                        <th class="py-3 px-4">Status</th>
+                        <th class="py-3 px-4">Date</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 font-mono">
+                    {% for r in referrals %}
+                    <tr class="hover:bg-slate-50">
+                        <td class="py-3 px-4 font-sans font-bold text-slate-900">{{ r.referred_name }}</td>
+                        <td class="py-3 px-4 text-slate-700 font-sans">{{ r.challenge_purchased }}</td>
+                        <td class="py-3 px-4 text-slate-800">₹{{ r.order_amount|inr(2) }}</td>
+                        <td class="py-3 px-4 font-black text-emerald-600">+₹{{ r.commission_earned|inr(2) }}</td>
+                        <td class="py-3 px-4">
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded {% if r.status == 'PAID' %}bg-emerald-100 text-emerald-700{% else %}bg-amber-100 text-amber-700{% endif %}">
+                                {{ r.status }}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 text-slate-400 font-sans text-[11px]">{{ r.created_at.strftime('%b %d, %Y') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

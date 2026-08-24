@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Certificate - {{ cert.cert_id }} - FundedDesk{% endblock %}
+{% block breadcrumb %}<a href="/passed-challenges" class="hover:underline">Certificates</a> / {{ cert.cert_id }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6 pb-12">
+
+    <!-- Action Bar -->
+    <div class="flex items-center justify-between">
+        <a href="/passed-challenges" class="text-xs font-bold text-slate-600 hover:text-slate-900 flex items-center gap-1">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span>Back to Certificates</span>
+        </a>
+        <button onclick="window.print()" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-95 text-white font-bold text-xs py-2 px-4 rounded-xl flex items-center gap-2 shadow-sm transition-all">
+            <i data-lucide="printer" class="w-4 h-4"></i>
+            <span>Print / Save PDF</span>
+        </button>
+    </div>
+
+    <!-- Official Certificate Card -->
+    <div class="bg-[#FCFBF7] text-slate-900 rounded-3xl p-10 md:p-14 border-8 border-[#D4AF37] shadow-2xl relative overflow-hidden select-none" id="printable-certificate">
+        
+        <!-- Background Watermark -->
+        <div class="absolute inset-0 flex items-center justify-center opacity-5 pointer-events-none text-[180px] font-black tracking-widest text-slate-900">
+            FundedDesk
+        </div>
+
+        <!-- Certificate Border Inset -->
+        <div class="border-2 border-[#D4AF37]/50 rounded-2xl p-8 md:p-12 relative text-center flex flex-col justify-between min-h-[550px]">
+            
+            <!-- Header Brand -->
+            <div>
+                <div class="flex items-center justify-center gap-2 mb-2">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-blue-600 via-indigo-600 to-emerald-500 flex items-center justify-center text-white font-black text-sm">
+                        ▲
+                    </div>
+                    <span class="font-black text-xl tracking-wider text-slate-900">FundedDesk</span>
+                </div>
+                <div class="text-[11px] tracking-widest uppercase font-bold text-[#A37D1E]">Institutional Certificate of Performance</div>
+            </div>
+
+            <!-- Certificate Body -->
+            <div class="my-8 space-y-4">
+                <p class="text-xs uppercase tracking-widest text-slate-500 font-semibold">This credential is conferred upon</p>
+                <h1 class="text-4xl md:text-5xl font-extrabold text-slate-900 font-serif italic tracking-wide text-[#1A253C]">{{ cert.trader_name }}</h1>
+                <div class="w-32 h-0.5 bg-[#D4AF37] mx-auto my-3"></div>
+                <p class="text-sm text-slate-600 max-w-lg mx-auto leading-relaxed">
+                    For demonstrating exemplary risk management discipline and precision trading performance in the institutional quantitative evaluation
+                </p>
+                <div class="text-2xl font-black text-[#10B981] font-mono tracking-tight">
+                    ₹{{ cert.account_size|inr }} {{ cert.challenge_type }}
+                </div>
+                <div class="text-xs font-bold text-slate-700 uppercase tracking-wider">
+                    Official Status: <span class="text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full font-bold">{{ cert.phase_passed }}</span>
+                </div>
+            </div>
+
+            <!-- Footer Signatures & QR Seal -->
+            <div class="grid grid-cols-3 items-end pt-8 border-t border-[#D4AF37]/30">
+                <!-- Date & ID -->
+                <div class="text-left space-y-1">
+                    <div class="text-[10px] text-slate-400 font-bold uppercase">Issued On</div>
+                    <div class="text-xs font-bold text-slate-800">{{ cert.issue_date.strftime('%B %d, %Y') }}</div>
+                    <div class="text-[9px] font-mono text-slate-500">ID: {{ cert.cert_id }}</div>
+                </div>
+
+                <!-- Gold Medallion / Seal -->
+                <div class="flex flex-col items-center">
+                    <div class="w-16 h-16 rounded-full bg-gradient-to-tr from-[#D4AF37] via-[#F3E5AB] to-[#AA771C] text-slate-900 flex items-center justify-center shadow-lg border-2 border-amber-300 font-serif font-black text-xs">
+                        FundedDesk<br>SEAL
+                    </div>
+                </div>
+
+                <!-- Signature -->
+                <div class="text-right space-y-1">
+                    <div class="font-serif italic text-lg text-slate-800 font-bold -mb-1">Dr. S. K. Vance</div>
+                    <div class="text-[10px] text-slate-400 font-bold uppercase border-t border-slate-300 pt-1 inline-block">Managing Director & Head of Risk</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

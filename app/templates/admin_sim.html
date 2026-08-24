@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Simulation Sandbox & Testing - FundedDesk{% endblock %}
+{% block breadcrumb %}Simulation Sandbox{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-6 pb-12">
+    <div>
+        <div class="inline-block bg-purple-100 text-purple-700 text-xs font-black px-3 py-1 rounded-full mb-2">
+            DEVELOPER & TESTING SANDBOX
+        </div>
+        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Prop-Firm Rule & Market Simulator</h1>
+        <p class="text-slate-500 text-sm mt-0.5">Quickly trigger passes, breaches, market shocks, and test automated certificate generation.</p>
+    </div>
+
+    <!-- Account Action Cards -->
+    <div class="space-y-4">
+        {% for acc in accounts %}
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                <div>
+                    <span class="font-mono font-black text-lg text-slate-900">{{ acc.account_number }}</span>
+                    <span class="text-xs font-bold ml-2 px-2.5 py-0.5 rounded-full {% if acc.status == 'ACTIVE' %}bg-blue-100 text-blue-700{% elif acc.status == 'PASSED' %}bg-emerald-100 text-emerald-700{% else %}bg-rose-100 text-rose-700{% endif %}">
+                        {{ acc.status }}
+                    </span>
+                    <span class="text-xs font-semibold ml-1 text-slate-500">({{ acc.phase }} &middot; ₹{{ acc.initial_balance|inr }})</span>
+                </div>
+                <div class="text-xs font-mono font-bold text-slate-700">
+                    Equity: ₹{{ acc.current_equity|inr(2) }}
+                </div>
+            </div>
+
+            <!-- Testing Actions -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
+                <!-- Trigger Pass -->
+                <form action="/admin/sim/pass-account" method="POST">
+                    <input type="hidden" name="account_id" value="{{ acc.id }}">
+                    <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors shadow-xs">
+                        <i data-lucide="award" class="w-3.5 h-3.5"></i>
+                        <span>Simulate Pass & Issue Cert</span>
+                    </button>
+                </form>
+
+                <!-- Trigger Daily Loss Breach -->
+                <form action="/admin/sim/breach-account" method="POST">
+                    <input type="hidden" name="account_id" value="{{ acc.id }}">
+                    <input type="hidden" name="breach_type" value="daily">
+                    <button type="submit" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-2.5 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors shadow-xs">
+                        <i data-lucide="alert-octagon" class="w-3.5 h-3.5"></i>
+                        <span>Simulate Daily Loss Breach</span>
+                    </button>
+                </form>
+
+                <!-- Reset Account -->
+                <form action="/admin/sim/reset-account" method="POST">
+                    <input type="hidden" name="account_id" value="{{ acc.id }}">
+                    <button type="submit" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-2.5 px-3 rounded-xl text-xs flex items-center justify-center gap-1.5 transition-colors shadow-xs">
+                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                        <span>Reset Account to Initial</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Market Price Shock Simulator -->
+    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+        <h3 class="font-extrabold text-base text-slate-900 mb-3">Market Volatility Shock Generator</h3>
+        <p class="text-xs text-slate-500 mb-4">Inject an instant price spike or drop into the live feed to test active SL/TP triggers and position PnL reactions.</p>
+        
+        <div class="flex flex-wrap items-center gap-3">
+            <button type="button" onclick="injectSpike('XAUUSD', 50)" class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs py-2.5 px-4 rounded-xl shadow-xs">
+                Gold (XAUUSD) +50 Pips Spike 🚀
+            </button>
+            <button type="button" onclick="injectSpike('XAUUSD', -50)" class="bg-amber-700 hover:bg-amber-800 text-white font-bold text-xs py-2.5 px-4 rounded-xl shadow-xs">
+                Gold (XAUUSD) -50 Pips Drop 🔻
+            </button>
+            <button type="button" onclick="injectSpike('EURUSD', 30)" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs py-2.5 px-4 rounded-xl shadow-xs">
+                EURUSD +30 Pips Spike 🚀
+            </button>
+            <button type="button" onclick="injectSpike('BTCUSD', 500)" class="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs py-2.5 px-4 rounded-xl shadow-xs">
+                Bitcoin +₹500 Spike 🚀
+            </button>
+        </div>
+        <div id="spike-status" class="text-xs text-emerald-600 font-semibold mt-2 hidden"></div>
+    </div>
+</div>
+
+<script>
+    async function injectSpike(symbol, pips) {
+        const formData = new FormData();
+        formData.append('symbol', symbol);
+        formData.append('pips', pips);
+
+        try {
+            const res = await fetch('/admin/sim/market-spike', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            if (data.success) {
+                const status = document.getElementById('spike-status');
+                status.innerText = `✓ Market spike injected for ${symbol}! Check the Trading Terminal.`;
+                status.classList.remove('hidden');
+                setTimeout(() => status.classList.add('hidden'), 4000);
+            }
+        } catch (e) {
+            console.error('Spike error:', e);
+        }
+    }
+</script>
+{% endblock %}
+

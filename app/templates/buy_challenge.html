@@ -1,0 +1,359 @@
+{% extends "base.html" %}
+
+{% block title %}Acquire Capital - FundedDesk{% endblock %}
+{% block breadcrumb %}Buy Challenge{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto space-y-6 pb-12">
+    <!-- Title -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Acquire Evaluation Capital</h1>
+            <p class="text-slate-500 text-sm mt-0.5">Select your institutional funding track, capital tier, and platform.</p>
+        </div>
+        <div class="flex items-center gap-2 bg-emerald-50 border border-emerald-200 px-3.5 py-1.5 rounded-xl">
+            <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i>
+            <span class="text-xs font-bold text-emerald-800 font-mono">Razorpay Secured Gateway</span>
+        </div>
+    </div>
+
+    <!-- Step 1: Evaluation Model Tabs -->
+    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+        <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Step 1: Choose Evaluation Track</div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="model-selector">
+            <button type="button" onclick="selectModel('2-Step')" id="btn-model-2-Step" class="model-btn p-4 rounded-xl border-2 border-blue-600 bg-blue-50/50 text-left transition-all relative">
+                <div class="absolute top-3 right-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-xs">POPULAR</div>
+                <div class="text-base font-black text-slate-900">2-Step Evaluation</div>
+                <div class="text-xs text-slate-600 mt-1">Phase 1 (8%) + Phase 2 (5%) Target</div>
+                <div class="text-xs font-bold text-emerald-600 mt-2">Max Daily: 5% &middot; Max Loss: 10% &middot; 80% Split</div>
+            </button>
+
+            <button type="button" onclick="selectModel('1-Step')" id="btn-model-1-Step" class="model-btn p-4 rounded-xl border-2 border-slate-200 hover:border-slate-300 text-left transition-all">
+                <div class="text-base font-black text-slate-900">1-Step Fast Track</div>
+                <div class="text-xs text-slate-600 mt-1">Single Phase (10% Target)</div>
+                <div class="text-xs font-bold text-emerald-600 mt-2">Max Daily: 4% &middot; Max Loss: 6%</div>
+            </button>
+
+            <button type="button" onclick="selectModel('Instant')" id="btn-model-Instant" class="model-btn p-4 rounded-xl border-2 border-slate-200 hover:border-slate-300 text-left transition-all">
+                <div class="text-base font-black text-slate-900">Instant Funding</div>
+                <div class="text-xs text-slate-600 mt-1">Zero Evaluation Phase</div>
+                <div class="text-xs font-bold text-emerald-600 mt-2">Trade Live Immediately &middot; 80% Split</div>
+            </button>
+        </div>
+    </div>
+
+    <!-- Step 2: Account Capital & Pricing -->
+    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+        <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Step 2: Choose Account Size</div>
+        
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3" id="packages-container">
+            {% for pkg in packages %}
+            <label class="package-card cursor-pointer block border-2 rounded-xl p-3.5 text-center transition-all border-slate-200 hover:border-slate-300" data-model="{{ pkg.model_type }}" data-price="{{ pkg.price }}" data-size="{{ pkg.account_size }}" data-id="{{ pkg.id }}">
+                <input type="radio" name="package_id" value="{{ pkg.id }}" class="hidden" onchange="updateSummary()">
+                <div class="text-lg font-black text-slate-900 font-mono">{{ pkg.name }}</div>
+                <div class="text-xs text-slate-500 font-semibold mt-1">₹{{ pkg.account_size|inr }} Capital</div>
+                <div class="text-sm font-extrabold text-blue-600 mt-2 font-mono">₹{{ pkg.price|inr }}</div>
+            </label>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Step 3: Platform Selection & Add-ons -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Platform -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+            <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Step 3: Platform Engine</div>
+            <div class="grid grid-cols-3 gap-2">
+                <label class="platform-option border-2 border-blue-600 bg-blue-50/50 rounded-xl p-3 text-center cursor-pointer">
+                    <input type="radio" name="platform" value="WebTrader" checked class="hidden" onchange="selectPlatform(this)">
+                    <div class="font-bold text-slate-900 text-sm">WebTrader</div>
+                    <div class="text-[10px] text-blue-600 font-bold">Live Built-in</div>
+                </label>
+                <label class="platform-option border-2 border-slate-200 hover:border-slate-300 rounded-xl p-3 text-center cursor-pointer">
+                    <input type="radio" name="platform" value="MetaTrader 5" class="hidden" onchange="selectPlatform(this)">
+                    <div class="font-bold text-slate-900 text-sm">MT5</div>
+                    <div class="text-[10px] text-slate-500 font-medium">Supported</div>
+                </label>
+                <label class="platform-option border-2 border-slate-200 hover:border-slate-300 rounded-xl p-3 text-center cursor-pointer">
+                    <input type="radio" name="platform" value="cTrader" class="hidden" onchange="selectPlatform(this)">
+                    <div class="font-bold text-slate-900 text-sm">cTrader</div>
+                    <div class="text-[10px] text-slate-500 font-medium">Supported</div>
+                </label>
+            </div>
+        </div>
+
+        <!-- Promo Code & Payment Gateway -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between">
+            <div>
+                <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Promo Code Discount</div>
+                <div class="flex gap-2">
+                    <input type="text" id="coupon-input" placeholder="Enter coupon: SAVE20 or LAUNCH50" class="flex-1 border border-slate-300 rounded-xl px-3 py-2 text-sm font-semibold text-slate-800 uppercase focus:outline-blue-600">
+                    <button type="button" onclick="applyCoupon()" class="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-4 py-2 rounded-xl">Apply</button>
+                </div>
+                <div id="coupon-msg" class="text-xs mt-1.5 font-semibold text-emerald-600 hidden"></div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                <span>Payment Method:</span>
+                <span class="font-bold text-slate-800 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span>Razorpay (UPI / Cards / NetBanking / EMI)</span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Summary & Razorpay Trigger Card -->
+    <div class="bg-gradient-to-tr from-slate-950 via-slate-900 to-indigo-950 text-white rounded-3xl p-8 shadow-2xl border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+            <div class="text-xs font-bold uppercase tracking-wider text-emerald-400">Order Summary</div>
+            <div class="text-2xl md:text-3xl font-black mt-1" id="summary-title">₹100,000 2-Step Evaluation</div>
+            <div class="text-xs text-slate-400 mt-1 flex items-center gap-2">
+                <span>Instant Razorpay Automated Provisioning</span>
+                <span>&middot;</span>
+                <span class="text-emerald-400">100% Fee Refund on 1st Payout</span>
+            </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center gap-6">
+            <div class="text-right">
+                <div class="text-xs text-slate-400 font-semibold" id="original-price-display"></div>
+                <div class="text-3xl md:text-4xl font-black text-emerald-400 font-mono" id="final-price-display">₹499</div>
+                <div class="text-[11px] text-slate-400 font-mono mt-0.5" id="inr-price-display">≈ ₹41,666 INR</div>
+            </div>
+            
+            <button type="button" onclick="startRazorpayPayment()" id="pay-btn" class="w-full sm:w-auto bg-gradient-to-r from-emerald-500 via-emerald-600 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-black py-4 px-8 rounded-2xl text-base shadow-xl shadow-emerald-500/25 transition-all flex items-center justify-center gap-2.5">
+                <i data-lucide="lock" class="w-4 h-4"></i>
+                <span id="pay-btn-text">Pay with Razorpay</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentModel = '{{ selected_model }}' || '1-Step';
+    let discountPercent = 0;
+    const razorpayKeyId = "{{ razorpay_key_id }}";
+
+    function selectModel(model) {
+        currentModel = model;
+        document.querySelectorAll('.model-btn').forEach(b => {
+            b.classList.remove('border-blue-600', 'bg-blue-50/50');
+            b.classList.add('border-slate-200');
+        });
+        const activeBtn = document.getElementById('btn-model-' + model);
+        if (activeBtn) {
+            activeBtn.classList.remove('border-slate-200');
+            activeBtn.classList.add('border-blue-600', 'bg-blue-50/50');
+        }
+
+        let firstPkgFound = false;
+        document.querySelectorAll('.package-card').forEach(card => {
+            if (card.getAttribute('data-model') === model) {
+                card.style.display = 'block';
+                if (!firstPkgFound) {
+                    const input = card.querySelector('input');
+                    input.checked = true;
+                    firstPkgFound = true;
+                }
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        updateSummary();
+    }
+
+    function selectPlatform(input) {
+        document.querySelectorAll('.platform-option').forEach(p => {
+            p.classList.remove('border-blue-600', 'bg-blue-50/50');
+            p.classList.add('border-slate-200');
+        });
+        input.closest('.platform-option').classList.add('border-blue-600', 'bg-blue-50/50');
+    }
+
+    function applyCoupon() {
+        const val = document.getElementById('coupon-input').value.trim().toUpperCase();
+        const msg = document.getElementById('coupon-msg');
+        if (val === 'SAVE20' || val === 'FundedDesk20' || val === 'TRADER20') {
+            discountPercent = 0.20;
+            msg.innerText = '✓ Promo Code applied (20% OFF)!';
+            msg.className = 'text-xs mt-1.5 font-semibold text-emerald-400 block';
+        } else if (val === 'LAUNCH50' || val === 'HALFPRICE') {
+            discountPercent = 0.50;
+            msg.innerText = '✓ Promo Code applied (50% OFF)!';
+            msg.className = 'text-xs mt-1.5 font-semibold text-emerald-400 block';
+        } else if (val === 'LAUNCH10') {
+            discountPercent = 0.10;
+            msg.innerText = '✓ Promo Code applied (10% OFF)!';
+            msg.className = 'text-xs mt-1.5 font-semibold text-emerald-400 block';
+        } else {
+            discountPercent = 0;
+            msg.innerText = '✗ Invalid coupon code. Try SAVE20';
+            msg.className = 'text-xs mt-1.5 font-semibold text-rose-400 block';
+        }
+        updateSummary();
+    }
+
+    function getSelectedPackage() {
+        const selected = document.querySelector('input[name="package_id"]:checked');
+        if (!selected) return null;
+        return selected.closest('.package-card');
+    }
+
+    function updateSummary() {
+        const card = getSelectedPackage();
+        if (!card) return;
+
+        document.querySelectorAll('.package-card').forEach(c => {
+            c.classList.remove('border-blue-600', 'bg-blue-50/40');
+            c.classList.add('border-slate-200');
+        });
+        card.classList.add('border-blue-600', 'bg-blue-50/40');
+
+        const basePrice = parseFloat(card.getAttribute('data-price'));
+        const size = parseFloat(card.getAttribute('data-size'));
+        const model = card.getAttribute('data-model');
+
+        document.getElementById('summary-title').innerText = `₹${(size).toLocaleString('en-IN')} ${model} Evaluation`;
+
+        let finalPrice = basePrice;
+        if (discountPercent > 0) {
+            const discAmt = basePrice * discountPercent;
+            finalPrice = basePrice - discAmt;
+            document.getElementById('original-price-display').innerText = `₹${basePrice.toLocaleString('en-IN')}`;
+        } else {
+            document.getElementById('original-price-display').innerText = '';
+        }
+
+        document.getElementById('final-price-display').innerText = `₹${finalPrice.toLocaleString('en-IN')}`;
+        document.getElementById('inr-price-display').innerText = `Native INR Checkout`;
+    }
+
+    // Official Razorpay Gateway Integration
+    async function startRazorpayPayment() {
+        const card = getSelectedPackage();
+        if (!card) return alert('Please select a challenge package');
+
+        const packageId = card.getAttribute('data-id');
+        const couponCode = document.getElementById('coupon-input').value.trim();
+        const platformInput = document.querySelector('input[name="platform"]:checked');
+        const platform = platformInput ? platformInput.value : 'WebTrader';
+
+        const btn = document.getElementById('pay-btn');
+        const btnText = document.getElementById('pay-btn-text');
+        btnText.innerText = 'Creating Razorpay Order...';
+        btn.disabled = true;
+
+        try {
+            // 1. Create Razorpay order on server
+            const formData = new FormData();
+            formData.append('package_id', packageId);
+            formData.append('coupon_code', couponCode);
+
+            const res = await fetch('/api/payment/create-order', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+
+            if (!data.success) {
+                alert('Order Error: ' + (data.error || 'Failed to create payment order'));
+                btnText.innerText = 'Pay with Razorpay';
+                btn.disabled = false;
+                return;
+            }
+
+            // 2. Launch Razorpay Checkout Modal or bypass if mock
+            if (data.order_id.startsWith('order_mock_')) {
+                btnText.innerText = 'Verifying Mock Payment...';
+                const verifyForm = new FormData();
+                verifyForm.append('package_id', packageId);
+                verifyForm.append('platform', platform);
+                verifyForm.append('coupon_code', couponCode);
+                verifyForm.append('razorpay_order_id', data.order_id);
+                verifyForm.append('razorpay_payment_id', 'pay_mock_' + Math.random().toString(36).substr(2, 9));
+                verifyForm.append('razorpay_signature', 'mock_signature_123');
+
+                const verifyRes = await fetch('/api/payment/verify', {
+                    method: 'POST',
+                    body: verifyForm
+                });
+                const verifyData = await verifyRes.json();
+                if (verifyData.success) {
+                    window.location.href = verifyData.redirect_url;
+                } else {
+                    alert('Verification Error: ' + (verifyData.error || 'Payment verification failed'));
+                    btnText.innerText = 'Pay with Razorpay';
+                    btn.disabled = false;
+                }
+                return;
+            }
+
+            const options = {
+                "key": data.key_id,
+                "amount": data.amount_paise,
+                "currency": data.currency,
+                "name": "FundedDesk",
+                "description": data.package_name + " Evaluation",
+                "order_id": data.order_id,
+                "prefill": {
+                    "name": data.user_name,
+                    "email": data.user_email
+                },
+                "theme": {
+                    "color": "#10B981"
+                },
+                "handler": async function (response) {
+                    btnText.innerText = 'Verifying Payment...';
+                    // 3. Verify Razorpay Payment Signature
+                    const verifyForm = new FormData();
+                    verifyForm.append('package_id', packageId);
+                    verifyForm.append('platform', platform);
+                    verifyForm.append('coupon_code', couponCode);
+                    verifyForm.append('razorpay_order_id', response.razorpay_order_id);
+                    verifyForm.append('razorpay_payment_id', response.razorpay_payment_id);
+                    verifyForm.append('razorpay_signature', response.razorpay_signature);
+
+                    const verifyRes = await fetch('/api/payment/verify', {
+                        method: 'POST',
+                        body: verifyForm
+                    });
+                    const verifyData = await verifyRes.json();
+
+                    if (verifyData.success) {
+                        window.location.href = verifyData.redirect_url;
+                    } else {
+                        alert('Verification Error: ' + (verifyData.error || 'Payment verification failed'));
+                        btnText.innerText = 'Pay with Razorpay';
+                        btn.disabled = false;
+                    }
+                },
+                "modal": {
+                    "ondismiss": function () {
+                        btnText.innerText = 'Pay with Razorpay';
+                        btn.disabled = false;
+                    }
+                }
+            };
+
+            const rzp = new Razorpay(options);
+            rzp.on('payment.failed', function (response) {
+                alert('Payment Failed: ' + response.error.description);
+                btnText.innerText = 'Pay with Razorpay';
+                btn.disabled = false;
+            });
+            rzp.open();
+
+        } catch (err) {
+            console.error('Payment checkout error:', err);
+            alert('Failed to initiate Razorpay checkout.');
+            btnText.innerText = 'Pay with Razorpay';
+            btn.disabled = false;
+        }
+    }
+
+    // Initialize
+    selectModel(currentModel);
+</script>
+{% endblock %}

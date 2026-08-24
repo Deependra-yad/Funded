@@ -1,0 +1,228 @@
+from fastapi import APIRouter, Depends, Request, HTTPException, Form
+from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.templating import Jinja2Templates
+from sqlalchemy.orm import Session
+from pathlib import Path
+from app.database import get_db
+from app.models import User, TradingAccount, TradePosition, utc_now
+from app.security import require_auth
+from app.engine.market_data import market_engine, INSTRUMENTS
+from app.engine.prop_rules import evaluate_account_and_trades
+from app.config import APP_NAME
+import uuid
+
+router = APIRouter()
+templates = Jinja2Templates(directory=str(Path(__file__).resolve().parent.parent / "templates"))
+
+@router.get("/trading", response_class=HTMLResponse)
+async def trading_terminal(
+    request: Request,
+    account_id: int = None,
+    symbol: str = "NIFTY50",
+    user: User = Depends(require_auth),
+    db: Session = Depends(get_db)
+):
+    accounts = db.query(TradingAccount).filter(TradingAccount.user_id == user.id).all()
+    
+    if not accounts:
+        return templates.TemplateResponse(
+            request=request,
+            name="trading_terminal.html",
+            context={
+                "app_name": APP_NAME,
+                "active_page": "trading",
+                "user": user,
+                "accounts": [],
+                "current_account": None,
+                "instruments": INSTRUMENTS,
+                "current_symbol": symbol,
+                "positions": [],
+                "history": []
+            }
+        )
+
+    current_account = None
+    if account_id:
+        current_account = db.query(TradingAccount).filter(TradingAccount.id == account_id, TradingAccount.user_id == user.id).first()
+    
+    if not current_account:
+        current_account = next((a for a in accounts if a.status == "ACTIVE"), accounts[0])
+
+    if current_account.status == "ACTIVE":
+        evaluate_account_and_trades(db, current_account)
+
+    positions = db.query(TradePosition).filter(
+        TradePosition.account_id == current_account.id,
+        TradePosition.status == "OPEN"
+    ).order_by(TradePosition.open_time.desc()).all()
+
+    history = db.query(TradePosition).filter(
+        TradePosition.account_id == current_account.id,
+        TradePosition.status == "CLOSED"
+    ).order_by(TradePosition.close_time.desc()).limit(30).all()
+
+    return templates.TemplateResponse(
+        request=request,
+        name="trading_terminal.html",
+        context={
+            "app_name": APP_NAME,
+            "active_page": "trading",
+            "user": user,
+            "accounts": accounts,
+            "current_account": current_account,
+            "instruments": INSTRUMENTS,
+            "current_symbol": symbol,
+            "positions": positions,
+            "history": history
+        }
+    )
+
+@router.post("/api/trade/open")
+async def open_trade(
+    account_id: int = Form(...),
+    symbol: str = Form(...),
+    order_type: str = Form(...),
+    volume_lots: float = Form(1.0),
+    stop_loss: float = Form(None),
+    take_profit: float = Form(None),
+    user: User = Depends(require_auth),
+    db: Session = Depends(get_db)
+):
+    account = db.query(TradingAccount).filter(TradingAccount.id == account_id, TradingAccount.user_id == user.id).first()
+    if not account:
+        return JSONResponse(status_code=404, content={"error": "Trading account not found or access denied"})
+
+    if account.status != "ACTIVE":
+        return JSONResponse(status_code=400, content={"error": f"Account is not active ({account.status}). Trading disabled."})
+
+    if symbol not in INSTRUMENTS:
+        return JSONResponse(status_code=400, content={"error": "Invalid market symbol"})
+
+    prices = market_engine.prices[symbol]
+    base_open = prices["ask"] if order_type == "BUY" else prices["bid"]
+    # Simulate realistic slippage (0.01% worse price)
+    slippage_factor = 1.0001 if order_type == "BUY" else 0.9999
+    open_price = round(base_open * slippage_factor, 2)
+
+    ticket = f"TK-{uuid.uuid4().hex[:8].upper()}"
+    new_trade = TradePosition(
+        ticket=ticket,
+        account_id=account.id,
+        symbol=symbol,
+        order_type=order_type,
+        volume_lots=volume_lots,
+        open_price=open_price,
+        current_price=open_price,
+        stop_loss=stop_loss if stop_loss and stop_loss > 0 else None,
+        take_profit=take_profit if take_profit and take_profit > 0 else None,
+        pnl=0.0,
+        status="OPEN",
+        open_time=utc_now()
+    )
+    db.add(new_trade)
+    db.commit()
+
+    state = evaluate_account_and_trades(db, account)
+
+    return JSONResponse(content={
+        "success": True,
+        "message": f"Order {order_type} {volume_lots} lots {symbol} placed at {open_price}",
+        "ticket": ticket,
+        "account_state": state
+    })
+
+@router.post("/api/trade/close/{trade_id}")
+async def close_trade(trade_id: int, user: User = Depends(require_auth), db: Session = Depends(get_db)):
+    trade = db.query(TradePosition).join(TradingAccount).filter(
+        TradePosition.id == trade_id,
+        TradingAccount.user_id == user.id
+    ).first()
+
+    if not trade:
+        return JSONResponse(status_code=404, content={"error": "Trade not found or access denied"})
+
+    if trade.status != "OPEN":
+        return JSONResponse(status_code=400, content={"error": "Trade is already closed"})
+
+    account = trade.account
+    pnl, cur_price, pips = market_engine.calculate_pnl(trade.symbol, trade.order_type, trade.volume_lots, trade.open_price)
+    
+    trade.status = "CLOSED"
+    trade.close_price = cur_price
+    trade.pnl = pnl
+    trade.close_time = utc_now()
+    
+    account.current_balance += pnl
+    db.commit()
+
+    state = evaluate_account_and_trades(db, account)
+
+    return JSONResponse(content={
+        "success": True,
+        "message": f"Trade {trade.ticket} closed at {cur_price} with PnL ${pnl:+.2f}",
+        "account_state": state
+    })
+
+@router.get("/api/account/{account_id}/state")
+async def get_account_state(account_id: int, user: User = Depends(require_auth), db: Session = Depends(get_db)):
+    account = db.query(TradingAccount).filter(TradingAccount.id == account_id, TradingAccount.user_id == user.id).first()
+    if not account:
+        return JSONResponse(status_code=404, content={"error": "Account not found"})
+
+    state = evaluate_account_and_trades(db, account)
+    
+    open_positions = db.query(TradePosition).filter(
+        TradePosition.account_id == account.id,
+        TradePosition.status == "OPEN"
+    ).order_by(TradePosition.open_time.desc()).all()
+
+    closed_positions = db.query(TradePosition).filter(
+        TradePosition.account_id == account.id,
+        TradePosition.status == "CLOSED"
+    ).order_by(TradePosition.close_time.desc()).limit(50).all()
+
+    positions_data = []
+    for p in open_positions:
+        positions_data.append({
+            "id": p.id,
+            "ticket": p.ticket,
+            "symbol": p.symbol,
+            "order_type": p.order_type,
+            "volume_lots": p.volume_lots,
+            "open_price": p.open_price,
+            "current_price": p.current_price,
+            "stop_loss": p.stop_loss,
+            "take_profit": p.take_profit,
+            "pnl": p.pnl,
+            "open_time": p.open_time.strftime("%H:%M:%S") if p.open_time else ""
+        })
+
+    history_data = []
+    for h in closed_positions:
+        history_data.append({
+            "id": h.id,
+            "ticket": h.ticket,
+            "symbol": h.symbol,
+            "order_type": h.order_type,
+            "volume_lots": h.volume_lots,
+            "open_price": h.open_price,
+            "close_price": h.close_price,
+            "pnl": h.pnl,
+            "close_time": h.close_time.strftime("%Y-%m-%d %H:%M:%S") if h.close_time else ""
+        })
+
+    return JSONResponse(content={
+        "state": state,
+        "positions": positions_data,
+        "history": history_data
+    })
+
+@router.get("/api/market/prices")
+async def get_prices():
+    prices = market_engine.get_all_prices()
+    return JSONResponse(content=prices)
+
+@router.get("/api/market/candles/{symbol}")
+async def get_candles(symbol: str):
+    candles = market_engine.get_candles(symbol)
+    return JSONResponse(content=candles)
