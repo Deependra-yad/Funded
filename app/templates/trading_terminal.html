@@ -322,7 +322,8 @@
 
     function initCharts() {
         var tvSym = tvSymbolMap[activeSymbol] || ('BSE:' + activeSymbol);
-        tvWidget1 = initTVWidget("tv_chart_container_1", tvSym, "5");
+        var interval = (tvSym.startsWith('BINGX') || tvSym.startsWith('BINANCE')) ? "5" : "D"; 
+        tvWidget1 = initTVWidget("tv_chart_container_1", tvSym, interval);
         
         // Ensure active symbol is highlighted in watchlist
         var wl = document.getElementById('wl-' + activeSymbol);
@@ -337,7 +338,9 @@
             wrapper2.classList.remove('hidden');
             if (!tvWidget2) {
                 // Initialize second chart to BankNifty equivalent
-                tvWidget2 = initTVWidget("tv_chart_container_2", tvSymbolMap['BANKNIFTY'], "5");
+                var tvSym2 = tvSymbolMap['BANKNIFTY'];
+                var interval = (tvSym2.startsWith('BINGX') || tvSym2.startsWith('BINANCE')) ? "5" : "D";
+                tvWidget2 = initTVWidget("tv_chart_container_2", tvSym2, interval);
             }
         } else {
             wrapper2.classList.add('hidden');
@@ -355,8 +358,12 @@
         
         document.getElementById('order-symbol-title').innerText = sym;
         
+        // tv.js widget doesn't support dynamic setSymbol, we must recreate the iframe
         var tvSym = tvSymbolMap[sym] || ('BSE:' + sym);
-        if(tvWidget1 && tvWidget1.activeChart) tvWidget1.activeChart().setSymbol(tvSym);
+        var interval = (tvSym.startsWith('BINGX') || tvSym.startsWith('BINANCE')) ? "5" : "D"; 
+        
+        document.getElementById("tv_chart_container_1").innerHTML = "";
+        tvWidget1 = initTVWidget("tv_chart_container_1", tvSym, interval);
         
         if(pricesData[activeSymbol]) {
             var p = pricesData[activeSymbol];
