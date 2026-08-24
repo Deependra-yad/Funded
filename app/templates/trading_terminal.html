@@ -668,22 +668,18 @@
     
     function prepareOptionTrade(symbol, action) {
         closeOptionChain();
-        document.getElementById('trade-symbol').value = symbol; // Must set the input value
-        document.getElementById('qt-symbol-label').innerText = symbol; // Update UI label
+        activeSymbol = symbol;
         
         // Update the lot size input based on Nifty/Banknifty
+        var qtyInput = document.getElementById('qt-qty');
         if (symbol.includes('BANK')) {
-            document.getElementById('trade-lots').value = '15'; // BankNifty lot
+            qtyInput.value = '15'; // BankNifty lot
         } else {
-            document.getElementById('trade-lots').value = '25'; // Nifty lot
+            qtyInput.value = '25'; // Nifty lot
         }
         
         // Auto-click the buy/sell button if possible
-        if (action === 'BUY') {
-            submitTrade('BUY');
-        } else {
-            submitTrade('SELL');
-        }
+        placeTrade(action);
         
         showToast(`Placing ${action} order for ${symbol}...`, 'success');
     }

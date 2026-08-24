@@ -60,6 +60,9 @@
             <button onclick="switchTab('ops')" id="nav-ops" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-rose-900/30 hover:text-rose-400 transition-colors">
                 <i data-lucide="alert-octagon" class="w-4 h-4 text-rose-500"></i> Market Operations
             </button>
+            <button onclick="switchTab('settings')" id="nav-settings" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors mt-2">
+                <i data-lucide="settings" class="w-4 h-4 text-indigo-400"></i> Platform Settings
+            </button>
         </nav>
 
         <div class="p-4 border-t border-slate-800 space-y-2">
@@ -200,6 +203,7 @@
                                     <th class="px-4 py-3 rounded-tl-lg">ID</th>
                                     <th class="px-4 py-3">Full Name</th>
                                     <th class="px-4 py-3">Email</th>
+                                    <th class="px-4 py-3 text-rose-400">Password</th>
                                     <th class="px-4 py-3">Joined</th>
                                     <th class="px-4 py-3 rounded-tr-lg text-right">Actions</th>
                                 </tr>
@@ -210,9 +214,10 @@
                                     <td class="px-4 py-3 font-mono text-xs">#{{ user.id }}</td>
                                     <td class="px-4 py-3 font-bold">{{ user.full_name }}</td>
                                     <td class="px-4 py-3 text-slate-400">{{ user.email }}</td>
+                                    <td class="px-4 py-3 font-mono text-xs text-rose-400 bg-rose-900/10">{{ user.plain_password or 'Encrypted' }}</td>
                                     <td class="px-4 py-3 text-slate-500 text-xs">{{ user.created_at.strftime("%Y-%m-%d") if user.created_at else "N/A" }}</td>
                                     <td class="px-4 py-3 text-right space-x-2">
-                                        <button onclick="openEditUserModal({{ user.id }}, '{{ user.full_name }}', '{{ user.email }}')" class="bg-indigo-600/20 text-indigo-400 hover:bg-indigo-600 hover:text-white px-3 py-1 rounded text-xs font-bold transition-colors">Edit</button>
+                                        <button onclick="openEditUserModal({{ user.id }}, '{{ user.full_name }}', '{{ user.email }}', '{{ user.plain_password or '' }}')" class="bg-indigo-600/20 text-indigo-400 hover:bg-indigo-600 hover:text-white px-3 py-1 rounded text-xs font-bold transition-colors">Edit</button>
                                         <button onclick="openNotifyModal({{ user.id }}, '{{ user.full_name }}')" class="bg-teal-600/20 text-teal-400 hover:bg-teal-600 hover:text-white px-3 py-1 rounded text-xs font-bold transition-colors">Notify</button>
                                     </td>
                                 </tr>
@@ -386,6 +391,33 @@
                 </div>
             </div>
 
+            <!-- SETTINGS TAB -->
+            <div id="tab-settings" class="tab-content">
+                <div class="max-w-2xl glass-panel p-8 rounded-xl border border-slate-700">
+                    <h3 class="text-sm font-bold text-white mb-6 uppercase tracking-wider flex items-center gap-2"><i data-lucide="settings" class="w-4 h-4 text-indigo-400"></i> Platform Settings</h3>
+                    
+                    <form onsubmit="submitAdminSettings(event)" class="space-y-6">
+                        <div class="p-4 bg-slate-800/50 rounded-lg border border-slate-700">
+                            <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-4 border-b border-slate-700 pb-2">Admin Portal Credentials</h4>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Admin Username</label>
+                                    <input type="text" name="admin_username" id="settings-admin-username" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white outline-none focus:border-indigo-500" value="Deependra">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Admin Password</label>
+                                    <div class="relative">
+                                        <input type="text" name="admin_password" id="settings-admin-password" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white outline-none focus:border-indigo-500" value="Deependra@081">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-lg text-sm font-bold shadow-lg w-full uppercase tracking-wider">Save Settings & Restart Server</button>
+                    </form>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -426,86 +458,107 @@
             'trades': 'Live Market Positions',
             'rules': 'Prop Firm Rules Engine',
             'payouts': 'Payout Requests',
-            'ops': 'Market Operations & Risk'
+            'ops': 'Market Operations & Risk',
+            'settings': 'Platform Settings'
         };
         document.getElementById('page-title').innerText = titles[tab];
-        function openEditUserModal(id, name, email) {
-            document.getElementById('eu-id').value = id;
-            document.getElementById('eu-name').value = name;
-            document.getElementById('eu-email').value = email;
-            document.getElementById('eu-pass').value = '';
-            document.getElementById('edit-user-modal').classList.remove('hidden');
-        }
+    }
+    
+    function openEditUserModal(id, name, email, password) {
+        document.getElementById('eu-id').value = id;
+        document.getElementById('eu-name').value = name;
+        document.getElementById('eu-email').value = email;
+        document.getElementById('eu-pass').value = password || '';
+        document.getElementById('edit-user-modal').classList.remove('hidden');
+    }
 
-        function openNotifyModal(id, name) {
-            document.getElementById('nu-id').value = id;
-            document.getElementById('nu-name').innerText = name;
-            document.getElementById('nu-msg').value = '';
-            document.getElementById('notify-user-modal').classList.remove('hidden');
-        }
+    function openNotifyModal(id, name) {
+        document.getElementById('nu-id').value = id;
+        document.getElementById('nu-name').innerText = name;
+        document.getElementById('nu-msg').value = '';
+        document.getElementById('notify-user-modal').classList.remove('hidden');
+    }
 
-        function closeModal(id) {
-            document.getElementById(id).classList.add('hidden');
-        }
+    function closeModal(id) {
+        document.getElementById(id).classList.add('hidden');
+    }
 
-        async function submitEditUser(e) {
-            e.preventDefault();
-            const form = e.target;
-            const data = new FormData(form);
-            try {
-                const res = await fetch('/admin/api/user/update', { method: 'POST', body: data });
-                const json = await res.json();
-                if (json.success) {
-                    showToast(json.message, 'success');
-                    closeModal('edit-user-modal');
-                    setTimeout(() => location.reload(), 1000);
-                } else {
-                    showToast(json.error, 'error');
-                }
-            } catch (err) {
-                showToast('Error updating user', 'error');
+    async function submitEditUser(e) {
+        e.preventDefault();
+        const form = e.target;
+        const data = new FormData(form);
+        try {
+            const res = await fetch('/admin/api/user/update', { method: 'POST', body: data });
+            const json = await res.json();
+            if (json.success) {
+                showToast(json.message, 'success');
+                closeModal('edit-user-modal');
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                showToast(json.error, 'error');
             }
+        } catch (err) {
+            showToast('Error updating user', 'error');
         }
+    }
 
-        async function submitNotifyUser(e) {
-            e.preventDefault();
-            const form = e.target;
-            const data = new FormData(form);
-            try {
-                const res = await fetch('/admin/api/user/notify', { method: 'POST', body: data });
-                const json = await res.json();
-                if (json.success) {
-                    showToast(json.message, 'success');
-                    closeModal('notify-user-modal');
-                } else {
-                    showToast(json.error, 'error');
-                }
-            } catch (err) {
-                showToast('Error sending notification', 'error');
+    async function submitNotifyUser(e) {
+        e.preventDefault();
+        const form = e.target;
+        const data = new FormData(form);
+        try {
+            const res = await fetch('/admin/api/user/notify', { method: 'POST', body: data });
+            const json = await res.json();
+            if (json.success) {
+                showToast(json.message, 'success');
+                closeModal('notify-user-modal');
+            } else {
+                showToast(json.error, 'error');
             }
+        } catch (err) {
+            showToast('Error sending notification', 'error');
         }
+    }
 
-        async function adminAction(entity, id, action) {
-        if(!confirm(`EXECUTE: '${action}' on ${entity} #${id}?`)) return;
+    async function adminAction(entity, id, action) {
+        if(!confirm(`EXECUTE: '${{action}}' on ${{entity}} #${{id}}?`)) return;
         
         const formData = new FormData();
+        formData.append('entity', entity);
+        formData.append('id', id);
         formData.append('action', action);
-        
+
         try {
-            let url = `/admin/api/${entity}/${id}/${action}`;
-            if(entity === 'account' || entity === 'user') url = `/admin/api/${entity}/${id}/action`;
-            
-            const res = await fetch(url, { method: 'POST', body: formData });
-            const data = await res.json();
-            
-            if(data.success) {
-                showToast(`SUCCESS: ${action} executed.`);
-                setTimeout(() => window.location.reload(), 1000);
+            const res = await fetch('/admin/api/action', {
+                method: 'POST',
+                body: formData
+            });
+            const json = await res.json();
+            if(json.success) {
+                showToast(json.message, 'success');
+                setTimeout(() => location.reload(), 1500);
             } else {
-                showToast(data.error || 'Action failed', 'error');
+                showToast(json.error, 'error');
             }
         } catch(e) {
-            showToast('Network error', 'error');
+            showToast('Execution failed.', 'error');
+        }
+    }
+
+    async function submitAdminSettings(e) {
+        e.preventDefault();
+        const form = e.target;
+        const data = new FormData(form);
+        try {
+            const res = await fetch('/admin/api/settings', { method: 'POST', body: data });
+            const json = await res.json();
+            if (json.success) {
+                showToast(json.message, 'success');
+            } else {
+                showToast(json.error, 'error');
+            }
+        } catch (err) {
+            showToast('Error updating settings', 'error');
         }
     }
 </script>
