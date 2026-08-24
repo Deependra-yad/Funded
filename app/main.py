@@ -17,7 +17,8 @@ from app.routers import (
     affiliate,
     billing,
     profile,
-    admin_sim
+    admin_sim,
+    admin_dashboard
 )
 
 # Initialize Database Schema & Seed Data
@@ -140,6 +141,7 @@ app.include_router(affiliate.router)
 app.include_router(billing.router)
 app.include_router(profile.router)
 app.include_router(admin_sim.router)
+app.include_router(admin_dashboard.router)
 
 if __name__ == "__main__":
     import uvicorn
