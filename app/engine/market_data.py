@@ -10,7 +10,7 @@ INSTRUMENTS = {
     "NIFTY50": {
         "name": "NIFTY 50 Index (NSE)",
         "category": "Indices",
-        "base_price": 24500.0,
+        "base_price": 24200.0,
         "spread": 1.5,
         "digits": 2,
         "pip_size": 1.0,
@@ -20,7 +20,7 @@ INSTRUMENTS = {
     "BANKNIFTY": {
         "name": "NIFTY BANK Index (NSE)",
         "category": "Indices",
-        "base_price": 50500.0,
+        "base_price": 57500.0,
         "spread": 2.5,
         "digits": 2,
         "pip_size": 1.0,
