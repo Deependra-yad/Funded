@@ -52,7 +52,9 @@
         .wl-item.active { background: #f8fafc; border-left: 3px solid #2962ff; }
     </style>
 </head>
-<body class="h-screen w-screen overflow-hidden flex flex-col bg-white text-slate-800">
+<body class="h-screen w-screen overflow-hidden flex flex-col bg-white text-slate-800"
+      data-active-symbol="{{ current_symbol | default('NIFTY50') }}" 
+      data-account-id="{{ current_account.id if current_account else 'null' }}">
 
     <!-- Toast Container -->
     <div id="toast-container"></div>
@@ -254,9 +256,10 @@
     lucide.createIcons();
 
     // ===== STATE =====
-    var activeSymbol = "{{ current_symbol | default('NIFTY50') }}";
+    var activeSymbol = document.body.getAttribute('data-active-symbol');
     if(!activeSymbol || activeSymbol.trim() === '') activeSymbol = 'NIFTY50';
-    var activeAccountId = {{ current_account.id if current_account else 'null' }};
+    var accAttr = document.body.getAttribute('data-account-id');
+    var activeAccountId = (accAttr && accAttr !== 'null' && accAttr !== 'None') ? parseInt(accAttr) : null;
     var tvWidget = null;
     var isTrading = false;
     var pricesData = {};
