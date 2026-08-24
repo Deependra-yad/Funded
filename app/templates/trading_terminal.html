@@ -85,6 +85,9 @@
             <button onclick="toggleDualChart()" class="flex items-center gap-2 bg-[#2a2e39] hover:bg-[#363a45] px-3 py-1.5 rounded text-white text-xs font-bold transition-colors">
                 <i data-lucide="layout-template" class="w-4 h-4"></i> Split Screen
             </button>
+            <button onclick="toggleFullscreen()" class="flex items-center gap-2 bg-[#2a2e39] hover:bg-[#363a45] px-3 py-1.5 rounded text-white text-xs font-bold transition-colors">
+                <i data-lucide="maximize" class="w-4 h-4"></i> Full Screen
+            </button>
         </div>
 
         <div class="flex items-center gap-6 text-xs font-mono">
@@ -117,7 +120,7 @@
         <div class="flex-1 flex flex-col relative min-w-0">
             
             <!-- DUAL CHART CONTAINER -->
-            <div class="flex-1 flex w-full h-full relative z-0 bg-slate-200 gap-[1px]">
+            <div id="dual-chart-container" class="flex-1 flex w-full h-full relative z-0 bg-slate-200 gap-[1px]">
                 
                 <!-- Chart 1 (Left) -->
                 <div class="flex-1 h-full relative bg-white">
@@ -344,6 +347,27 @@
             }
         } else {
             wrapper2.classList.add('hidden');
+        }
+    }
+
+    function toggleFullscreen() {
+        var elem = document.getElementById("dual-chart-container");
+        if (!document.fullscreenElement) {
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) { /* Safari */
+                elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { /* IE11 */
+                elem.msRequestFullscreen();
+            }
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) { /* Safari */
+                document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) { /* IE11 */
+                document.msExitFullscreen();
+            }
         }
     }
 

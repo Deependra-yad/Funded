@@ -54,6 +54,12 @@
             <button onclick="switchTab('payouts')" id="nav-payouts" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
                 <i data-lucide="banknote" class="w-4 h-4 text-teal-400"></i> Payout Requests
             </button>
+            <div class="pt-4 pb-2">
+                <p class="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Danger Zone</p>
+            </div>
+            <button onclick="switchTab('ops')" id="nav-ops" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-rose-900/30 hover:text-rose-400 transition-colors">
+                <i data-lucide="alert-octagon" class="w-4 h-4 text-rose-500"></i> Market Operations
+            </button>
         </nav>
 
         <div class="p-4 border-t border-slate-800 space-y-2">
@@ -292,6 +298,41 @@
                 </div>
             </div>
 
+            <!-- MARKET OPERATIONS TAB -->
+            <div id="tab-ops" class="tab-content">
+                <div class="max-w-4xl glass-panel p-8 rounded-xl border border-rose-500/30 bg-rose-900/10 relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-rose-500"></div>
+                    <h3 class="text-lg font-bold text-rose-400 mb-6 uppercase tracking-wider flex items-center gap-2"><i data-lucide="alert-octagon" class="w-5 h-5 text-rose-500"></i> God-Mode Market Operations</h3>
+                    <p class="text-sm text-slate-400 mb-8">WARNING: These controls directly manipulate the trading engine and simulate market anomalies. Actions are irreversible.</p>
+                    
+                    <div class="space-y-6">
+                        <div class="flex items-center justify-between p-4 rounded-lg bg-slate-900/80 border border-slate-800">
+                            <div>
+                                <h4 class="text-sm font-bold text-white mb-1">Global Trade Halt (Circuit Breaker)</h4>
+                                <p class="text-xs text-slate-500">Instantly suspends all opening/closing of positions across the platform.</p>
+                            </div>
+                            <button onclick="showToast('Global circuit breaker engaged. Trading halted.', 'error')" class="bg-rose-600 hover:bg-rose-500 text-white px-6 py-2 rounded font-bold uppercase tracking-wider text-xs">Execute Halt</button>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-4 rounded-lg bg-slate-900/80 border border-slate-800">
+                            <div>
+                                <h4 class="text-sm font-bold text-white mb-1">Simulate Liquidity Wipe (Spread Expansion)</h4>
+                                <p class="text-xs text-slate-500">Temporarily increases spreads on all instruments by 500% to test risk engine margin calls.</p>
+                            </div>
+                            <button onclick="showToast('Spreads expanded. Margin calls evaluating.', 'success')" class="bg-amber-600 hover:bg-amber-500 text-white px-6 py-2 rounded font-bold uppercase tracking-wider text-xs">Expand Spreads</button>
+                        </div>
+                        
+                        <div class="flex items-center justify-between p-4 rounded-lg bg-slate-900/80 border border-slate-800">
+                            <div>
+                                <h4 class="text-sm font-bold text-white mb-1">Nightly Drawdown Reset</h4>
+                                <p class="text-xs text-slate-500">Force the nightly cron job to calculate end-of-day equity and reset daily drawdowns.</p>
+                            </div>
+                            <button onclick="showToast('Nightly reset complete.', 'success')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2 rounded font-bold uppercase tracking-wider text-xs">Force Reset</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -331,7 +372,8 @@
             'accounts': 'Trading Accounts',
             'trades': 'Live Market Positions',
             'rules': 'Prop Firm Rules Engine',
-            'payouts': 'Payout Requests'
+            'payouts': 'Payout Requests',
+            'ops': 'Market Operations & Risk'
         };
         document.getElementById('page-title').innerText = titles[tab];
     }
