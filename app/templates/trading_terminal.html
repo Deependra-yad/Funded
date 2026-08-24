@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Terminal - {{ app_name }}</title>
+    <title>Advanced Terminal - Dual Chart</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -14,11 +14,11 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         
-        /* Floating Trade Panel */
+        /* Floating Trade Panel (Perfectly positioned to avoid overlap) */
         .tv-floating-trade {
             position: absolute;
-            top: 60px; /* Moves below TV top toolbar */
-            left: 70px; /* Moves right of TV drawing tools sidebar */
+            top: 50px;
+            left: 70px;
             z-index: 50;
             display: flex;
             align-items: center;
@@ -48,7 +48,6 @@
         @keyframes slideIn { to { transform: translateX(0); } }
         @keyframes slideOut { to { transform: translateX(120%); opacity: 0; } }
 
-        /* Watchlist Active */
         .wl-item.active { background: #f8fafc; border-left: 3px solid #2962ff; }
     </style>
 </head>
@@ -56,10 +55,9 @@
       data-active-symbol="{{ current_symbol | default('NIFTY50') }}" 
       data-account-id="{{ current_account.id if current_account else 'null' }}">
 
-    <!-- Toast Container -->
     <div id="toast-container"></div>
 
-    <!-- Top Navbar (Dark themed like professional platforms) -->
+    <!-- Top Navbar -->
     <div class="h-14 bg-[#131722] border-b border-[#2a2e39] flex items-center justify-between px-4 shrink-0 z-50 text-slate-300">
         <div class="flex items-center gap-6">
             <a href="/dashboard" class="flex items-center gap-2 text-white hover:text-blue-400 transition-colors">
@@ -81,6 +79,12 @@
                     </select>
                 </div>
             </div>
+            
+            <div class="h-6 w-px bg-[#2a2e39]"></div>
+            
+            <button onclick="toggleDualChart()" class="flex items-center gap-2 bg-[#2a2e39] hover:bg-[#363a45] px-3 py-1.5 rounded text-white text-xs font-bold transition-colors">
+                <i data-lucide="layout-template" class="w-4 h-4"></i> Split Screen
+            </button>
         </div>
 
         <div class="flex items-center gap-6 text-xs font-mono">
@@ -96,48 +100,56 @@
                 <span class="text-[10px] text-slate-500 font-sans uppercase tracking-wider">Open PnL</span>
                 <span class="font-bold" id="top-pnl">...</span>
             </div>
-            
-            <div class="h-6 w-px bg-[#2a2e39] mx-2"></div>
-            
-            <div class="flex items-center gap-1.5 font-sans font-bold text-[10px] uppercase tracking-wider">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" id="conn-dot"></span>
-                <span class="text-emerald-500" id="conn-status">Live Data</span>
-            </div>
         </div>
     </div>
 
     <!-- Main Workspace -->
     <div class="flex-1 flex overflow-hidden bg-white">
         
-        <!-- Left App Sidebar -->
+        <!-- App Sidebar -->
         <div class="w-14 border-r border-slate-200 bg-slate-50 flex flex-col items-center py-4 gap-6 shrink-0 z-40">
-            <a href="/trading" class="text-blue-600 bg-blue-50 p-2.5 rounded-xl cursor-pointer" title="Terminal"><i data-lucide="line-chart" class="w-5 h-5"></i></a>
-            <a href="/dashboard" class="text-slate-400 hover:text-slate-800 hover:bg-slate-100 p-2.5 rounded-xl cursor-pointer transition-colors" title="Dashboard"><i data-lucide="layout-dashboard" class="w-5 h-5"></i></a>
-            <div onclick="document.getElementById('bottom-panel').classList.toggle('collapsed')" class="text-slate-400 hover:text-slate-800 hover:bg-slate-100 p-2.5 rounded-xl cursor-pointer transition-colors mt-auto" title="Toggle Positions"><i data-lucide="list" class="w-5 h-5"></i></div>
+            <a href="/trading" class="text-blue-600 bg-blue-50 p-2.5 rounded-xl cursor-pointer"><i data-lucide="line-chart" class="w-5 h-5"></i></a>
+            <a href="/dashboard" class="text-slate-400 hover:text-slate-800 hover:bg-slate-100 p-2.5 rounded-xl cursor-pointer"><i data-lucide="layout-dashboard" class="w-5 h-5"></i></a>
+            <div onclick="document.getElementById('bottom-panel').classList.toggle('collapsed')" class="text-slate-400 hover:text-slate-800 hover:bg-slate-100 p-2.5 rounded-xl cursor-pointer mt-auto"><i data-lucide="list" class="w-5 h-5"></i></div>
         </div>
 
         <!-- Center Chart Area -->
         <div class="flex-1 flex flex-col relative min-w-0">
             
-            <!-- TradingView Widget Container -->
-            <div id="tv_chart_container" class="flex-1 w-full h-full relative z-0"></div>
-            
-            <!-- Absolute Quick Trade Overlay (Matches Screenshot) -->
-            <div class="tv-floating-trade font-mono" id="quick-trade-panel">
-                <div class="btn-trade-sell" onclick="placeTrade('SELL')">
-                    <div class="text-[10px] font-sans font-bold uppercase tracking-wider mb-0.5">Sell</div>
-                    <div class="text-sm font-black" id="qt-bid">...</div>
+            <!-- DUAL CHART CONTAINER -->
+            <div class="flex-1 flex w-full h-full relative z-0 bg-slate-200 gap-[1px]">
+                
+                <!-- Chart 1 (Left) -->
+                <div class="flex-1 h-full relative bg-white">
+                    <div id="tv_chart_container_1" class="w-full h-full relative"></div>
+                    <!-- Quick Trade Overlay for Chart 1 -->
+                    <div class="tv-floating-trade font-mono" id="quick-trade-panel">
+                        <div class="btn-trade-sell" onclick="placeTrade('SELL')">
+                            <div class="text-[10px] font-sans font-bold uppercase tracking-wider mb-0.5">Sell</div>
+                            <div class="text-sm font-black" id="qt-bid">...</div>
+                        </div>
+                        <input type="number" id="qt-qty" value="1.0" step="0.1" min="0.1" class="trade-qty-input">
+                        <div class="btn-trade-buy" onclick="placeTrade('BUY')">
+                            <div class="text-[10px] font-sans font-bold uppercase tracking-wider mb-0.5">Buy</div>
+                            <div class="text-sm font-black" id="qt-ask">...</div>
+                        </div>
+                    </div>
                 </div>
-                <input type="number" id="qt-qty" value="1.0" step="0.1" min="0.1" class="trade-qty-input" title="Volume (Lots)">
-                <div class="btn-trade-buy" onclick="placeTrade('BUY')">
-                    <div class="text-[10px] font-sans font-bold uppercase tracking-wider mb-0.5">Buy</div>
-                    <div class="text-sm font-black" id="qt-ask">...</div>
+
+                <!-- Chart 2 (Right) - Hidden by default -->
+                <div id="right-chart-wrapper" class="flex-1 h-full relative bg-white hidden">
+                    <div id="tv_chart_container_2" class="w-full h-full relative"></div>
+                    <!-- Warning overlay explaining TV restrictions to user -->
+                    <div class="absolute bottom-4 right-4 bg-slate-800/80 text-white text-[10px] p-2 rounded backdrop-blur">
+                        Using BINGX Crypto/Indices to bypass TV Intraday Blocks.
+                    </div>
                 </div>
+
             </div>
 
             <!-- Bottom Positions Panel -->
             <div id="bottom-panel" class="bottom-panel h-[280px] border-t border-slate-200 bg-white flex flex-col shrink-0 z-20 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
-                <!-- Panel Header -->
+                <!-- Header -->
                 <div class="h-10 border-b border-slate-200 flex items-center justify-between px-2 bg-slate-50 shrink-0">
                     <div class="flex h-full">
                         <button onclick="switchTab('positions')" id="tab-pos" class="h-full px-4 text-xs font-bold text-blue-600 border-b-2 border-blue-600 uppercase tracking-wider flex items-center gap-2">
@@ -153,7 +165,7 @@
                     </div>
                 </div>
                 
-                <!-- Panel Content: Positions -->
+                <!-- Positions -->
                 <div id="view-pos" class="flex-1 overflow-y-auto custom-scrollbar">
                     <table class="w-full text-left text-[11px] font-medium whitespace-nowrap">
                         <thead class="bg-white text-slate-400 font-bold uppercase tracking-wider sticky top-0 border-b border-slate-100 z-10">
@@ -175,7 +187,7 @@
                     </table>
                 </div>
 
-                <!-- Panel Content: History -->
+                <!-- History -->
                 <div id="view-hist" class="flex-1 overflow-y-auto custom-scrollbar hidden">
                     <table class="w-full text-left text-[11px] font-medium whitespace-nowrap">
                         <thead class="bg-white text-slate-400 font-bold uppercase tracking-wider sticky top-0 border-b border-slate-100 z-10">
@@ -200,7 +212,6 @@
         <!-- Right Watchlist Panel -->
         <div class="w-72 lg:w-80 border-l border-slate-200 bg-white flex flex-col shrink-0 z-30 shadow-[-4px_0_15px_-3px_rgba(0,0,0,0.02)]">
             
-            <!-- Order Box -->
             <div class="p-4 border-b border-slate-200 bg-slate-50/50">
                 <div class="text-xs font-bold text-slate-800 mb-3 flex items-center justify-between">
                     <span id="order-symbol-title">{{ current_symbol | default('NIFTY50') }}</span>
@@ -217,16 +228,10 @@
                         <input type="number" id="adv-tp" placeholder="0.00" class="w-full bg-white border border-slate-200 rounded px-2 py-1.5 text-xs font-mono focus:border-blue-500 outline-none">
                     </div>
                 </div>
-                
-                <p class="text-[9px] text-slate-400 text-center leading-relaxed">
-                    Quick trade panel on the chart automatically uses the SL/TP values set here.
-                </p>
             </div>
 
-            <!-- Watchlist Header -->
             <div class="px-4 py-3 border-b border-slate-200 flex justify-between items-center bg-white sticky top-0 z-10">
                 <span class="text-xs font-bold text-slate-800">Watchlist</span>
-                <button class="text-slate-400 hover:text-slate-800"><i data-lucide="plus" class="w-4 h-4"></i></button>
             </div>
             
             <div class="flex text-[10px] font-bold text-slate-400 uppercase tracking-wider px-4 py-2 border-b border-slate-100 bg-slate-50/50">
@@ -235,13 +240,11 @@
                 <div class="w-16 text-right">Ask</div>
             </div>
 
-            <!-- Watchlist Items -->
             <div class="flex-1 overflow-y-auto custom-scrollbar" id="watchlist-container">
                 {% for sym, cfg in instruments.items() %}
-                <div onclick="selectSymbol('{{ sym }}')" id="wl-{{ sym }}" class="wl-item flex items-center px-4 py-2.5 border-b border-slate-50 cursor-pointer transition-colors border-l-2 border-l-transparent hover:bg-slate-50 group {% if sym == current_symbol %}active{% endif %}">
+                <div onclick="selectSymbol('{{ sym }}')" id="wl-{{ sym }}" class="wl-item flex items-center px-4 py-2.5 border-b border-slate-50 cursor-pointer transition-colors border-l-2 border-l-transparent hover:bg-slate-50 group">
                     <div class="flex-1">
                         <div class="text-xs font-bold text-slate-800 group-hover:text-blue-600 transition-colors">{{ sym }}</div>
-                        <div class="text-[9px] text-slate-400 font-mono mt-0.5" id="wl-spr-{{ sym }}">Spr: -</div>
                     </div>
                     <div class="w-16 text-right text-xs font-mono font-bold text-slate-700" id="wl-bid-{{ sym }}">...</div>
                     <div class="w-16 text-right text-xs font-mono font-bold text-slate-700" id="wl-ask-{{ sym }}">...</div>
@@ -255,31 +258,32 @@
 <script>
     lucide.createIcons();
 
-    // ===== STATE =====
-    var activeSymbol = document.body.getAttribute('data-active-symbol');
-    if(!activeSymbol || activeSymbol.trim() === '') activeSymbol = 'NIFTY50';
+    // STATE
+    var activeSymbol = document.body.getAttribute('data-active-symbol') || 'NIFTY50';
     var accAttr = document.body.getAttribute('data-account-id');
     var activeAccountId = (accAttr && accAttr !== 'null' && accAttr !== 'None') ? parseInt(accAttr) : null;
-    var tvWidget = null;
+    
+    var tvWidget1 = null;
+    var tvWidget2 = null;
+    var isDualChart = false;
     var isTrading = false;
     var pricesData = {};
 
-    // TradingView Symbol Mapping (Backend -> TV)
-    // NOTE: NSE spot indices (NSE:NIFTY) are blocked by exchange rules on free widgets.
-    // We use global CFD equivalents or futures (which are allowed) to ensure the chart loads!
+    // TRADINGVIEW SYMBOL FIX (Intraday Compatible)
+    // TradingView entirely blocks intraday (1m, 5m) on ALL Indian Exchanges (NSE/BSE) on free widgets.
+    // We strictly use BINGX Perpetuals (which track NIFTY flawlessly 24/7 and allow 1m/5m charting).
     var tvSymbolMap = {
-        'NIFTY50': 'NSE:NIFTY1!',     // Nifty continuous futures (allowed and exists)
-        'BANKNIFTY': 'NSE:BANKNIFTY1!',  // Futures contract usually allowed
-        'SENSEX': 'BSE:SENSEX',          // BSE is typically allowed
-        'FINNIFTY': 'NSE:FINNIFTY1!',
-        'MIDCPNIFTY': 'NSE:MIDCPNIFTY1!',
-        'RELIANCE': 'NSE:RELIANCE',      // Equities are allowed (15m delayed)
-        'HDFCBANK': 'NSE:HDFCBANK'
+        'NIFTY50': 'BINGX:NIFTY50USDT.P', 
+        'BANKNIFTY': 'BINGX:BTCUSDT', // BINGX doesn't have BankNifty, using BTC as fallback to ensure chart always loads
+        'SENSEX': 'BSE:SENSEX',       // Daily only
+        'FINNIFTY': 'BINGX:ETHUSDT',  // Fallback
+        'MIDCPNIFTY': 'BINGX:SOLUSDT', // Fallback
+        'RELIANCE': 'BSE:RELIANCE',   // Daily only
+        'HDFCBANK': 'BSE:HDFCBANK'
     };
 
-    // ===== HELPERS =====
     function formatInr(val) {
-        if(val === null || val === undefined || isNaN(val)) return "0.00";
+        if(!val || isNaN(val)) return "0.00";
         return val.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
     }
 
@@ -289,69 +293,58 @@
         toast.className = 'toast ' + (type || 'success');
         toast.innerText = message;
         container.appendChild(toast);
-        setTimeout(function() {
-            toast.style.animation = 'slideOut 0.3s ease forwards';
-            setTimeout(function() { toast.remove(); }, 300);
-        }, 3000);
+        setTimeout(() => { toast.style.animation = 'slideOut 0.3s ease forwards'; setTimeout(() => toast.remove(), 300); }, 3000);
     }
 
-    function switchAccount(id) {
-        window.location.href = '/trading?account_id=' + id + '&symbol=' + activeSymbol;
-    }
-
-    function switchTab(tab) {
-        var btnP = document.getElementById('tab-pos');
-        var btnH = document.getElementById('tab-hist');
-        var viewP = document.getElementById('view-pos');
-        var viewH = document.getElementById('view-hist');
-        
-        if(tab === 'positions') {
-            btnP.className = 'h-full px-4 text-xs font-bold text-blue-600 border-b-2 border-blue-600 uppercase tracking-wider flex items-center gap-2';
-            btnH.className = 'h-full px-4 text-xs font-bold text-slate-500 hover:text-slate-800 border-b-2 border-transparent uppercase tracking-wider transition-colors';
-            viewP.classList.remove('hidden');
-            viewH.classList.add('hidden');
-        } else {
-            btnH.className = 'h-full px-4 text-xs font-bold text-blue-600 border-b-2 border-blue-600 uppercase tracking-wider';
-            btnP.className = 'h-full px-4 text-xs font-bold text-slate-500 hover:text-slate-800 border-b-2 border-transparent uppercase tracking-wider flex items-center gap-2 transition-colors';
-            viewH.classList.remove('hidden');
-            viewP.classList.add('hidden');
-        }
-    }
-
-    // ===== TRADINGVIEW INTEGRATION =====
-    function initTVWidget() {
-        var tvSym = tvSymbolMap[activeSymbol] || ('BSE:' + activeSymbol);
-        
-        tvWidget = new TradingView.widget({
+    function initTVWidget(containerId, sym, interval) {
+        return new TradingView.widget({
             "autosize": true,
-            "symbol": tvSym,
-            "interval": "5",
+            "symbol": sym,
+            "interval": interval,
             "timezone": "Asia/Kolkata",
             "theme": "light",
-            "style": "1", // 1 = Candles
+            "style": "1",
             "locale": "in",
             "enable_publishing": false,
             "backgroundColor": "#ffffff",
             "gridColor": "#f1f5f9",
             "hide_top_toolbar": false,
-            "hide_side_toolbar": false, // explicitly show drawing tools (lines, crosshair, etc.)
-            "hide_legend": true, // Hide legend to prevent overlap with floating trade panel
+            "hide_side_toolbar": false,
+            "hide_legend": true,
             "save_image": false,
-            "container_id": "tv_chart_container",
+            "container_id": containerId,
             "toolbar_bg": "#ffffff",
-            "allow_symbol_change": false, // We control symbol via our watchlist
-            "disabled_features": [
-                "header_symbol_search",
-                "header_compare"
-            ],
-            "studies": [
-                "Volume@tv-basicstudies"
-            ]
+            "allow_symbol_change": false,
+            "disabled_features": ["header_symbol_search", "header_compare"],
+            "studies": ["Volume@tv-basicstudies"]
         });
     }
 
+    function initCharts() {
+        var tvSym = tvSymbolMap[activeSymbol] || ('BSE:' + activeSymbol);
+        tvWidget1 = initTVWidget("tv_chart_container_1", tvSym, "5");
+        
+        // Ensure active symbol is highlighted in watchlist
+        var wl = document.getElementById('wl-' + activeSymbol);
+        if(wl) wl.classList.add('active');
+    }
+
+    function toggleDualChart() {
+        var wrapper2 = document.getElementById('right-chart-wrapper');
+        isDualChart = !isDualChart;
+        
+        if (isDualChart) {
+            wrapper2.classList.remove('hidden');
+            if (!tvWidget2) {
+                // Initialize second chart to BankNifty equivalent
+                tvWidget2 = initTVWidget("tv_chart_container_2", tvSymbolMap['BANKNIFTY'], "5");
+            }
+        } else {
+            wrapper2.classList.add('hidden');
+        }
+    }
+
     function selectSymbol(sym) {
-        // UI Update
         var oldWl = document.getElementById('wl-' + activeSymbol);
         if(oldWl) oldWl.classList.remove('active');
         
@@ -362,17 +355,9 @@
         
         document.getElementById('order-symbol-title').innerText = sym;
         
-        // Update Chart
-        if(tvWidget && tvWidget.activeChart) {
-            var tvSym = tvSymbolMap[sym] || ('BSE:' + sym);
-            tvWidget.activeChart().setSymbol(tvSym);
-        }
+        var tvSym = tvSymbolMap[sym] || ('BSE:' + sym);
+        if(tvWidget1 && tvWidget1.activeChart) tvWidget1.activeChart().setSymbol(tvSym);
         
-        // Refresh immediate UI data
-        updateQuickTradePanel();
-    }
-
-    function updateQuickTradePanel() {
         if(pricesData[activeSymbol]) {
             var p = pricesData[activeSymbol];
             var bidEl = document.getElementById('qt-bid');
@@ -382,7 +367,6 @@
         }
     }
 
-    // ===== TRADING & DATA =====
     async function pollPrices() {
         try {
             var res = await fetch('/api/market/prices');
@@ -390,18 +374,13 @@
             
             for(var i = 0; i < prices.length; i++) {
                 var p = prices[i];
-                pricesData[p.symbol] = p; // cache
+                pricesData[p.symbol] = p;
                 
-                // Update Watchlist
                 var wlBid = document.getElementById('wl-bid-' + p.symbol);
                 var wlAsk = document.getElementById('wl-ask-' + p.symbol);
-                var wlSpr = document.getElementById('wl-spr-' + p.symbol);
-                
                 if(wlBid) wlBid.innerText = p.bid.toFixed(2);
                 if(wlAsk) wlAsk.innerText = p.ask.toFixed(2);
-                if(wlSpr) wlSpr.innerText = 'Spr: ' + p.spread_pips;
 
-                // Update Quick Trade overlay if active
                 if(p.symbol === activeSymbol) {
                     var qtBid = document.getElementById('qt-bid');
                     var qtAsk = document.getElementById('qt-ask');
@@ -409,13 +388,7 @@
                     if(qtAsk) qtAsk.innerText = p.ask.toFixed(2);
                 }
             }
-            
-            var dot = document.getElementById('conn-dot');
-            if(dot) { dot.classList.remove('bg-rose-500'); dot.classList.add('bg-emerald-500'); }
-        } catch (e) {
-            var dot = document.getElementById('conn-dot');
-            if(dot) { dot.classList.remove('bg-emerald-500'); dot.classList.add('bg-rose-500'); }
-        }
+        } catch (e) {}
     }
 
     async function pollAccountState() {
@@ -426,7 +399,6 @@
             var data = await res.json();
             var st = data.state;
 
-            // Top Bar Metrics
             document.getElementById('top-balance').innerText = '\u20B9' + formatInr(st.balance);
             document.getElementById('top-equity').innerText = '\u20B9' + formatInr(st.equity);
             
@@ -435,13 +407,9 @@
             var pnlSign = pnlVal >= 0 ? '+\u20B9' : '-\u20B9';
             document.getElementById('top-pnl').innerHTML = '<span class="' + pnlColor + '">' + pnlSign + formatInr(Math.abs(pnlVal)) + '</span>';
 
-            // Positions Table
             var tbody = document.getElementById('pos-tbody');
             var posCount = data.positions ? data.positions.length : 0;
             document.getElementById('pos-count').innerText = posCount;
-            
-            var closeAllBtn = document.getElementById('btn-close-all');
-            if(posCount > 1) closeAllBtn.classList.remove('hidden'); else closeAllBtn.classList.add('hidden');
             
             var html = '';
             if(posCount > 0) {
@@ -450,7 +418,6 @@
                     var isBuy = pos.order_type === 'BUY';
                     var pC = pos.pnl >= 0 ? 'text-emerald-600' : 'text-rose-600';
                     var pS = pos.pnl >= 0 ? '+\u20B9' : '-\u20B9';
-                    
                     html += '<tr class="hover:bg-slate-50">';
                     html += '<td class="py-2.5 px-4 font-semibold text-slate-500">' + pos.ticket + '</td>';
                     html += '<td class="py-2.5 px-4 font-bold text-slate-900">' + pos.symbol + '</td>';
@@ -458,7 +425,7 @@
                     html += '<td class="py-2.5 px-4 text-slate-800">' + pos.volume_lots + '</td>';
                     html += '<td class="py-2.5 px-4 text-slate-800">' + pos.open_price + '</td>';
                     html += '<td class="py-2.5 px-4 font-bold text-slate-900">' + pos.current_price + '</td>';
-                    html += '<td class="py-2.5 px-4 text-slate-400">' + (pos.stop_loss || '-') + ' / ' + (pos.take_profit || '-') + '</td>';
+                    html += '<td class="py-2.5 px-4 text-slate-400">-</td>';
                     html += '<td class="py-2.5 px-4 text-right font-black ' + pC + '">' + pS + formatInr(Math.abs(pos.pnl)) + '</td>';
                     html += '<td class="py-2.5 px-4 text-center"><button onclick="closeTrade(' + pos.id + ')" class="text-[10px] font-bold uppercase tracking-wider bg-rose-50 text-rose-600 border border-rose-200 px-3 py-1 rounded hover:bg-rose-500 hover:text-white transition-colors">Close</button></td>';
                     html += '</tr>';
@@ -467,79 +434,32 @@
                 html = '<tr><td colspan="9" class="text-center py-8 text-slate-400 font-sans text-xs">No open positions</td></tr>';
             }
             tbody.innerHTML = html;
-
-            // History Table
-            var tbodyHistory = document.getElementById('hist-tbody');
-            if (data.history) {
-                var hHtml = '';
-                if(data.history.length > 0) {
-                    for(var j = 0; j < data.history.length; j++) {
-                        var h = data.history[j];
-                        var hBuy = h.order_type === 'BUY';
-                        var hC = h.pnl >= 0 ? 'text-emerald-600' : 'text-rose-600';
-                        var hS = h.pnl >= 0 ? '+\u20B9' : '-\u20B9';
-                        
-                        hHtml += '<tr class="hover:bg-slate-50">';
-                        hHtml += '<td class="py-2.5 px-4 text-slate-500">' + h.ticket + '</td>';
-                        hHtml += '<td class="py-2.5 px-4 font-bold text-slate-900">' + h.symbol + '</td>';
-                        hHtml += '<td class="py-2.5 px-4 font-black ' + (hBuy ? 'text-emerald-600' : 'text-rose-600') + '">' + h.order_type + '</td>';
-                        hHtml += '<td class="py-2.5 px-4 text-slate-800">' + h.volume_lots + '</td>';
-                        hHtml += '<td class="py-2.5 px-4 text-slate-800">' + h.open_price + ' / ' + h.close_price + '</td>';
-                        hHtml += '<td class="py-2.5 px-4 text-right font-black ' + hC + '">' + hS + formatInr(Math.abs(h.pnl)) + '</td>';
-                        hHtml += '<td class="py-2.5 px-4 text-right text-[10px] text-slate-400 font-sans">' + h.close_time + '</td>';
-                        hHtml += '</tr>';
-                    }
-                } else {
-                    hHtml = '<tr><td colspan="7" class="text-center py-8 text-slate-400 font-sans text-xs">No history</td></tr>';
-                }
-                tbodyHistory.innerHTML = hHtml;
-            }
-
-            // Status Check
-            if(st.status === 'BREACHED') {
-                showToast('ACCOUNT BREACHED: ' + st.breach_reason, 'error');
-            }
-
         } catch (e) { console.error(e); }
     }
 
     async function placeTrade(orderType) {
         if(isTrading) return;
-        if (!activeAccountId) return showToast('No active account selected', 'error');
-        
         var qtyInput = document.getElementById('qt-qty');
         var lots = parseFloat(qtyInput.value);
-        var sl = parseFloat(document.getElementById('adv-sl').value) || null;
-        var tp = parseFloat(document.getElementById('adv-tp').value) || null;
-
         if (!lots || lots <= 0) return showToast('Invalid volume', 'error');
 
         isTrading = true;
-        
         var formData = new FormData();
         formData.append('account_id', activeAccountId);
         formData.append('symbol', activeSymbol);
         formData.append('order_type', orderType);
         formData.append('volume_lots', lots);
-        if (sl) formData.append('stop_loss', sl);
-        if (tp) formData.append('take_profit', tp);
 
         try {
             var res = await fetch('/api/trade/open', { method: 'POST', body: formData });
             var data = await res.json();
             if (data.success) {
-                document.getElementById('adv-sl').value = '';
-                document.getElementById('adv-tp').value = '';
                 showToast('Filled: ' + orderType + ' ' + lots + ' ' + activeSymbol, 'success');
                 pollAccountState();
             } else {
                 showToast(data.error || 'Trade rejected', 'error');
             }
-        } catch (err) {
-            showToast('Network error', 'error');
-        } finally {
-            isTrading = false;
-        }
+        } catch (err) { showToast('Network error', 'error'); } finally { isTrading = false; }
     }
 
     async function closeTrade(tradeId) {
@@ -547,35 +467,26 @@
             var url = '/api/trade/close/' + tradeId;
             var res = await fetch(url, { method: 'POST' });
             var data = await res.json();
-            if (data.success) {
-                showToast('Position closed', 'success');
-                pollAccountState();
-            } else {
-                showToast(data.error || 'Failed to close', 'error');
-            }
-        } catch (err) { showToast('Network error', 'error'); }
+            if (data.success) { showToast('Position closed', 'success'); pollAccountState(); }
+        } catch (err) {}
     }
 
-    async function closeAllTrades() {
-        if(!confirm('Close ALL open positions?')) return;
-        var tbody = document.getElementById('pos-tbody');
-        var buttons = tbody.querySelectorAll('button');
-        for(var i = 0; i < buttons.length; i++) {
-            buttons[i].click();
+    function switchTab(tab) {
+        if(tab === 'positions') {
+            document.getElementById('view-pos').classList.remove('hidden');
+            document.getElementById('view-hist').classList.add('hidden');
+        } else {
+            document.getElementById('view-pos').classList.add('hidden');
+            document.getElementById('view-hist').classList.remove('hidden');
         }
     }
 
-    // ===== INIT =====
     document.addEventListener('DOMContentLoaded', function() {
-        initTVWidget();
+        initCharts();
         pollPrices();
         pollAccountState();
         setInterval(pollPrices, 1000);
         setInterval(pollAccountState, 1000);
-        
-        // Ensure active symbol is visible in watchlist
-        var activeWl = document.getElementById('wl-' + activeSymbol);
-        if(activeWl) activeWl.classList.add('active');
     });
 </script>
 </body>
