@@ -247,9 +247,37 @@ class MarketDataEngine:
             return list(self.candle_cache[symbol])
 
     def calculate_pnl(self, symbol: str, order_type: str, lots: float, open_price: float) -> tuple[float, float, float]:
-        if symbol not in INSTRUMENTS:
-            return 0.0, open_price, 0.0
+        from app.engine.options_engine import calculate_option_price_live
         
+        is_option = symbol.endswith("CE") or symbol.endswith("PE")
+        
+        if not is_option and symbol not in INSTRUMENTS:
+            return 0.0, open_price, 0.0
+            
+        if is_option:
+            underlying = "NIFTY50" if "NIFTY" in symbol else "BANKNIFTY"
+            underlying_spot = self.prices[underlying]["mid"]
+            opt_price = calculate_option_price_live(symbol, underlying_spot)
+            if opt_price is None: opt_price = open_price
+            
+            # Options spread logic
+            bid = opt_price - 0.25
+            ask = opt_price + 0.25
+            
+            current_exit_price = bid if order_type == "BUY" else ask
+            diff = current_exit_price - open_price if order_type == "BUY" else open_price - current_exit_price
+            
+            pips = diff
+            contract_size = 25 if "NIFTY" in symbol else 15
+            pnl = diff * lots * contract_size
+            
+            turnover = (open_price + current_exit_price) * lots * contract_size
+            stt_and_charges = turnover * 0.000125
+            total_fees = stt_and_charges + 40.0
+            pnl -= total_fees
+            return round(pnl, 2), round(current_exit_price, 2), round(pips, 1)
+
+        # Standard instruments
         cfg = INSTRUMENTS[symbol]
         cur_p = self.prices[symbol]
         
@@ -263,12 +291,9 @@ class MarketDataEngine:
         pips = diff / cfg["pip_size"]
         pnl = diff * lots * cfg["contract_size"]
         
-        # Indian Market Simulated Fees (STT + Exchange Transaction Charges + Brokerage)
         turnover = (open_price + current_exit_price) * lots * cfg["contract_size"]
-        stt_and_charges = turnover * 0.000125  # 0.0125% combined friction
-        brokerage = 40.0  # ₹40 round trip per simulated trade
-        total_fees = stt_and_charges + brokerage
-        
+        stt_and_charges = turnover * 0.000125
+        total_fees = stt_and_charges + 40.0
         pnl -= total_fees
 
         if "JPY" in symbol:

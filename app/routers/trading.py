@@ -95,14 +95,26 @@ async def open_trade(
     if account.status != "ACTIVE":
         return JSONResponse(status_code=400, content={"error": f"Account is not active ({account.status}). Trading disabled."})
 
-    if symbol not in INSTRUMENTS:
-        return JSONResponse(status_code=400, content={"error": "Invalid market symbol"})
+    from app.engine.options_engine import calculate_option_price_live
 
-    prices = market_engine.prices[symbol]
-    base_open = prices["ask"] if order_type == "BUY" else prices["bid"]
-    # Simulate realistic slippage (0.01% worse price)
-    slippage_factor = 1.0001 if order_type == "BUY" else 0.9999
-    open_price = round(base_open * slippage_factor, 2)
+    open_price = 0.0
+    
+    if symbol in INSTRUMENTS:
+        prices = market_engine.prices[symbol]
+        base_open = prices["ask"] if order_type == "BUY" else prices["bid"]
+        slippage_factor = 1.0001 if order_type == "BUY" else 0.9999
+        open_price = round(base_open * slippage_factor, 2)
+    elif symbol.endswith("CE") or symbol.endswith("PE"):
+        underlying = "NIFTY50" if "NIFTY" in symbol else "BANKNIFTY"
+        underlying_spot = market_engine.prices[underlying]["mid"]
+        opt_price = calculate_option_price_live(symbol, underlying_spot)
+        if opt_price is None:
+            return JSONResponse(status_code=400, content={"error": "Invalid option symbol"})
+        # Add spread for options (0.50 pts)
+        base_open = opt_price + 0.25 if order_type == "BUY" else opt_price - 0.25
+        open_price = round(base_open, 2)
+    else:
+        return JSONResponse(status_code=400, content={"error": "Invalid market symbol"})
 
     ticket = f"TK-{uuid.uuid4().hex[:8].upper()}"
     new_trade = TradePosition(
@@ -226,3 +238,19 @@ async def get_prices():
 async def get_candles(symbol: str):
     candles = market_engine.get_candles(symbol)
     return JSONResponse(content=candles)
+
+@router.get("/api/options/{symbol}")
+async def get_options_chain(symbol: str):
+    from app.engine.options_engine import generate_option_chain
+    if symbol not in ["NIFTY50", "BANKNIFTY"]:
+        return JSONResponse(status_code=400, content={"error": "Options only supported for NIFTY50 and BANKNIFTY"})
+        
+    spot = market_engine.prices[symbol]["mid"]
+    step = 50 if symbol == "NIFTY50" else 100
+    chain = generate_option_chain(symbol.replace("50", ""), spot, strike_step=step, num_strikes=15)
+    
+    return JSONResponse(content={
+        "symbol": symbol,
+        "spot": spot,
+        "chain": chain
+    })
