@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Control Panel - {{ app_name }}</title>
+    <title>Super Admin Control - {{ app_name }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -20,7 +20,6 @@
 </head>
 <body class="h-screen w-screen overflow-hidden flex flex-col md:flex-row">
 
-    <!-- Toast Notifications -->
     <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2"></div>
 
     <!-- Sidebar -->
@@ -28,14 +27,14 @@
         <div class="p-6 border-b border-slate-800 flex items-center gap-3">
             <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center font-bold text-white shadow-lg shadow-indigo-500/20">FD</div>
             <div>
-                <h1 class="font-bold text-slate-100 leading-tight">Control Panel</h1>
-                <p class="text-[10px] text-slate-400 font-mono uppercase tracking-widest">Super Admin</p>
+                <h1 class="font-bold text-slate-100 leading-tight text-sm">Control Panel</h1>
+                <p class="text-[9px] text-emerald-400 font-mono uppercase tracking-widest flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> {{ admin_name }}</p>
             </div>
         </div>
 
-        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1">
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1 custom-scrollbar">
             <button onclick="switchTab('overview')" id="nav-overview" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition-colors bg-slate-800/50 text-white">
-                <i data-lucide="layout-dashboard" class="w-4 h-4 text-indigo-400"></i> Overview
+                <i data-lucide="layout-dashboard" class="w-4 h-4 text-indigo-400"></i> Platform Overview
             </button>
             <button onclick="switchTab('users')" id="nav-users" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
                 <i data-lucide="users" class="w-4 h-4 text-emerald-400"></i> Users Management
@@ -44,16 +43,25 @@
                 <i data-lucide="wallet" class="w-4 h-4 text-amber-400"></i> Trading Accounts
             </button>
             <button onclick="switchTab('trades')" id="nav-trades" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
-                <i data-lucide="activity" class="w-4 h-4 text-rose-400"></i> Live Positions
+                <i data-lucide="activity" class="w-4 h-4 text-rose-400"></i> Live Market Trades
             </button>
+            <div class="pt-4 pb-2">
+                <p class="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">System Config</p>
+            </div>
             <button onclick="switchTab('rules')" id="nav-rules" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
                 <i data-lucide="settings" class="w-4 h-4 text-slate-400"></i> Prop Firm Rules
             </button>
+            <button onclick="switchTab('payouts')" id="nav-payouts" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors">
+                <i data-lucide="banknote" class="w-4 h-4 text-teal-400"></i> Payout Requests
+            </button>
         </nav>
 
-        <div class="p-4 border-t border-slate-800">
-            <a href="/dashboard" class="flex items-center gap-2 text-xs text-slate-400 hover:text-white transition-colors">
-                <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Platform
+        <div class="p-4 border-t border-slate-800 space-y-2">
+            <a href="/dashboard" class="flex items-center gap-2 text-xs text-slate-400 hover:text-white transition-colors px-2 py-1.5 rounded hover:bg-slate-800">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> To Platform
+            </a>
+            <a href="/admin/logout" class="flex items-center gap-2 text-xs text-rose-400 hover:text-rose-300 transition-colors px-2 py-1.5 rounded hover:bg-rose-500/10">
+                <i data-lucide="log-out" class="w-4 h-4"></i> Secure Logout
             </a>
         </div>
     </div>
@@ -61,13 +69,16 @@
     <!-- Main Content Area -->
     <div class="flex-1 overflow-y-auto custom-scrollbar relative z-0">
         
-        <!-- TOP NAV -->
         <div class="sticky top-0 z-10 glass-panel border-b border-slate-800 h-16 flex items-center justify-between px-6">
             <h2 class="text-lg font-bold text-slate-100" id="page-title">Platform Overview</h2>
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-6">
+                <div class="flex items-center gap-2 text-xs font-mono bg-slate-900/50 px-3 py-1.5 rounded border border-slate-700">
+                    <span class="text-slate-400">Total Simulated AUM:</span>
+                    <span class="text-emerald-400 font-bold">${{ "{:,.0f}".format(stats.total_aum) }}</span>
+                </div>
                 <div class="flex items-center gap-2 text-xs font-mono">
                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span class="text-slate-400">SYSTEM: ONLINE</span>
+                    <span class="text-slate-400">CORE ONLINE</span>
                 </div>
             </div>
         </div>
@@ -76,7 +87,6 @@
             
             <!-- OVERVIEW TAB -->
             <div id="tab-overview" class="tab-content active space-y-6">
-                <!-- Stat Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="stat-card p-5 rounded-xl">
                         <div class="flex items-center justify-between mb-4">
@@ -108,43 +118,43 @@
                     </div>
                 </div>
 
-                <!-- Quick Actions -->
-                <div class="glass-panel p-6 rounded-xl">
-                    <h3 class="text-sm font-bold text-slate-100 mb-4 uppercase tracking-wider">Quick Admin Actions</h3>
+                <div class="glass-panel p-6 rounded-xl border border-slate-700">
+                    <h3 class="text-sm font-bold text-slate-100 mb-4 uppercase tracking-wider flex items-center gap-2"><i data-lucide="zap" class="w-4 h-4 text-amber-400"></i> Super Admin Quick Actions</h3>
                     <div class="flex flex-wrap gap-3">
-                        <button class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">Broadcast Message</button>
-                        <button class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">Generate Promo Code</button>
-                        <button class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">Export DB Backup</button>
+                        <button class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg shadow-indigo-500/20">Broadcast Platform Message</button>
+                        <button class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-slate-600">Force Market Sync</button>
+                        <button class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-slate-600">Generate Master Promo</button>
+                        <button class="bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-rose-500/20">Emergency Stop Trading</button>
                     </div>
                 </div>
             </div>
 
             <!-- USERS TAB -->
             <div id="tab-users" class="tab-content">
-                <div class="glass-panel rounded-xl overflow-hidden">
+                <div class="glass-panel rounded-xl overflow-hidden border border-slate-700">
                     <div class="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-800/50">
-                        <input type="text" placeholder="Search users by email or name..." class="bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-sm text-white w-64 focus:outline-none focus:border-indigo-500">
+                        <input type="text" placeholder="Search users by email or name..." class="bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-sm text-white w-72 focus:outline-none focus:border-indigo-500">
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm whitespace-nowrap">
-                            <thead class="bg-slate-900/50 text-slate-400 text-xs uppercase tracking-wider font-bold">
+                            <thead class="bg-slate-900/80 text-slate-400 text-xs uppercase tracking-wider font-bold">
                                 <tr>
                                     <th class="px-6 py-4">ID</th>
                                     <th class="px-6 py-4">Name</th>
                                     <th class="px-6 py-4">Email</th>
                                     <th class="px-6 py-4">Joined</th>
-                                    <th class="px-6 py-4 text-right">Actions</th>
+                                    <th class="px-6 py-4 text-right">Danger Zone</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-slate-800 text-slate-300">
+                            <tbody class="divide-y divide-slate-800/50 text-slate-300">
                                 {% for u in users %}
-                                <tr class="hover:bg-slate-800/30 transition-colors" id="user-row-{{ u.id }}">
+                                <tr class="hover:bg-slate-800/30 transition-colors">
                                     <td class="px-6 py-4 font-mono text-slate-500">#{{ u.id }}</td>
                                     <td class="px-6 py-4 font-medium text-white">{{ u.full_name }}</td>
                                     <td class="px-6 py-4">{{ u.email }}</td>
                                     <td class="px-6 py-4 font-mono text-xs">{{ u.created_at.strftime('%Y-%m-%d') if u.created_at else 'N/A' }}</td>
                                     <td class="px-6 py-4 text-right space-x-2">
-                                        <button onclick="adminAction('user', {{ u.id }}, 'delete')" class="text-xs bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white px-3 py-1.5 rounded transition-colors font-bold">Ban & Delete</button>
+                                        <button onclick="adminAction('user', {{ u.id }}, 'delete')" class="text-[11px] bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white px-3 py-1.5 rounded transition-colors font-bold uppercase tracking-wider border border-rose-500/20">Ban & Delete</button>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -154,12 +164,12 @@
                 </div>
             </div>
 
-            <!-- ACCOUNTS TAB (Highly Detailed) -->
+            <!-- ACCOUNTS TAB -->
             <div id="tab-accounts" class="tab-content">
-                <div class="glass-panel rounded-xl overflow-hidden">
+                <div class="glass-panel rounded-xl overflow-hidden border border-slate-700">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm whitespace-nowrap">
-                            <thead class="bg-slate-900/50 text-slate-400 text-[11px] uppercase tracking-wider font-bold">
+                            <thead class="bg-slate-900/80 text-slate-400 text-[11px] uppercase tracking-wider font-bold">
                                 <tr>
                                     <th class="px-4 py-4">Acc No</th>
                                     <th class="px-4 py-4">Trader</th>
@@ -167,10 +177,10 @@
                                     <th class="px-4 py-4">Status</th>
                                     <th class="px-4 py-4 text-right">Balance</th>
                                     <th class="px-4 py-4 text-right">Equity</th>
-                                    <th class="px-4 py-4 text-center">Controls</th>
+                                    <th class="px-4 py-4 text-center">God Controls</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-slate-800 text-slate-300">
+                            <tbody class="divide-y divide-slate-800/50 text-slate-300">
                                 {% for acc in accounts %}
                                 <tr class="hover:bg-slate-800/30 transition-colors">
                                     <td class="px-4 py-4 font-mono font-bold text-white">{{ acc.account_number }}</td>
@@ -178,19 +188,19 @@
                                     <td class="px-4 py-4 text-xs font-bold text-indigo-400">{{ acc.phase }}</td>
                                     <td class="px-4 py-4">
                                         {% if acc.status == 'ACTIVE' %}
-                                            <span class="bg-emerald-500/20 text-emerald-400 px-2 py-1 rounded text-[10px] font-bold uppercase">Active</span>
+                                            <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider">Active</span>
                                         {% else %}
-                                            <span class="bg-rose-500/20 text-rose-400 px-2 py-1 rounded text-[10px] font-bold uppercase">Breached</span>
-                                            <div class="text-[9px] text-rose-500 mt-1 max-w-[150px] truncate" title="{{ acc.breach_reason }}">{{ acc.breach_reason }}</div>
+                                            <span class="bg-rose-500/20 text-rose-400 border border-rose-500/20 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider">Breached</span>
+                                            <div class="text-[9px] text-rose-500 mt-1 max-w-[150px] truncate">{{ acc.breach_reason }}</div>
                                         {% endif %}
                                     </td>
                                     <td class="px-4 py-4 text-right font-mono font-medium">${{ "{:,.2f}".format(acc.current_balance) }}</td>
                                     <td class="px-4 py-4 text-right font-mono font-medium">${{ "{:,.2f}".format(acc.current_equity) }}</td>
                                     <td class="px-4 py-4 text-center">
                                         <div class="flex items-center justify-center gap-2">
-                                            <button onclick="adminAction('account', {{ acc.id }}, 'pass_phase')" class="text-[10px] bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white px-2 py-1 rounded transition-colors font-bold" title="Push to next phase">Pass</button>
-                                            <button onclick="adminAction('account', {{ acc.id }}, 'reset')" class="text-[10px] bg-amber-500/10 text-amber-400 hover:bg-amber-500 hover:text-white px-2 py-1 rounded transition-colors font-bold" title="Reset to initial balance & Phase 1">Reset</button>
-                                            <button onclick="adminAction('account', {{ acc.id }}, 'force_breach')" class="text-[10px] bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white px-2 py-1 rounded transition-colors font-bold" title="Trigger Breach">Breach</button>
+                                            <button onclick="adminAction('account', {{ acc.id }}, 'pass_phase')" class="text-[10px] bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white px-2.5 py-1 rounded transition-colors font-bold border border-emerald-500/20">PASS</button>
+                                            <button onclick="adminAction('account', {{ acc.id }}, 'reset')" class="text-[10px] bg-amber-500/10 text-amber-400 hover:bg-amber-500 hover:text-white px-2.5 py-1 rounded transition-colors font-bold border border-amber-500/20">RESET</button>
+                                            <button onclick="adminAction('account', {{ acc.id }}, 'force_breach')" class="text-[10px] bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white px-2.5 py-1 rounded transition-colors font-bold border border-rose-500/20">BREACH</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -203,10 +213,10 @@
 
             <!-- TRADES TAB -->
             <div id="tab-trades" class="tab-content">
-                <div class="glass-panel rounded-xl overflow-hidden">
+                <div class="glass-panel rounded-xl overflow-hidden border border-slate-700">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left text-sm whitespace-nowrap">
-                            <thead class="bg-slate-900/50 text-slate-400 text-[11px] uppercase tracking-wider font-bold">
+                            <thead class="bg-slate-900/80 text-slate-400 text-[11px] uppercase tracking-wider font-bold">
                                 <tr>
                                     <th class="px-4 py-4">Ticket</th>
                                     <th class="px-4 py-4">Account</th>
@@ -217,9 +227,9 @@
                                     <th class="px-4 py-4 text-right">Action</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-slate-800 text-slate-300">
+                            <tbody class="divide-y divide-slate-800/50 text-slate-300">
                                 {% for pos in positions %}
-                                <tr class="hover:bg-slate-800/30 transition-colors" id="pos-row-{{ pos.id }}">
+                                <tr class="hover:bg-slate-800/30 transition-colors">
                                     <td class="px-4 py-4 font-mono text-slate-500">#{{ pos.ticket }}</td>
                                     <td class="px-4 py-4 font-mono font-bold text-white">{{ pos.account_id }}</td>
                                     <td class="px-4 py-4 font-bold">{{ pos.symbol }}</td>
@@ -227,7 +237,7 @@
                                     <td class="px-4 py-4 font-mono">{{ pos.volume_lots }}</td>
                                     <td class="px-4 py-4 font-mono text-right">{{ pos.open_price }}</td>
                                     <td class="px-4 py-4 text-right">
-                                        <button onclick="adminAction('position', {{ pos.id }}, 'close')" class="text-xs bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white px-3 py-1 rounded transition-colors font-bold">Force Close</button>
+                                        <button onclick="adminAction('position', {{ pos.id }}, 'close')" class="text-[10px] bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white px-3 py-1.5 rounded transition-colors font-bold uppercase tracking-wider border border-rose-500/20">Force Close</button>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -239,11 +249,10 @@
 
             <!-- RULES CONFIGURATION TAB -->
             <div id="tab-rules" class="tab-content">
-                <div class="max-w-3xl glass-panel p-8 rounded-xl">
-                    <h3 class="text-lg font-bold text-white mb-6 border-b border-slate-700 pb-4">Evaluation Rules Engine</h3>
-                    
-                    <div class="space-y-6">
-                        <div class="grid grid-cols-2 gap-6">
+                <div class="max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="glass-panel p-8 rounded-xl border border-slate-700">
+                        <h3 class="text-sm font-bold text-white mb-6 uppercase tracking-wider flex items-center gap-2"><i data-lucide="sliders" class="w-4 h-4 text-indigo-400"></i> Phase Targets</h3>
+                        <div class="space-y-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Phase 1 Profit Target (%)</label>
                                 <input type="number" value="8" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white font-mono focus:border-indigo-500 outline-none">
@@ -253,8 +262,11 @@
                                 <input type="number" value="5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white font-mono focus:border-indigo-500 outline-none">
                             </div>
                         </div>
-
-                        <div class="grid grid-cols-2 gap-6">
+                    </div>
+                    
+                    <div class="glass-panel p-8 rounded-xl border border-slate-700">
+                        <h3 class="text-sm font-bold text-white mb-6 uppercase tracking-wider flex items-center gap-2"><i data-lucide="shield-alert" class="w-4 h-4 text-rose-400"></i> Risk Limits</h3>
+                        <div class="space-y-4">
                             <div>
                                 <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Max Daily Drawdown (%)</label>
                                 <input type="number" value="5" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white font-mono focus:border-indigo-500 outline-none">
@@ -264,12 +276,19 @@
                                 <input type="number" value="10" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white font-mono focus:border-indigo-500 outline-none">
                             </div>
                         </div>
-                        
-                        <div class="pt-4 mt-6 border-t border-slate-800">
-                            <button class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2.5 rounded-lg text-sm font-bold transition-colors w-full">Apply Global Rule Changes</button>
-                            <p class="text-[10px] text-slate-500 mt-3 text-center">Changes apply immediately to all active evaluation accounts.</p>
-                        </div>
                     </div>
+                </div>
+                <div class="max-w-4xl mt-6">
+                    <button class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-lg text-sm font-bold transition-colors shadow-lg shadow-indigo-500/20 w-full uppercase tracking-wider">Deploy Global Rule Changes</button>
+                </div>
+            </div>
+            
+            <!-- PAYOUTS TAB -->
+            <div id="tab-payouts" class="tab-content">
+                <div class="glass-panel p-12 rounded-xl border border-slate-700 text-center">
+                    <i data-lucide="banknote" class="w-12 h-12 text-slate-600 mx-auto mb-4"></i>
+                    <h3 class="text-xl font-bold text-slate-300 mb-2">No Pending Payout Requests</h3>
+                    <p class="text-sm text-slate-500">Funded traders who hit their profit splits will appear here.</p>
                 </div>
             </div>
 
@@ -311,28 +330,27 @@
             'users': 'User Management',
             'accounts': 'Trading Accounts',
             'trades': 'Live Market Positions',
-            'rules': 'Prop Firm Rules Engine'
+            'rules': 'Prop Firm Rules Engine',
+            'payouts': 'Payout Requests'
         };
         document.getElementById('page-title').innerText = titles[tab];
     }
 
     async function adminAction(entity, id, action) {
-        if(!confirm(`Are you sure you want to perform '${action}' on ${entity} #${id}?`)) return;
+        if(!confirm(`EXECUTE: '${action}' on ${entity} #${id}?`)) return;
         
         const formData = new FormData();
         formData.append('action', action);
         
         try {
-            const url = `/admin/api/${entity}/${id}/${action}`;
-            // If action is delete/close, the URL format might differ based on FastAPI setup, handling generically
-            let finalUrl = url;
-            if(entity === 'account') finalUrl = `/admin/api/account/${id}/action`;
+            let url = `/admin/api/${entity}/${id}/${action}`;
+            if(entity === 'account' || entity === 'user') url = `/admin/api/${entity}/${id}/action`;
             
-            const res = await fetch(finalUrl, { method: 'POST', body: formData });
+            const res = await fetch(url, { method: 'POST', body: formData });
             const data = await res.json();
             
             if(data.success) {
-                showToast(`Action ${action} successful!`);
+                showToast(`SUCCESS: ${action} executed.`);
                 setTimeout(() => window.location.reload(), 1000);
             } else {
                 showToast(data.error || 'Action failed', 'error');

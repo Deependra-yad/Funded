@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - {{ app_name }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #0f172a; }
+        .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
+    </style>
+</head>
+<body class="h-screen w-screen flex items-center justify-center p-4">
+
+    <div class="glass-panel w-full max-w-md rounded-2xl p-8 shadow-2xl">
+        <div class="flex justify-center mb-6">
+            <div class="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center font-bold text-xl text-white shadow-lg shadow-indigo-500/20">FD</div>
+        </div>
+        
+        <h2 class="text-2xl font-bold text-center text-white mb-2">Super Admin Access</h2>
+        <p class="text-slate-400 text-sm text-center mb-8">Authorized personnel only.</p>
+
+        {% if error %}
+        <div class="bg-rose-500/10 border border-rose-500/20 rounded-lg p-3 mb-6 flex items-center gap-3 text-rose-400 text-sm">
+            <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <form action="/admin/login" method="POST" class="space-y-5">
+            <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Admin Username</label>
+                <input type="text" name="username" required class="w-full bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-colors" placeholder="Enter username">
+            </div>
+            
+            <div>
+                <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Secure Password</label>
+                <input type="password" name="password" required class="w-full bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-colors" placeholder="Enter password">
+            </div>
+            
+            <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-4 rounded-lg shadow-lg shadow-indigo-500/20 transition-all active:scale-[0.98]">
+                Authenticate
+            </button>
+        </form>
+        
+        <div class="mt-8 text-center">
+            <a href="/dashboard" class="text-xs text-slate-500 hover:text-white transition-colors">Return to User Platform</a>
+        </div>
+    </div>
+
+<script>
+    lucide.createIcons();
+</script>
+</body>
+</html>
