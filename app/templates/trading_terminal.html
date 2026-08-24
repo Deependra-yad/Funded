@@ -262,13 +262,15 @@
     var pricesData = {};
 
     // TradingView Symbol Mapping (Backend -> TV)
+    // NOTE: NSE spot indices (NSE:NIFTY) are blocked by exchange rules on free widgets.
+    // We use global CFD equivalents or futures (which are allowed) to ensure the chart loads!
     var tvSymbolMap = {
-        'NIFTY50': 'NSE:NIFTY',
-        'BANKNIFTY': 'NSE:BANKNIFTY',
-        'SENSEX': 'BSE:SENSEX',
-        'FINNIFTY': 'NSE:FINNIFTY',
-        'MIDCPNIFTY': 'NSE:MIDCPNIFTY',
-        'RELIANCE': 'NSE:RELIANCE',
+        'NIFTY50': 'OANDA:IN50_INR',     // Guaranteed working NIFTY 50 CFD
+        'BANKNIFTY': 'NSE:BANKNIFTY1!',  // Futures contract usually allowed
+        'SENSEX': 'BSE:SENSEX',          // BSE is typically allowed
+        'FINNIFTY': 'NSE:FINNIFTY1!',
+        'MIDCPNIFTY': 'NSE:MIDCPNIFTY1!',
+        'RELIANCE': 'NSE:RELIANCE',      // Equities are allowed (15m delayed)
         'HDFCBANK': 'NSE:HDFCBANK'
     };
 
