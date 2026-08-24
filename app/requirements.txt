@@ -1,3 +1,290 @@
+2026-08-24 16:34:08.584 [info] [main] Log level: Info
+2026-08-24 16:34:08.585 [info] [main] Validating found git in: "C:\Program Files\Git\cmd\git.exe"
+2026-08-24 16:34:08.732 [info] [main] Using git "2.55.0.windows.3" from "C:\Program Files\Git\cmd\git.exe"
+2026-08-24 16:34:08.732 [info] [Model][doInitialScan] Initial repository scan started
+2026-08-24 16:34:10.047 [info] > git rev-parse --show-toplevel [1295ms]
+2026-08-24 16:34:10.048 [info] fatal: not a git repository (or any of the parent directories): .git
+2026-08-24 16:34:10.715 [info] > git rev-parse --show-toplevel [103ms]
+2026-08-24 16:34:10.715 [info] fatal: not a git repository (or any of the parent directories): .git
+2026-08-24 16:34:10.887 [info] > git rev-parse --show-toplevel [169ms]
+2026-08-24 16:34:10.887 [info] fatal: not a git repository (or any of the parent directories): .git
+2026-08-24 16:34:11.022 [info] > git rev-parse --show-toplevel [59ms]
+2026-08-24 16:34:11.022 [info] fatal: not a git repository (or any of the parent directories): .git
+2026-08-24 16:34:11.083 [info] > git rev-parse --show-toplevel [54ms]
+2026-08-24 16:34:11.083 [info] fatal: not a git repository (or any of the parent directories): .git
+2026-08-24 16:34:11.137 [info] > git rev-parse --show-toplevel [51ms]
+2026-08-24 16:34:11.137 [info] fatal: not a git repository (or any of the parent directories): .git
+2026-08-24 16:34:11.189 [info] > git rev-parse --show-toplevel [49ms]
+2026-08-24 16:34:11.189 [info] fatal: not a git repository (or any of the parent directories): .git
+2026-08-24 16:34:11.196 [info] [Model][doInitialScan] Initial repository scan completed - repositories (0), closed repositories (0), parent repositories (0), unsafe repositories (0)
+2026-08-24 16:34:11.833 [info] > git rev-parse --show-toplevel [633ms]
+2026-08-24 16:34:11.833 [info] fatal: not a git repository (or any of the parent directories): .git
+2026-08-24 16:34:12.080 [info] > git rev-parse --show-toplevel [163ms]
+2026-08-24 16:34:12.080 [info] fatal: not a git repository (or any of the parent directories): .git
+2026-08-24 16:34:12.202 [info] > git rev-parse --show-toplevel [67ms]
+2026-08-24 16:34:12.202 [info] fatal: not a git repository (or any of the parent directories): .git
+2026-08-24 16:34:12.261 [info] > git rev-parse --show-toplevel [58ms]
+2026-08-24 16:34:12.261 [info] fatal: not a git repository (or any of the parent directories): .git
+2026-08-24 16:34:12.312 [info] > git rev-parse --show-toplevel [47ms]
+2026-08-24 16:34:12.312 [info] fatal: not a git repository (or any of the parent directories): .git
+2026-08-24 16:34:12.367 [info] > git rev-parse --show-toplevel [52ms]
+2026-08-24 16:34:12.367 [info] fatal: not a git repository (or any of the parent directories): .git
+2026-08-24 16:34:12.430 [info] > git rev-parse --show-toplevel [60ms]
+2026-08-24 16:34:12.430 [info] fatal: not a git repository (or any of the parent directories): .git
+2026-08-24 16:34:13.729 [info] > git rev-parse --show-toplevel [71ms]
+2026-08-24 16:34:13.729 [info] fatal: not a git repository (or any of the parent directories): .git
+2026-08-24 16:34:13.730 [info] > git rev-parse --show-toplevel [65ms]
+2026-08-24 16:34:13.730 [info] fatal: not a git repository (or any of the parent directories): .git
+2026-08-24 16:42:53.431 [info] > git rev-parse --show-toplevel [42ms]
+2026-08-24 16:42:53.431 [info] fatal: not a git repository (or any of the parent directories): .git
+2026-08-24 16:43:04.041 [info] > git rev-parse --show-toplevel [39ms]
+2026-08-24 16:43:04.041 [info] fatal: not a git repository (or any of the parent directories): .git
+2026-08-24 16:43:05.569 [info] > git rev-parse --show-toplevel [65ms]
+2026-08-24 16:43:05.569 [info] fatal: not a git repository (or any of the parent directories): .git
+2026-08-24 16:43:11.444 [info] > git rev-parse --show-toplevel [83ms]
+2026-08-24 16:43:11.444 [info] fatal: not a git repository (or any of the parent directories): .git
+2026-08-24 16:43:26.018 [info] > git rev-parse --show-toplevel [159ms]
+2026-08-24 16:43:26.018 [info] fatal: not a git repository (or any of the parent directories): .git
+2026-08-24 16:43:54.217 [info] > git rev-parse --show-toplevel [128ms]
+2026-08-24 16:43:54.217 [info] fatal: not a git repository (or any of the parent directories): .git
+2026-08-24 16:54:25.383 [info] > git rev-parse --show-toplevel [54ms]
+2026-08-24 16:54:25.383 [info] fatal: not a git repository (or any of the parent directories): .git
+2026-08-24 17:04:41.563 [info] > git rev-parse --show-toplevel [103ms]
+2026-08-24 17:04:41.563 [info] fatal: not a git repository (or any of the parent directories): .git
+2026-08-24 17:26:14.235 [info] > git init -b main [55ms]
+2026-08-24 17:26:14.277 [info] > git rev-parse --show-toplevel [39ms]
+2026-08-24 17:26:14.335 [info] > git rev-parse --git-dir --git-common-dir --show-superproject-working-tree [52ms]
+2026-08-24 17:26:14.352 [info] [Model][openRepository] Opened repository (path): p:\Python\app
+2026-08-24 17:26:14.352 [info] [Model][openRepository] Opened repository (real path): p:\Python\app
+2026-08-24 17:26:14.352 [info] [Model][openRepository] Opened repository (kind): repository
+2026-08-24 17:26:14.383 [info] [Git][getRemotes] No remotes found in the git config file
+2026-08-24 17:26:14.423 [info] > git config --get --local core.virtualfilesystem [62ms]
+2026-08-24 17:26:14.423 [warning] [Git][config] git config failed: Failed to execute git
+2026-08-24 17:26:14.430 [info] > git config --get commit.template [56ms]
+2026-08-24 17:26:14.440 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) --ignore-case refs/heads/main refs/remotes/main [57ms]
+2026-08-24 17:26:14.441 [warning] [Git][getBranch] No such branch: main
+2026-08-24 17:26:14.533 [info] > git status -z -uall [86ms]
+2026-08-24 17:26:14.538 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [84ms]
+2026-08-24 17:26:14.576 [info] [Git][getRemotes] No remotes found in the git config file
+2026-08-24 17:26:14.603 [info] > git add -A -- . [236ms]
+2026-08-24 17:26:14.603 [info] warning: in the working copy of 'config.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'database.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'engine/__init__.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'engine/prop_rules.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'engine/razorpay_client.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'models.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'routers/__init__.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'routers/admin_sim.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'routers/affiliate.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'routers/auth.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'routers/billing.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'routers/certificates.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'routers/challenges.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'routers/dashboard.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'routers/landing.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'routers/profile.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'routers/store.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'security.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'seed.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'templates/trading_terminal_js1.html', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'templates/trading_terminal_ui.html', LF will be replaced by CRLF the next time Git touches it
+2026-08-24 17:26:14.624 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) --ignore-case refs/heads/main refs/remotes/main [71ms]
+2026-08-24 17:26:14.624 [warning] [Git][getBranch] No such branch: main
+2026-08-24 17:26:14.625 [error] [GitHistoryProvider][resolveHEADMergeBase] Failed to resolve merge base for main: Error: No such branch: main.
+2026-08-24 17:26:14.636 [info] > git config --get commit.template [66ms]
+2026-08-24 17:26:14.638 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) --ignore-case refs/heads/main refs/remotes/main [63ms]
+2026-08-24 17:26:14.638 [warning] [Git][getBranch] No such branch: main
+2026-08-24 17:26:14.698 [info] > git -c user.useConfigOnly=true commit --quiet --allow-empty-message --file - --allow-empty-message [86ms]
+2026-08-24 17:26:14.698 [info] Author identity unknown
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: no email was given and auto-detection is disabled
+2026-08-24 17:26:14.705 [info] > git status -z -uall [64ms]
+2026-08-24 17:26:14.713 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [67ms]
+2026-08-24 17:26:14.749 [info] > git log --format=%H%n%aN%n%aE%n%at%n%ct%n%P%n%D%n%B -z --shortstat --diff-merges=first-parent -n50 --skip=0 --topo-order --decorate=full --stdin [74ms]
+2026-08-24 17:26:14.749 [info] fatal: bad revision 'refs/heads/main'
+2026-08-24 17:26:14.749 [error] [GitHistoryProvider][provideHistoryItems] Failed to get history items with options '{"historyItemRefs":["refs/heads/main"],"limit":50,"skip":0}': Failed to execute git {
+  "exitCode": 128,
+  "gitCommand": "log",
+  "stdout": "",
+  "stderr": "fatal: bad revision 'refs/heads/main'\n"
+}
+2026-08-24 17:26:14.766 [info] > git config --get-all user.name [62ms]
+2026-08-24 17:26:14.775 [info] [Git][getRemotes] No remotes found in the git config file
+2026-08-24 17:26:14.832 [info] > git config --get commit.template [63ms]
+2026-08-24 17:26:14.834 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) --ignore-case refs/heads/main refs/remotes/main [60ms]
+2026-08-24 17:26:14.834 [warning] [Git][getBranch] No such branch: main
+2026-08-24 17:26:14.884 [info] > git status -z -uall [47ms]
+2026-08-24 17:26:14.892 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [50ms]
+2026-08-24 17:26:15.295 [info] > git check-ignore -v -z --stdin [64ms]
+2026-08-24 17:26:15.337 [info] > git check-ignore -v -z --stdin [90ms]
+2026-08-24 17:26:15.368 [info] > git show --textconv :routers/dashboard.py [63ms]
+2026-08-24 17:26:15.378 [info] > git show --textconv HEAD:routers/dashboard.py [65ms]
+2026-08-24 17:26:15.385 [info] > git ls-files --stage -- routers/dashboard.py [65ms]
+2026-08-24 17:26:15.393 [info] > git ls-tree -l HEAD -- routers/dashboard.py [60ms]
+2026-08-24 17:26:15.393 [info] fatal: Not a valid object name HEAD
+2026-08-24 17:26:15.435 [info] > git hash-object -t tree /dev/null [51ms]
+2026-08-24 17:26:15.435 [warning] [GitFileSystemProvider][readFile] File not found - git:/p%3A/Python/app/routers/dashboard.py.git?%7B%22path%22%3A%22p%3A%5C%5CPython%5C%5Capp%5C%5Crouters%5C%5Cdashboard.py%22%2C%22ref%22%3A%22HEAD%22%7D
+2026-08-24 17:26:15.445 [info] > git cat-file -s 2eb1d2261ce4fe96b7b69c36d2e77da3e813eeb4 [54ms]
+2026-08-24 17:26:15.447 [info] > git hash-object -t tree /dev/null [50ms]
+2026-08-24 17:26:15.447 [warning] [GitFileSystemProvider][stat] File not found - git:/p%3A/Python/app/routers/dashboard.py.git?%7B%22path%22%3A%22p%3A%5C%5CPython%5C%5Capp%5C%5Crouters%5C%5Cdashboard.py%22%2C%22ref%22%3A%22HEAD%22%7D
+2026-08-24 17:26:16.042 [info] > git ls-files --stage -- routers/dashboard.py [60ms]
+2026-08-24 17:26:16.084 [info] > git cat-file -s 2eb1d2261ce4fe96b7b69c36d2e77da3e813eeb4 [40ms]
+2026-08-24 17:26:16.126 [info] > git show --textconv :routers/dashboard.py [37ms]
+2026-08-24 17:28:18.604 [info] > git log --format=%H%n%aN%n%aE%n%at%n%ct%n%P%n%D%n%B -z --shortstat --diff-merges=first-parent -n50 --skip=0 --topo-order --decorate=full --stdin [50ms]
+2026-08-24 17:28:18.604 [info] fatal: bad revision 'refs/heads/main'
+2026-08-24 17:28:18.605 [error] [GitHistoryProvider][provideHistoryItems] Failed to get history items with options '{"historyItemRefs":["refs/heads/main"],"limit":50,"skip":0}': Failed to execute git {
+  "exitCode": 128,
+  "gitCommand": "log",
+  "stdout": "",
+  "stderr": "fatal: bad revision 'refs/heads/main'\n"
+}
+2026-08-24 17:28:21.552 [info] > git -c user.useConfigOnly=true commit --quiet [52ms]
+2026-08-24 17:28:21.552 [info] Author identity unknown
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: no email was given and auto-detection is disabled
+2026-08-24 17:28:21.595 [info] > git config --get-all user.name [39ms]
+2026-08-24 17:28:21.600 [info] [Git][getRemotes] No remotes found in the git config file
+2026-08-24 17:28:21.635 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) --ignore-case refs/heads/main refs/remotes/main [35ms]
+2026-08-24 17:28:21.635 [warning] [Git][getBranch] No such branch: main
+2026-08-24 17:28:21.635 [info] > git config --get commit.template [38ms]
+2026-08-24 17:28:21.716 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [67ms]
+2026-08-24 17:28:21.717 [info] > git status -z -uall [77ms]
+2026-08-24 17:29:30.978 [info] > git log --format=%H%n%aN%n%aE%n%at%n%ct%n%P%n%D%n%B -z --shortstat --diff-merges=first-parent -n50 --skip=0 --topo-order --decorate=full --stdin [46ms]
+2026-08-24 17:29:30.978 [info] fatal: bad revision 'refs/heads/main'
+2026-08-24 17:29:30.979 [error] [GitHistoryProvider][provideHistoryItems] Failed to get history items with options '{"historyItemRefs":["refs/heads/main"],"limit":50,"skip":0}': Failed to execute git {
+  "exitCode": 128,
+  "gitCommand": "log",
+  "stdout": "",
+  "stderr": "fatal: bad revision 'refs/heads/main'\n"
+}
+2026-08-24 17:29:32.247 [info] > git -c user.useConfigOnly=true commit --quiet [55ms]
+2026-08-24 17:29:32.247 [info] Author identity unknown
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: no email was given and auto-detection is disabled
+2026-08-24 17:29:32.295 [info] > git config --get-all user.name [45ms]
+2026-08-24 17:29:32.298 [info] [Git][getRemotes] No remotes found in the git config file
+2026-08-24 17:29:32.341 [info] > git config --get commit.template [44ms]
+2026-08-24 17:29:32.341 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) --ignore-case refs/heads/main refs/remotes/main [41ms]
+2026-08-24 17:29:32.341 [warning] [Git][getBranch] No such branch: main
+2026-08-24 17:29:32.382 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [37ms]
+2026-08-24 17:29:32.384 [info] > git status -z -uall [41ms]
+2026-08-24 17:29:40.455 [info] > git check-ignore -v -z --stdin [48ms]
+2026-08-24 17:29:40.527 [info] > git show --textconv :routers/dashboard.py [68ms]
+2026-08-24 17:29:40.529 [info] > git show --textconv HEAD:routers/dashboard.py [66ms]
+2026-08-24 17:29:40.529 [warning] [GitFileSystemProvider][readFile] File not found - git:/p%3A/Python/app/routers/dashboard.py.git?%7B%22path%22%3A%22p%3A%5C%5CPython%5C%5Capp%5C%5Crouters%5C%5Cdashboard.py%22%2C%22ref%22%3A%22HEAD%22%7D
+2026-08-24 17:29:40.536 [info] > git ls-files --stage -- routers/dashboard.py [67ms]
+2026-08-24 17:29:40.542 [info] > git ls-tree -l HEAD -- routers/dashboard.py [69ms]
+2026-08-24 17:29:40.542 [info] fatal: Not a valid object name HEAD
+2026-08-24 17:29:40.543 [warning] [GitFileSystemProvider][stat] File not found - git:/p%3A/Python/app/routers/dashboard.py.git?%7B%22path%22%3A%22p%3A%5C%5CPython%5C%5Capp%5C%5Crouters%5C%5Cdashboard.py%22%2C%22ref%22%3A%22HEAD%22%7D
+2026-08-24 17:29:40.584 [info] > git cat-file -s 2eb1d2261ce4fe96b7b69c36d2e77da3e813eeb4 [43ms]
+2026-08-24 17:29:40.795 [info] > git check-ignore -v -z --stdin [39ms]
+2026-08-24 17:30:03.657 [info] > git log --format=%H%n%aN%n%aE%n%at%n%ct%n%P%n%D%n%B -z --shortstat --diff-merges=first-parent -n50 --skip=0 --topo-order --decorate=full --stdin [50ms]
+2026-08-24 17:30:03.657 [info] fatal: bad revision 'refs/heads/main'
+2026-08-24 17:30:03.658 [error] [GitHistoryProvider][provideHistoryItems] Failed to get history items with options '{"historyItemRefs":["refs/heads/main"],"limit":50,"skip":0}': Failed to execute git {
+  "exitCode": 128,
+  "gitCommand": "log",
+  "stdout": "",
+  "stderr": "fatal: bad revision 'refs/heads/main'\n"
+}
+2026-08-24 17:30:09.016 [info] > git check-ignore -v -z --stdin [54ms]
+2026-08-24 17:30:11.613 [info] > git -c user.useConfigOnly=true commit --quiet [3454ms]
+2026-08-24 17:30:11.613 [info] Aborting commit due to empty commit message.
+2026-08-24 17:30:11.618 [info] [Git][getRemotes] No remotes found in the git config file
+2026-08-24 17:30:11.662 [info] > git config --get commit.template [46ms]
+2026-08-24 17:30:11.663 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) --ignore-case refs/heads/main refs/remotes/main [45ms]
+2026-08-24 17:30:11.663 [warning] [Git][getBranch] No such branch: main
+2026-08-24 17:30:11.713 [info] > git status -z -uall [47ms]
+2026-08-24 17:30:11.723 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [53ms]
+2026-08-24 17:30:11.830 [info] > git check-ignore -v -z --stdin [51ms]
+2026-08-24 17:30:11.926 [info] > git show --textconv :routers/dashboard.py [75ms]
+2026-08-24 17:30:11.929 [info] > git show --textconv HEAD:routers/dashboard.py [72ms]
+2026-08-24 17:30:11.930 [warning] [GitFileSystemProvider][readFile] File not found - git:/p%3A/Python/app/routers/dashboard.py.git?%7B%22path%22%3A%22p%3A%5C%5CPython%5C%5Capp%5C%5Crouters%5C%5Cdashboard.py%22%2C%22ref%22%3A%22HEAD%22%7D
+2026-08-24 17:30:11.932 [info] > git ls-files --stage -- routers/dashboard.py [70ms]
+2026-08-24 17:30:11.943 [info] > git ls-tree -l HEAD -- routers/dashboard.py [77ms]
+2026-08-24 17:30:11.943 [info] fatal: Not a valid object name HEAD
+2026-08-24 17:30:11.943 [warning] [GitFileSystemProvider][stat] File not found - git:/p%3A/Python/app/routers/dashboard.py.git?%7B%22path%22%3A%22p%3A%5C%5CPython%5C%5Capp%5C%5Crouters%5C%5Cdashboard.py%22%2C%22ref%22%3A%22HEAD%22%7D
+2026-08-24 17:30:11.990 [info] > git cat-file -s 2eb1d2261ce4fe96b7b69c36d2e77da3e813eeb4 [53ms]
+2026-08-24 17:30:12.110 [info] > git check-ignore -v -z --stdin [54ms]
+2026-08-24 17:31:09.391 [info] > git log --format=%H%n%aN%n%aE%n%at%n%ct%n%P%n%D%n%B -z --shortstat --diff-merges=first-parent -n50 --skip=0 --topo-order --decorate=full --stdin [48ms]
+2026-08-24 17:31:09.391 [info] fatal: bad revision 'refs/heads/main'
+2026-08-24 17:31:09.391 [error] [GitHistoryProvider][provideHistoryItems] Failed to get history items with options '{"historyItemRefs":["refs/heads/main"],"limit":50,"skip":0}': Failed to execute git {
+  "exitCode": 128,
+  "gitCommand": "log",
+  "stdout": "",
+  "stderr": "fatal: bad revision 'refs/heads/main'\n"
+}
+2026-08-24 17:31:24.307 [info] > git -c user.useConfigOnly=true commit --quiet [13351ms]
+2026-08-24 17:31:24.307 [info] Aborting commit due to empty commit message.
+2026-08-24 17:31:24.320 [info] [Git][getRemotes] No remotes found in the git config file
+2026-08-24 17:31:24.411 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) --ignore-case refs/heads/main refs/remotes/main [92ms]
+2026-08-24 17:31:24.411 [warning] [Git][getBranch] No such branch: main
+2026-08-24 17:31:24.412 [info] > git config --get commit.template [98ms]
+2026-08-24 17:31:24.459 [info] > git status -z -uall [45ms]
+2026-08-24 17:31:24.463 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [46ms]
+2026-08-24 17:31:24.562 [info] > git check-ignore -v -z --stdin [47ms]
+2026-08-24 17:31:24.631 [info] > git show --textconv :routers/dashboard.py [65ms]
+2026-08-24 17:31:24.647 [info] > git show --textconv HEAD:routers/dashboard.py [70ms]
+2026-08-24 17:31:24.648 [warning] [GitFileSystemProvider][readFile] File not found - git:/p%3A/Python/app/routers/dashboard.py.git?%7B%22path%22%3A%22p%3A%5C%5CPython%5C%5Capp%5C%5Crouters%5C%5Cdashboard.py%22%2C%22ref%22%3A%22HEAD%22%7D
+2026-08-24 17:31:24.649 [info] > git ls-files --stage -- routers/dashboard.py [68ms]
+2026-08-24 17:31:24.658 [info] > git ls-tree -l HEAD -- routers/dashboard.py [70ms]
+2026-08-24 17:31:24.658 [info] fatal: Not a valid object name HEAD
+2026-08-24 17:31:24.659 [warning] [GitFileSystemProvider][stat] File not found - git:/p%3A/Python/app/routers/dashboard.py.git?%7B%22path%22%3A%22p%3A%5C%5CPython%5C%5Capp%5C%5Crouters%5C%5Cdashboard.py%22%2C%22ref%22%3A%22HEAD%22%7D
+2026-08-24 17:31:24.694 [info] > git cat-file -s 2eb1d2261ce4fe96b7b69c36d2e77da3e813eeb4 [38ms]
+2026-08-24 17:31:24.868 [info] > git check-ignore -v -z --stdin [62ms]
+2026-08-24 17:32:03.127 [info] > git log --format=%H%n%aN%n%aE%n%at%n%ct%n%P%n%D%n%B -z --shortstat --diff-merges=first-parent -n50 --skip=0 --topo-order --decorate=full --stdin [53ms]
+2026-08-24 17:32:03.127 [info] fatal: bad revision 'refs/heads/main'
+2026-08-24 17:32:03.127 [error] [GitHistoryProvider][provideHistoryItems] Failed to get history items with options '{"historyItemRefs":["refs/heads/main"],"limit":50,"skip":0}': Failed to execute git {
+  "exitCode": 128,
+  "gitCommand": "log",
+  "stdout": "",
+  "stderr": "fatal: bad revision 'refs/heads/main'\n"
+}
+2026-08-24 17:32:52.367 [info] > git check-ignore -v -z --stdin [55ms]
+2026-08-24 17:33:43.881 [info] > git check-ignore -v -z --stdin [58ms]
+2026-08-24 17:33:47.197 [info] > git -c user.useConfigOnly=true commit --quiet [134902ms]
+2026-08-24 17:33:47.197 [info] fatal: cannot lock ref 'HEAD': reference already exists
+2026-08-24 17:33:47.298 [info] > git config --get-all user.name [98ms]
+2026-08-24 17:33:47.344 [info] > git config --get-all user.email [38ms]
+2026-08-24 17:33:47.349 [info] [Git][getRemotes] No remotes found in the git config file
+2026-08-24 17:33:47.394 [info] > git config --get commit.template [47ms]
+2026-08-24 17:33:47.407 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) --ignore-case refs/heads/main refs/remotes/main [58ms]
+2026-08-24 17:33:47.442 [info] > git check-ignore -v -z --stdin [49ms]
+2026-08-24 17:33:47.461 [info] > git status -z -uall [51ms]
+2026-08-24 17:33:47.462 [info] > git for-each-ref --sort -committerdate --format %(refname)%00%(objectname)%00%(*objectname) [50ms]
+2026-08-24 17:33:47.515 [info] > git show --textconv :requirements.txt [63ms]
+2026-08-24 17:33:47.525 [info] > git ls-files --stage -- requirements.txt [64ms]
+2026-08-24 17:33:47.594 [info] > git cat-file -s 9b0023c05afd332260a9f9c9bc5ff3e20ac174f5 [55ms]
+2026-08-24 17:33:47.846 [info] > git check-ignore -v -z --stdin [54ms]
 fastapi==0.141.1
 uvicorn==0.52.4
 sqlalchemy==2.0.52
@@ -7,3 +294,4 @@ python-multipart==0.0.32
 bcrypt==5.0.0
 pyjwt==2.13.0
 razorpay==2.0.1
+
