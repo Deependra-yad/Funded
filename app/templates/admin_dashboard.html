@@ -72,7 +72,59 @@
         </div>
     </div>
 
-    <!-- Main Content Area -->
+    <!-- Edit User Modal -->
+    <div id="edit-user-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-slate-800 w-full max-w-md rounded-xl shadow-2xl overflow-hidden border border-slate-700">
+            <div class="p-4 bg-slate-900 border-b border-slate-700 flex justify-between items-center">
+                <h3 class="text-white font-bold">Edit User</h3>
+                <button onclick="closeModal('edit-user-modal')" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <form onsubmit="submitEditUser(event)" class="p-6 space-y-4">
+                <input type="hidden" id="eu-id" name="user_id">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Username / Full Name</label>
+                    <input type="text" id="eu-name" name="full_name" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Email</label>
+                    <input type="email" id="eu-email" name="email" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white outline-none focus:border-indigo-500">
+                </div>
+                <div class="pt-2 border-t border-slate-700">
+                    <label class="block text-xs font-bold text-rose-400 uppercase tracking-wider mb-2">Force Reset Password</label>
+                    <p class="text-xs text-slate-500 mb-2">Passwords are encrypted. To change, type a new one here. Leave blank to keep current.</p>
+                    <input type="text" id="eu-pass" name="new_password" class="w-full bg-slate-900 border border-rose-500/50 rounded-lg px-4 py-2 text-white outline-none focus:border-rose-500" placeholder="New Password...">
+                </div>
+                <div class="pt-4 flex justify-end gap-2">
+                    <button type="button" onclick="closeModal('edit-user-modal')" class="px-4 py-2 text-sm font-bold text-slate-400 hover:text-white">Cancel</button>
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2 rounded-lg text-sm font-bold shadow-lg">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notify User Modal -->
+    <div id="notify-user-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
+        <div class="bg-slate-800 w-full max-w-md rounded-xl shadow-2xl overflow-hidden border border-slate-700">
+            <div class="p-4 bg-slate-900 border-b border-slate-700 flex justify-between items-center">
+                <h3 class="text-white font-bold">Send Notification</h3>
+                <button onclick="closeModal('notify-user-modal')" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <form onsubmit="submitNotifyUser(event)" class="p-6 space-y-4">
+                <input type="hidden" id="nu-id" name="user_id">
+                <p class="text-sm text-slate-300">Sending to: <span id="nu-name" class="font-bold text-teal-400"></span></p>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Message</label>
+                    <textarea id="nu-msg" name="message" rows="4" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-white outline-none focus:border-teal-500" placeholder="Type notification..."></textarea>
+                </div>
+                <div class="pt-4 flex justify-end gap-2">
+                    <button type="button" onclick="closeModal('notify-user-modal')" class="px-4 py-2 text-sm font-bold text-slate-400 hover:text-white">Cancel</button>
+                    <button type="submit" class="bg-teal-600 hover:bg-teal-500 text-white px-6 py-2 rounded-lg text-sm font-bold shadow-lg flex items-center gap-2"><i data-lucide="send" class="w-4 h-4"></i> Send Push</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
     <div class="flex-1 overflow-y-auto custom-scrollbar relative z-0">
         
         <div class="sticky top-0 z-10 glass-panel border-b border-slate-800 h-16 flex items-center justify-between px-6">
@@ -139,28 +191,29 @@
             <div id="tab-users" class="tab-content">
                 <div class="glass-panel rounded-xl overflow-hidden border border-slate-700">
                     <div class="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-800/50">
-                        <input type="text" placeholder="Search users by email or name..." class="bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-sm text-white w-72 focus:outline-none focus:border-indigo-500">
-                    </div>
+                <div class="glass-panel p-6 rounded-xl border border-slate-700 overflow-hidden">
+                    <h3 class="text-sm font-bold text-white mb-6 uppercase tracking-wider flex items-center gap-2"><i data-lucide="users" class="w-4 h-4 text-indigo-400"></i> Registered Users</h3>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm whitespace-nowrap">
-                            <thead class="bg-slate-900/80 text-slate-400 text-xs uppercase tracking-wider font-bold">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-800/50 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
                                 <tr>
-                                    <th class="px-6 py-4">ID</th>
-                                    <th class="px-6 py-4">Name</th>
-                                    <th class="px-6 py-4">Email</th>
-                                    <th class="px-6 py-4">Joined</th>
-                                    <th class="px-6 py-4 text-right">Danger Zone</th>
+                                    <th class="px-4 py-3 rounded-tl-lg">ID</th>
+                                    <th class="px-4 py-3">Full Name</th>
+                                    <th class="px-4 py-3">Email</th>
+                                    <th class="px-4 py-3">Joined</th>
+                                    <th class="px-4 py-3 rounded-tr-lg text-right">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-slate-800/50 text-slate-300">
-                                {% for u in users %}
-                                <tr class="hover:bg-slate-800/30 transition-colors">
-                                    <td class="px-6 py-4 font-mono text-slate-500">#{{ u.id }}</td>
-                                    <td class="px-6 py-4 font-medium text-white">{{ u.full_name }}</td>
-                                    <td class="px-6 py-4">{{ u.email }}</td>
-                                    <td class="px-6 py-4 font-mono text-xs">{{ u.created_at.strftime('%Y-%m-%d') if u.created_at else 'N/A' }}</td>
-                                    <td class="px-6 py-4 text-right space-x-2">
-                                        <button onclick="adminAction('user', {{ u.id }}, 'delete')" class="text-[11px] bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white px-3 py-1.5 rounded transition-colors font-bold uppercase tracking-wider border border-rose-500/20">Ban & Delete</button>
+                            <tbody class="divide-y divide-slate-800 text-slate-300">
+                                {% for user in users %}
+                                <tr class="hover:bg-slate-800/50 transition-colors">
+                                    <td class="px-4 py-3 font-mono text-xs">#{{ user.id }}</td>
+                                    <td class="px-4 py-3 font-bold">{{ user.full_name }}</td>
+                                    <td class="px-4 py-3 text-slate-400">{{ user.email }}</td>
+                                    <td class="px-4 py-3 text-slate-500 text-xs">{{ user.created_at.strftime("%Y-%m-%d") if user.created_at else "N/A" }}</td>
+                                    <td class="px-4 py-3 text-right space-x-2">
+                                        <button onclick="openEditUserModal({{ user.id }}, '{{ user.full_name }}', '{{ user.email }}')" class="bg-indigo-600/20 text-indigo-400 hover:bg-indigo-600 hover:text-white px-3 py-1 rounded text-xs font-bold transition-colors">Edit</button>
+                                        <button onclick="openNotifyModal({{ user.id }}, '{{ user.full_name }}')" class="bg-teal-600/20 text-teal-400 hover:bg-teal-600 hover:text-white px-3 py-1 rounded text-xs font-bold transition-colors">Notify</button>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -376,9 +429,63 @@
             'ops': 'Market Operations & Risk'
         };
         document.getElementById('page-title').innerText = titles[tab];
-    }
+        function openEditUserModal(id, name, email) {
+            document.getElementById('eu-id').value = id;
+            document.getElementById('eu-name').value = name;
+            document.getElementById('eu-email').value = email;
+            document.getElementById('eu-pass').value = '';
+            document.getElementById('edit-user-modal').classList.remove('hidden');
+        }
 
-    async function adminAction(entity, id, action) {
+        function openNotifyModal(id, name) {
+            document.getElementById('nu-id').value = id;
+            document.getElementById('nu-name').innerText = name;
+            document.getElementById('nu-msg').value = '';
+            document.getElementById('notify-user-modal').classList.remove('hidden');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        async function submitEditUser(e) {
+            e.preventDefault();
+            const form = e.target;
+            const data = new FormData(form);
+            try {
+                const res = await fetch('/admin/api/user/update', { method: 'POST', body: data });
+                const json = await res.json();
+                if (json.success) {
+                    showToast(json.message, 'success');
+                    closeModal('edit-user-modal');
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showToast(json.error, 'error');
+                }
+            } catch (err) {
+                showToast('Error updating user', 'error');
+            }
+        }
+
+        async function submitNotifyUser(e) {
+            e.preventDefault();
+            const form = e.target;
+            const data = new FormData(form);
+            try {
+                const res = await fetch('/admin/api/user/notify', { method: 'POST', body: data });
+                const json = await res.json();
+                if (json.success) {
+                    showToast(json.message, 'success');
+                    closeModal('notify-user-modal');
+                } else {
+                    showToast(json.error, 'error');
+                }
+            } catch (err) {
+                showToast('Error sending notification', 'error');
+            }
+        }
+
+        async function adminAction(entity, id, action) {
         if(!confirm(`EXECUTE: '${action}' on ${entity} #${id}?`)) return;
         
         const formData = new FormData();
