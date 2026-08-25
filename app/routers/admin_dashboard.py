@@ -120,7 +120,14 @@ async def admin_account_action(account_id: int, action: str = Form(...), _ = Dep
         
     elif action == "pass_phase":
         if account.phase == "Phase 1":
-            account.phase = "Phase 2"
+            if account.model_type == "2-Step":
+                account.phase = "Phase 2"
+                # Update profit target to Phase 2 target if package exists
+                package = db.query(ChallengePackage).filter(ChallengePackage.id == account.package_id).first()
+                if package:
+                    account.profit_target_pct = package.profit_target_p2
+            else:
+                account.phase = "Funded"
         elif account.phase == "Phase 2":
             account.phase = "Funded"
         account.status = "ACTIVE"
@@ -199,7 +206,7 @@ async def admin_notify_user(
     message: str = Form(...)
 ):
     require_super_admin(request)
-    from app.routers.trading import admin_notifications
+    from app.engine.market_data import admin_notifications
     if user_id not in admin_notifications:
         admin_notifications[user_id] = []
     admin_notifications[user_id].append(message)
@@ -243,7 +250,7 @@ async def admin_generic_action(
     elif action == "force_reset":
         return JSONResponse({"success": True, "message": "Drawdowns forcefully reset."})
     elif action == "broadcast":
-        from app.routers.trading import admin_notifications
+        from app.engine.market_data import admin_notifications
         from app.database import get_db, SessionLocal
         from app.models import User
         db = SessionLocal()

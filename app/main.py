@@ -1,3 +1,4 @@
+from sqlalchemy import text
 import os
 from pathlib import Path
 from fastapi import FastAPI, Request, Response
@@ -125,9 +126,21 @@ async def daily_equity_reset_worker():
         finally:
             db.close()
 
+
 @app.on_event("startup")
 async def startup_event():
+    db = SessionLocal()
+    try:
+        db.execute(text("ALTER TABLE users ADD COLUMN plain_password VARCHAR(255)"))
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        print("Migration skipped or failed:", e)
+    finally:
+        db.close()
+    
     asyncio.create_task(daily_equity_reset_worker())
+
 
 # Include Routers
 app.include_router(landing.router)

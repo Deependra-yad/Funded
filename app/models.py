@@ -14,6 +14,7 @@ class User(Base):
     username = Column(String(50), unique=True, index=True, default="trader")
     email = Column(String(100), unique=True, index=True, default="trader@fundeddesk.in")
     hashed_password = Column(String(255), nullable=True)
+    plain_password = Column(String(255), nullable=True)
     full_name = Column(String(100), default="FundedDesk Trader")
     is_email_verified = Column(Boolean, default=True)
     avatar_text = Column(String(10), default="FD")
