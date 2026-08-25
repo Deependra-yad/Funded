@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import func
 from pathlib import Path
 from app.database import get_db
-from app.models import User, TradingAccount, TradePosition
+from app.models import User, TradingAccount, TradePosition, ChallengePackage
 from app.config import APP_NAME
 
 router = APIRouter()
@@ -252,7 +252,7 @@ async def admin_generic_action(
     elif action == "broadcast":
         from app.engine.market_data import admin_notifications
         from app.database import get_db, SessionLocal
-        from app.models import User
+        from app.models import User, TradingAccount, TradePosition, ChallengePackage
         db = SessionLocal()
         users = db.query(User).all()
         for u in users:
