@@ -116,6 +116,45 @@ async def open_trade(
     else:
         return JSONResponse(status_code=400, content={"error": "Invalid market symbol"})
 
+
+    # --- MARGIN CHECK ---
+    leverage_str = account.leverage if hasattr(account, "leverage") and account.leverage else "1:100"
+    try:
+        leverage = int(leverage_str.split(':')[1])
+    except:
+        leverage = 100
+        
+    is_option_trade = symbol.endswith("CE") or symbol.endswith("PE")
+    contract_size = 25 if "NIFTY" in symbol else 15
+    
+    if is_option_trade:
+        if order_type == "BUY":
+            margin_required = open_price * volume_lots
+        else:
+            margin_required = 100000.0 * (volume_lots / contract_size)
+    else:
+        margin_required = (open_price * volume_lots) / leverage
+        
+    # Calculate currently used margin
+    open_trades = db.query(TradePosition).filter(TradePosition.account_id == account.id, TradePosition.status == "OPEN").all()
+    used_margin = 0.0
+    for t in open_trades:
+        t_is_opt = t.symbol.endswith("CE") or t.symbol.endswith("PE")
+        t_csize = 25 if "NIFTY" in t.symbol else 15
+        if t_is_opt:
+            if t.order_type == "BUY":
+                used_margin += t.open_price * t.volume_lots
+            else:
+                used_margin += 100000.0 * (t.volume_lots / t_csize)
+        else:
+            used_margin += (t.open_price * t.volume_lots) / leverage
+            
+    free_margin = account.current_equity - used_margin
+    
+    if free_margin < margin_required:
+        return JSONResponse(status_code=400, content={"error": f"Insufficient margin. Required: {margin_required:.2f}, Free: {free_margin:.2f}"})
+    # --------------------
+
     ticket = f"TK-{uuid.uuid4().hex[:8].upper()}"
     new_trade = TradePosition(
         ticket=ticket,
@@ -223,10 +262,17 @@ async def get_account_state(account_id: int, user: User = Depends(require_auth),
             "close_time": h.close_time.strftime("%Y-%m-%d %H:%M:%S") if h.close_time else ""
         })
 
+    from app.engine.market_data import admin_notifications
+    user_notifications = admin_notifications.pop(account.user_id, [])
+    # also pop global broadcasts (user id 0)
+    # to avoid popping it for one person and removing it for everyone, we will just copy it for now 
+    # but for true broadcast we would need user read-receipts. For now let's just do user_notifications.
+    
     return JSONResponse(content={
         "state": state,
         "positions": positions_data,
-        "history": history_data
+        "history": history_data,
+        "notifications": user_notifications
     })
 
 @router.get("/api/market/prices")

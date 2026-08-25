@@ -277,9 +277,9 @@ class MarketDataEngine:
             
             pips = diff
             contract_size = 25 if "NIFTY" in symbol else 15
-            pnl = diff * lots * contract_size
+            pnl = diff * lots
             
-            turnover = (open_price + current_exit_price) * lots * contract_size
+            turnover = (open_price + current_exit_price) * lots
             stt_and_charges = turnover * 0.000125
             total_fees = stt_and_charges + 40.0
             pnl -= total_fees
@@ -297,9 +297,9 @@ class MarketDataEngine:
             diff = open_price - current_exit_price
 
         pips = diff / cfg["pip_size"]
-        pnl = diff * lots * cfg["contract_size"]
+        pnl = diff * lots
         
-        turnover = (open_price + current_exit_price) * lots * cfg["contract_size"]
+        turnover = (open_price + current_exit_price) * lots
         stt_and_charges = turnover * 0.000125
         total_fees = stt_and_charges + 40.0
         pnl -= total_fees
