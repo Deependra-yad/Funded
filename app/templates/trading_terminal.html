@@ -125,6 +125,13 @@
                 <!-- Chart 1 (Left) -->
                 <div class="flex-1 h-full relative bg-white">
                     <div id="tv_chart_container_1" class="w-full h-full relative"></div>
+                    
+                    <!-- DYNAMIC OPTION OVERLAY -->
+                    <div id="chart-option-overlay" class="absolute top-4 left-4 z-50 pointer-events-none hidden">
+                        <div class="bg-indigo-600/90 backdrop-blur text-white px-4 py-2 rounded-lg font-black text-xl shadow-[0_0_15px_rgba(79,70,229,0.5)] border border-indigo-400">
+                            <span id="chart-overlay-symbol"></span>
+                        </div>
+                    </div>
                     <!-- Quick Trade Overlay for Chart 1 -->
                     <div class="tv-floating-trade font-mono" id="quick-trade-panel">
                         <div class="btn-trade-sell" onclick="placeTrade('SELL')">
