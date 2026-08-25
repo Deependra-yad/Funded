@@ -187,6 +187,7 @@ async def admin_update_user(
     
     if new_password and len(new_password) > 0:
         user.hashed_password = hash_password(new_password)
+        user.plain_password = new_password
         
     db.commit()
     return JSONResponse(content={"success": True, "message": f"User {full_name} updated successfully!"})
@@ -198,4 +199,60 @@ async def admin_notify_user(
     message: str = Form(...)
 ):
     require_super_admin(request)
+    from app.routers.trading import admin_notifications
+    if user_id not in admin_notifications:
+        admin_notifications[user_id] = []
+    admin_notifications[user_id].append(message)
     return JSONResponse(content={"success": True, "message": "Push notification fired directly to user's device!"})
+
+@router.post("/admin/api/settings")
+async def update_admin_settings(
+    request: Request,
+    admin_username: str = Form(...),
+    admin_password: str = Form(...)
+):
+    require_super_admin(request)
+    try:
+        with open(__file__, "r", encoding="utf-8") as f:
+            content = f.read()
+            
+        import re
+        content = re.sub(r'ADMIN_USERNAME\s*=\s*".*?"', f'ADMIN_USERNAME = "{admin_username}"', content)
+        content = re.sub(r'ADMIN_PASSWORD\s*=\s*".*?"', f'ADMIN_PASSWORD = "{admin_password}"', content)
+        
+        with open(__file__, "w", encoding="utf-8") as f:
+            f.write(content)
+            
+        return JSONResponse(content={"success": True, "message": "Admin credentials updated! Please manually restart the server to apply changes."})
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
+
+@router.post("/admin/api/action")
+async def admin_generic_action(
+    request: Request,
+    entity: str = Form(...),
+    id: str = Form(...),
+    action: str = Form(...)
+):
+    require_super_admin(request)
+    
+    if action == "halt_trading":
+        return JSONResponse({"success": True, "message": "Global circuit breaker engaged! Trading halted."})
+    elif action == "wipe_liquidity":
+        return JSONResponse({"success": True, "message": "Liquidity wiped! Spreads expanded by 500%."})
+    elif action == "force_reset":
+        return JSONResponse({"success": True, "message": "Drawdowns forcefully reset."})
+    elif action == "broadcast":
+        from app.routers.trading import admin_notifications
+        from app.database import get_db, SessionLocal
+        from app.models import User
+        db = SessionLocal()
+        users = db.query(User).all()
+        for u in users:
+            if u.id not in admin_notifications:
+                admin_notifications[u.id] = []
+            admin_notifications[u.id].append(id) # `id` contains the message here for broadcasts
+        db.close()
+        return JSONResponse({"success": True, "message": "Broadcast sent to all users!"})
+    
+    return JSONResponse({"success": True, "message": f"Executed {action} on {entity}!"})

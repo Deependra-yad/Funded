@@ -472,6 +472,12 @@
                 html = '<tr><td colspan="9" class="text-center py-8 text-slate-400 font-sans text-xs">No open positions</td></tr>';
             }
             tbody.innerHTML = html;
+            
+            if(data.notifications && data.notifications.length > 0) {
+                for(var i=0; i < data.notifications.length; i++) {
+                    showToast('LIVEMESSAGE: ' + data.notifications[i], 'success');
+                }
+            }
         } catch (e) { console.error(e); }
     }
 

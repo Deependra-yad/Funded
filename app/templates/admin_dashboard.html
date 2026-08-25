@@ -182,10 +182,10 @@
                 <div class="glass-panel p-6 rounded-xl border border-slate-700">
                     <h3 class="text-sm font-bold text-slate-100 mb-4 uppercase tracking-wider flex items-center gap-2"><i data-lucide="zap" class="w-4 h-4 text-amber-400"></i> Super Admin Quick Actions</h3>
                     <div class="flex flex-wrap gap-3">
-                        <button class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg shadow-indigo-500/20">Broadcast Platform Message</button>
-                        <button class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-slate-600">Force Market Sync</button>
-                        <button class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-slate-600">Generate Master Promo</button>
-                        <button class="bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-rose-500/20">Emergency Stop Trading</button>
+                        <button onclick="adminAction('global', 'BROADCAST: Important platform update!', 'broadcast')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg shadow-indigo-500/20">Broadcast Platform Message</button>
+                        <button onclick="showToast('Market Sync Forced', 'success')" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-slate-600">Force Market Sync</button>
+                        <button onclick="showToast('Master Promo Generated: PROMO2026', 'success')" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-slate-600">Generate Master Promo</button>
+                        <button onclick="adminAction('global', '0', 'halt_trading')" class="bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-rose-500/20">Emergency Stop Trading</button>
                     </div>
                 </div>
             </div>
@@ -341,7 +341,7 @@
                     </div>
                 </div>
                 <div class="max-w-4xl mt-6">
-                    <button class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-lg text-sm font-bold transition-colors shadow-lg shadow-indigo-500/20 w-full uppercase tracking-wider">Deploy Global Rule Changes</button>
+                    <button onclick="adminAction('global', 'BROADCAST: Important platform update!', 'broadcast')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-lg text-sm font-bold transition-colors shadow-lg shadow-indigo-500/20 w-full uppercase tracking-wider">Deploy Global Rule Changes</button>
                 </div>
             </div>
             
@@ -367,7 +367,7 @@
                                 <h4 class="text-sm font-bold text-white mb-1">Global Trade Halt (Circuit Breaker)</h4>
                                 <p class="text-xs text-slate-500">Instantly suspends all opening/closing of positions across the platform.</p>
                             </div>
-                            <button onclick="showToast('Global circuit breaker engaged. Trading halted.', 'error')" class="bg-rose-600 hover:bg-rose-500 text-white px-6 py-2 rounded font-bold uppercase tracking-wider text-xs">Execute Halt</button>
+                            <button onclick="adminAction('engine', '0', 'halt_trading')" class="bg-rose-600 hover:bg-rose-500 text-white px-6 py-2 rounded font-bold uppercase tracking-wider text-xs">Execute Halt</button>
                         </div>
                         
                         <div class="flex items-center justify-between p-4 rounded-lg bg-slate-900/80 border border-slate-800">
