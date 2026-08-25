@@ -9,6 +9,7 @@ from app.security import require_auth
 from app.engine.market_data import market_engine, INSTRUMENTS
 from app.engine.prop_rules import evaluate_account_and_trades
 from app.config import APP_NAME
+from app.engine.options_engine import calculate_option_price_live, generate_option_chain
 import uuid
 
 router = APIRouter()
@@ -95,7 +96,6 @@ async def open_trade(
     if account.status != "ACTIVE":
         return JSONResponse(status_code=400, content={"error": f"Account is not active ({account.status}). Trading disabled."})
 
-    from app.engine.options_engine import calculate_option_price_live
 
     open_price = 0.0
     
@@ -230,8 +230,23 @@ async def get_account_state(account_id: int, user: User = Depends(require_auth),
     })
 
 @router.get("/api/market/prices")
-async def get_prices():
+async def get_prices(active_symbol: str = None):
     prices = market_engine.get_all_prices()
+    
+    # If the user is viewing an option, calculate its live price and append it to the list
+    if active_symbol and (active_symbol.endswith("CE") or active_symbol.endswith("PE")):
+        underlying = "NIFTY50" if "NIFTY" in active_symbol else "BANKNIFTY"
+        underlying_spot = market_engine.prices.get(underlying, {}).get("mid", 0)
+        if underlying_spot > 0:
+            opt_price = calculate_option_price_live(active_symbol, underlying_spot)
+            if opt_price is not None:
+                prices.append({
+                    "symbol": active_symbol,
+                    "bid": round(opt_price - 0.25, 2),
+                    "ask": round(opt_price + 0.25, 2),
+                    "mid": opt_price
+                })
+                
     return JSONResponse(content=prices)
 
 @router.get("/api/market/candles/{symbol}")
@@ -241,7 +256,6 @@ async def get_candles(symbol: str):
 
 @router.get("/api/options/{symbol}")
 async def get_options_chain(symbol: str):
-    from app.engine.options_engine import generate_option_chain
     if symbol not in ["NIFTY50", "BANKNIFTY"]:
         return JSONResponse(status_code=400, content={"error": "Options only supported for NIFTY50 and BANKNIFTY"})
         

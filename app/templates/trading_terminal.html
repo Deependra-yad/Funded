@@ -403,7 +403,7 @@
 
     async function pollPrices() {
         try {
-            var res = await fetch('/api/market/prices');
+            var res = await fetch('/api/market/prices?active_symbol=' + activeSymbol);
             var prices = await res.json();
             
             for(var i = 0; i < prices.length; i++) {
