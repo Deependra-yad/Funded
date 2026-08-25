@@ -8,6 +8,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
     <style>
         body { font-family: 'Inter', sans-serif; }
         .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
@@ -125,13 +126,9 @@
                 <!-- Chart 1 (Left) -->
                 <div class="flex-1 h-full relative bg-white">
                     <div id="tv_chart_container_1" class="w-full h-full relative"></div>
+                      <div id="lw_chart_container_1" class="w-full h-full relative hidden" style="position: absolute; top: 0; left: 0; z-index: 10; background: white;"></div>
                     
-                    <!-- DYNAMIC OPTION OVERLAY -->
-                    <div id="chart-option-overlay" class="absolute top-4 left-4 z-50 pointer-events-none hidden">
-                        <div class="bg-indigo-600/90 backdrop-blur text-white px-4 py-2 rounded-lg font-black text-xl shadow-[0_0_15px_rgba(79,70,229,0.5)] border border-indigo-400">
-                            <span id="chart-overlay-symbol"></span>
-                        </div>
-                    </div>
+                    
                     <!-- Quick Trade Overlay for Chart 1 -->
                     <div class="tv-floating-trade font-mono" id="quick-trade-panel">
                         <div class="btn-trade-sell" onclick="placeTrade('SELL')">
@@ -150,9 +147,7 @@
                 <div id="right-chart-wrapper" class="flex-1 h-full relative bg-white hidden">
                     <div id="tv_chart_container_2" class="w-full h-full relative"></div>
                     <!-- Warning overlay explaining TV restrictions to user -->
-                    <div class="absolute bottom-4 right-4 bg-slate-800/80 text-white text-[10px] p-2 rounded backdrop-blur">
-                        Using BINGX Crypto/Indices to bypass TV Intraday Blocks.
-                    </div>
+                    
                 </div>
 
             </div>
@@ -381,35 +376,7 @@
         }
     }
 
-    function selectSymbol(sym) {
-        var oldWl = document.getElementById('wl-' + activeSymbol);
-        if(oldWl) oldWl.classList.remove('active');
-        
-        activeSymbol = sym;
-        
-        var newWl = document.getElementById('wl-' + activeSymbol);
-        if(newWl) newWl.classList.add('active');
-        
-        document.getElementById('order-symbol-title').innerText = sym;
-        
-        // Hide option overlay
-        var overlay = document.getElementById('chart-option-overlay');
-        if(overlay) overlay.classList.add('hidden');
-        
-        // tv.js widget doesn't support dynamic setSymbol, we must recreate the iframe
-        var tvSym = tvSymbolMap[sym] || ('BSE:' + sym);
-        var interval = (tvSym.startsWith('BINGX') || tvSym.startsWith('BINANCE')) ? "5" : "D"; 
-        
-        document.getElementById("tv_chart_container_1").innerHTML = "";
-        tvWidget1 = initTVWidget("tv_chart_container_1", tvSym, interval);
-        
-        if(pricesData[activeSymbol]) {
-            var p = pricesData[activeSymbol];
-            var bidEl = document.getElementById('qt-bid');
-            var askEl = document.getElementById('qt-ask');
-            if(bidEl) bidEl.innerText = p.bid.toFixed(2);
-            if(askEl) askEl.innerText = p.ask.toFixed(2);
-        }
+
     }
 
     async function pollPrices() {
@@ -431,6 +398,18 @@
                     var qtAsk = document.getElementById('qt-ask');
                     if(qtBid) qtBid.innerText = p.bid.toFixed(2);
                     if(qtAsk) qtAsk.innerText = p.ask.toFixed(2);
+                    
+                    if (typeof lwSeries !== 'undefined' && lwSeries && lastLwCandle && (activeSymbol.endsWith("CE") || activeSymbol.endsWith("PE"))) {
+                        var now = Math.floor(Date.now() / 1000) + 19800; // IST rough
+                        if (now - lastLwCandle.time > 300) {
+                            lastLwCandle = {time: now, open: p.mid, high: p.mid, low: p.mid, close: p.mid};
+                        } else {
+                            lastLwCandle.close = p.mid;
+                            lastLwCandle.high = Math.max(lastLwCandle.high, p.mid);
+                            lastLwCandle.low = Math.min(lastLwCandle.low, p.mid);
+                        }
+                        lwSeries.update(lastLwCandle);
+                    }
                 }
             }
         } catch (e) {}
@@ -683,33 +662,83 @@
         }
     }
     
+
+
+    var lwChart = null;
+    var lwSeries = null;
+    var lastLwCandle = null;
+
+    async function renderOptionChart(symbol) {
+        document.getElementById("tv_chart_container_1").classList.add("hidden");
+        var lwContainer = document.getElementById("lw_chart_container_1");
+        lwContainer.classList.remove("hidden");
+        lwContainer.innerHTML = "";
+        
+        lwChart = LightweightCharts.createChart(lwContainer, {
+            width: lwContainer.clientWidth,
+            height: lwContainer.clientHeight,
+            layout: { backgroundColor: '#ffffff', textColor: '#333' },
+            grid: { vertLines: { color: '#f0f0f0' }, horzLines: { color: '#f0f0f0' } },
+            timeScale: { timeVisible: true, secondsVisible: false },
+        });
+        
+        lwSeries = lwChart.addCandlestickSeries({
+            upColor: '#22c55e', downColor: '#ef4444', borderVisible: false,
+            wickUpColor: '#22c55e', wickDownColor: '#ef4444'
+        });
+
+        try {
+            var res = await fetch('/api/market/candles/' + symbol);
+            var data = await res.json();
+            var cData = data.map(c => ({
+                time: c.time + 19800, // IST timezone offset roughly
+                open: c.open, high: c.high, low: c.low, close: c.close
+            }));
+            lwSeries.setData(cData);
+            if(cData.length > 0) lastLwCandle = cData[cData.length - 1];
+        } catch(e) {}
+    }
+
+    function selectSymbol(sym) {
+        var oldWl = document.getElementById('wl-' + activeSymbol);
+        if(oldWl) oldWl.classList.remove('active');
+        
+        activeSymbol = sym;
+        
+        var newWl = document.getElementById('wl-' + activeSymbol);
+        if(newWl) newWl.classList.add('active');
+        
+        document.getElementById('order-symbol-title').innerText = sym;
+        
+        if (sym.endsWith("CE") || sym.endsWith("PE")) {
+            renderOptionChart(sym);
+        } else {
+            document.getElementById("lw_chart_container_1").classList.add("hidden");
+            document.getElementById("tv_chart_container_1").classList.remove("hidden");
+            
+            var tvSym = tvSymbolMap[sym] || ('BSE:' + sym);
+            var interval = (tvSym.startsWith('BINGX') || tvSym.startsWith('BINANCE')) ? "5" : "D"; 
+            
+            document.getElementById("tv_chart_container_1").innerHTML = "";
+            tvWidget1 = initTVWidget("tv_chart_container_1", tvSym, interval);
+        }
+    }
+
     function prepareOptionTrade(symbol, action) {
         closeOptionChain();
-        activeSymbol = symbol;
+        selectSymbol(symbol); // Now actually select it so the chart changes!
         
-        // Update the main label so the user knows they are trading the option
-        document.getElementById('order-symbol-title').innerText = symbol;
-        
-        // SHOW OVERLAY ON GRAPH
-        var overlay = document.getElementById('chart-option-overlay');
-        if(overlay) {
-            document.getElementById('chart-overlay-symbol').innerText = symbol + ' (Tracking Spot)';
-            overlay.classList.remove('hidden');
-        }
-        
-        // Update the lot size input based on Nifty/Banknifty
         var qtyInput = document.getElementById('qt-qty');
         if (symbol.includes('BANK')) {
-            qtyInput.value = '15'; // BankNifty lot
+            qtyInput.value = '15';
         } else {
-            qtyInput.value = '25'; // Nifty lot
+            qtyInput.value = '25';
         }
         
-        // Auto-click the buy/sell button if possible
         placeTrade(action);
-        
         showToast(`Placing ${action} order for ${symbol}...`, 'success');
     }
+
 </script>
 </body>
 </html>

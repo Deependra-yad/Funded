@@ -4,6 +4,7 @@ import threading
 import httpx
 from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Any
+from app.engine.options_engine import calculate_option_price_live
 
 # Institutional Market Instruments
 INSTRUMENTS = {
@@ -134,10 +135,17 @@ class MarketDataEngine:
         t.start()
 
     def _generate_initial_candles(self, symbol: str, count: int = 120) -> List[Dict[str, Any]]:
-        cfg = INSTRUMENTS[symbol]
+        is_option = symbol.endswith("CE") or symbol.endswith("PE")
+        if is_option:
+            underlying = "NIFTY50" if "NIFTY" in symbol else "BANKNIFTY"
+            cfg = INSTRUMENTS.get(underlying, {"volatility": 2.0, "digits": 2})
+            current_p = 150.0  # mock option base price
+        else:
+            cfg = INSTRUMENTS.get(symbol, {"base_price": 100.0, "volatility": 1.0, "digits": 2})
+            current_p = cfg.get("base_price", 100.0)
+            
         candles = []
         now = datetime.now(timezone.utc)
-        current_p = cfg["base_price"]
 
         for i in range(count, 0, -1):
             t = now - timedelta(minutes=i * 5)
@@ -160,9 +168,10 @@ class MarketDataEngine:
             })
             current_p = close_p
 
-        self.prices[symbol]["mid"] = round(current_p, cfg["digits"])
-        self.prices[symbol]["bid"] = round(current_p - cfg["spread"] / 2, cfg["digits"])
-        self.prices[symbol]["ask"] = round(current_p + cfg["spread"] / 2, cfg["digits"])
+        if not is_option:
+            self.prices[symbol]["mid"] = round(current_p, cfg["digits"])
+            self.prices[symbol]["bid"] = round(current_p - cfg.get("spread", 0.5) / 2, cfg["digits"])
+            self.prices[symbol]["ask"] = round(current_p + cfg.get("spread", 0.5) / 2, cfg["digits"])
         return candles
 
     def tick(self, symbol: str = None) -> Dict[str, Any]:
@@ -247,7 +256,6 @@ class MarketDataEngine:
             return list(self.candle_cache[symbol])
 
     def calculate_pnl(self, symbol: str, order_type: str, lots: float, open_price: float) -> tuple[float, float, float]:
-        from app.engine.options_engine import calculate_option_price_live
         
         is_option = symbol.endswith("CE") or symbol.endswith("PE")
         
@@ -303,3 +311,6 @@ class MarketDataEngine:
 
 # Global engine instance
 market_engine = MarketDataEngine()
+
+# Global notifications store
+admin_notifications = {}
