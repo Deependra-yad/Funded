@@ -36,3 +36,4 @@ async def admin_notify_user(
 with open('app/routers/admin_dashboard.py', 'a', encoding='utf-8') as f:
     f.write(code)
 print("Updated admin_dashboard.py")
+

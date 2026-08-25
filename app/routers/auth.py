@@ -165,32 +165,32 @@ async def handle_register(
         parts = name_clean.split()
         avatar = (parts[0][0] + (parts[1][0] if len(parts) > 1 else parts[0][1:2])).upper() if name_clean else "TR"
 
-            new_user = User(
-                username=email_clean.split("@")[0],
-                email=email_clean,
-                full_name=name_clean,
-                hashed_password=hash_password(password),
-                plain_password=password,
-                is_email_verified=True,
-                avatar_text=avatar,
-                referral_code=f"FDK{uuid.uuid4().hex[:6].upper()}"
-            )
-            db.add(new_user)
-            db.commit()
-            db.refresh(new_user)
+        new_user = User(
+            username=email_clean.split("@")[0],
+            email=email_clean,
+            full_name=name_clean,
+            hashed_password=hash_password(password),
+            plain_password=password,
+            is_email_verified=True,
+            avatar_text=avatar,
+            referral_code=f"FDK{uuid.uuid4().hex[:6].upper()}"
+        )
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
 
-            # Issue session cookie and log in automatically
-            token = create_session_token(new_user.id)
-            target_url = next if next and not next.startswith("/login") else "/dashboard?welcome=1"
-            response = RedirectResponse(url=target_url, status_code=303)
-            response.set_cookie(
-                key=SESSION_COOKIE_NAME,
-                value=token,
-                httponly=True,
-                max_age=86400 * 30,
-                samesite="lax"
-            )
-            return response
+        # Issue session cookie and log in automatically
+        token = create_session_token(new_user.id)
+        target_url = next if next and not next.startswith("/login") else "/dashboard?welcome=1"
+        response = RedirectResponse(url=target_url, status_code=303)
+        response.set_cookie(
+            key=SESSION_COOKIE_NAME,
+            value=token,
+            httponly=True,
+            max_age=86400 * 30,
+            samesite="lax"
+        )
+        return response
 
 
 
