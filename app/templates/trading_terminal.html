@@ -385,6 +385,10 @@
         
         document.getElementById('order-symbol-title').innerText = sym;
         
+        // Hide option overlay
+        var overlay = document.getElementById('chart-option-overlay');
+        if(overlay) overlay.classList.add('hidden');
+        
         // tv.js widget doesn't support dynamic setSymbol, we must recreate the iframe
         var tvSym = tvSymbolMap[sym] || ('BSE:' + sym);
         var interval = (tvSym.startsWith('BINGX') || tvSym.startsWith('BINANCE')) ? "5" : "D"; 
@@ -669,6 +673,16 @@
     function prepareOptionTrade(symbol, action) {
         closeOptionChain();
         activeSymbol = symbol;
+        
+        // Update the main label so the user knows they are trading the option
+        document.getElementById('order-symbol-title').innerText = symbol;
+        
+        // SHOW OVERLAY ON GRAPH
+        var overlay = document.getElementById('chart-option-overlay');
+        if(overlay) {
+            document.getElementById('chart-overlay-symbol').innerText = symbol + ' (Tracking Spot)';
+            overlay.classList.remove('hidden');
+        }
         
         // Update the lot size input based on Nifty/Banknifty
         var qtyInput = document.getElementById('qt-qty');
