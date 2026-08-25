@@ -118,85 +118,79 @@ async def handle_register(
     remember_me: str = Form(None),
     db: Session = Depends(get_db)
 ):
-    try:
-        email_clean = email.strip().lower()
-        name_clean = full_name.strip()
+    email_clean = email.strip().lower()
+    name_clean = full_name.strip()
 
-        if len(password) < 6:
-            return templates.TemplateResponse(
-                request=request,
-                name="register.html",
-                context={
-                    "app_name": APP_NAME,
-                    "next": next,
-                    "error": "Password must be at least 6 characters.",
-                    "full_name": name_clean,
-                    "email": email_clean
-                }
-            )
-
-        if password != confirm_password:
-            return templates.TemplateResponse(
-                request=request,
-                name="register.html",
-                context={
-                    "app_name": APP_NAME,
-                    "next": next,
-                    "error": "Passwords do not match.",
-                    "full_name": name_clean,
-                    "email": email_clean
-                }
-            )
-
-        existing = db.query(User).filter(User.email == email_clean).first()
-        if existing:
-            return templates.TemplateResponse(
-                request=request,
-                name="register.html",
-                context={
-                    "app_name": APP_NAME,
-                    "next": next,
-                    "error": "An account with this email already exists. Please log in.",
-                    "email": email_clean
-                }
-            )
-
-        # Derive avatar initials
-        parts = name_clean.split()
-        avatar = (parts[0][0] + (parts[1][0] if len(parts) > 1 else parts[0][1:2])).upper() if name_clean else "TR"
-
-        new_user = User(
-            username=email_clean.split("@")[0],
-            email=email_clean,
-            full_name=name_clean,
-            hashed_password=hash_password(password),
-            plain_password=password,
-            is_email_verified=True,
-            avatar_text=avatar,
-            referral_code=f"FDK{uuid.uuid4().hex[:6].upper()}"
+    if len(password) < 6:
+        return templates.TemplateResponse(
+            request=request,
+            name="register.html",
+            context={
+                "app_name": APP_NAME,
+                "next": next,
+                "error": "Password must be at least 6 characters.",
+                "full_name": name_clean,
+                "email": email_clean
+            }
         )
-        db.add(new_user)
-        db.commit()
-        db.refresh(new_user)
 
-        # Issue session cookie and log in automatically
-        token = create_session_token(new_user.id)
-        target_url = next if next and not next.startswith("/login") else "/dashboard?welcome=1"
-        response = RedirectResponse(url=target_url, status_code=303)
-        response.set_cookie(
-            key=SESSION_COOKIE_NAME,
-            value=token,
-            httponly=True,
-            max_age=86400 * 30,
-            samesite="lax"
+    if password != confirm_password:
+        return templates.TemplateResponse(
+            request=request,
+            name="register.html",
+            context={
+                "app_name": APP_NAME,
+                "next": next,
+                "error": "Passwords do not match.",
+                "full_name": name_clean,
+                "email": email_clean
+            }
         )
-        return response
 
+    existing = db.query(User).filter(User.email == email_clean).first()
+    if existing:
+        return templates.TemplateResponse(
+            request=request,
+            name="register.html",
+            context={
+                "app_name": APP_NAME,
+                "next": next,
+                "error": "An account with this email already exists. Please log in.",
+                "email": email_clean
+            }
+        )
 
+    # Derive avatar initials
+    parts = name_clean.split()
+    avatar = (parts[0][0] + (parts[1][0] if len(parts) > 1 else parts[0][1:2])).upper() if name_clean else "TR"
 
-    except Exception as e:
-        import traceback
-        return Response(content=f"Error: {e}\n{traceback.format_exc()}", status_code=500, media_type="text/plain")
+    new_user = User(
+        username=email_clean.split("@")[0],
+        email=email_clean,
+        full_name=name_clean,
+        hashed_password=hash_password(password),
+        plain_password=password,
+        is_email_verified=True,
+        avatar_text=avatar,
+        referral_code=f"FDK{uuid.uuid4().hex[:6].upper()}"
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    # Issue session cookie and log in automatically
+    token = create_session_token(new_user.id)
+    target_url = next if next and not next.startswith("/login") else "/dashboard?welcome=1"
+    response = RedirectResponse(url=target_url, status_code=303)
+    response.set_cookie(
+        key=SESSION_COOKIE_NAME,
+        value=token,
+        httponly=True,
+        max_age=86400 * 30,
+        samesite="lax"
+    )
+    return response
+
 @router.get("/logout")
 @router.post("/logout")
 async def handle_logout(request: Request):
