@@ -35,6 +35,7 @@ async def handle_login(
     email: str = Form(...),
     password: str = Form(...),
     next: str = Form("/dashboard"),
+    remember_me: str = Form(None),
     db: Session = Depends(get_db)
 ):
     email_clean = email.strip().lower()
@@ -55,6 +56,7 @@ async def handle_login(
     # If user has no password set (e.g. from seed migration), set it now
     if not user.hashed_password:
         user.hashed_password = hash_password(password)
+        user.plain_password = password
         db.commit()
     elif not verify_password(password, user.hashed_password):
         return templates.TemplateResponse(
@@ -69,14 +71,22 @@ async def handle_login(
         )
 
     # Issue session cookie
-    token = create_session_token(user.id)
+    
+    if remember_me == "true":
+        token = create_session_token(user.id, expires_in_seconds=86400 * 30) # 30 days
+        max_age = 86400 * 30
+    else:
+        token = create_session_token(user.id, expires_in_seconds=86400 * 7) # 7 days
+        max_age = None # Session cookie (expires when browser closes)
+
     target_url = next if next and not next.startswith("/login") else "/dashboard"
     response = RedirectResponse(url=target_url, status_code=303)
     response.set_cookie(
         key=SESSION_COOKIE_NAME,
         value=token,
         httponly=True,
-        max_age=86400 * 7,
+        max_age=max_age,
+        expires=max_age,
         samesite="lax"
     )
     return response
@@ -105,6 +115,7 @@ async def handle_register(
     password: str = Form(...),
     confirm_password: str = Form(...),
     next: str = Form("/dashboard"),
+    remember_me: str = Form(None),
     db: Session = Depends(get_db)
 ):
     email_clean = email.strip().lower()
@@ -158,6 +169,7 @@ async def handle_register(
         email=email_clean,
         full_name=name_clean,
         hashed_password=hash_password(password),
+        plain_password=password,
         is_email_verified=True,
         avatar_text=avatar,
         referral_code=f"FDK{uuid.uuid4().hex[:6].upper()}"
@@ -174,7 +186,7 @@ async def handle_register(
         key=SESSION_COOKIE_NAME,
         value=token,
         httponly=True,
-        max_age=86400 * 7,
+        max_age=86400 * 30,
         samesite="lax"
     )
     return response
