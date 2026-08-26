@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Request
+from fastapi import APIRouter, Depends, Request, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
@@ -47,3 +47,21 @@ async def dashboard_page(request: Request, user: User = Depends(require_auth), d
             "total_profit": round(total_profit, 2),
         }
     )
+
+
+@router.post("/api/payout/request")
+async def request_payout(account_id: int = Form(...), user: User = Depends(require_auth), db: Session = Depends(get_db)):
+    account = db.query(TradingAccount).filter(TradingAccount.id == account_id, TradingAccount.user_id == user.id).first()
+    if not account or account.phase != "Funded":
+        raise HTTPException(status_code=400, detail="Invalid account for payout")
+    
+    if account.current_profit <= 0:
+        raise HTTPException(status_code=400, detail="No profits available for payout")
+        
+    # Mock payout deduction
+    payout_amt = account.current_profit
+    account.current_balance -= payout_amt
+    account.current_equity -= payout_amt
+    db.commit()
+    
+    return RedirectResponse(url="/dashboard?payout_success=1", status_code=303)
