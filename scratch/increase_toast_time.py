@@ -8,3 +8,4 @@ html = re.sub(r'setTimeout\(\(\) => \{ toast\.style\.animation = \'slideOut 0\.3
 
 with open('app/templates/trading_terminal.html', 'w', encoding='utf-8') as f:
     f.write(html)
+

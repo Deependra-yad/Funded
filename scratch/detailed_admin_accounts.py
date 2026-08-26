@@ -30,3 +30,4 @@ html = html.replace('{{ acc.current_equity }}', '{{ acc.current_equity|inr(2) }}
 
 with open('app/templates/admin_dashboard.html', 'w', encoding='utf-8') as f:
     f.write(html)
+

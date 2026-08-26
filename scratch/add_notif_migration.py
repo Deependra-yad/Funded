@@ -15,3 +15,4 @@ content = re.sub(r'(db\.execute\(text\("ALTER TABLE users ADD COLUMN plain_passw
 
 with open('app/main.py', 'w', encoding='utf-8') as f:
     f.write(content)
+

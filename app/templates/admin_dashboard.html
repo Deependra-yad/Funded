@@ -210,13 +210,20 @@
                                 {% for user in users %}
                                 <tr class="hover:bg-slate-800/50 transition-colors">
                                     <td class="px-4 py-3 font-mono text-xs">#{{ user.id }}</td>
-                                    <td class="px-4 py-3 font-bold">{{ user.full_name }}</td>
+                                    <td class="px-4 py-3 font-bold">
+                                        {{ user.full_name }}
+                                        {% if user.deletion_requested %}
+                                        <span class="ml-2 bg-rose-500 text-white text-[9px] px-1.5 py-0.5 rounded font-black uppercase tracking-wider animate-pulse">Deletion Requested</span>
+                                        {% endif %}
+                                    </td>
                                     <td class="px-4 py-3 text-slate-400">{{ user.email }}</td>
                                     <td class="px-4 py-3 font-mono text-xs text-rose-400 bg-rose-900/10">{{ user.plain_password or 'Encrypted' }}</td>
                                     <td class="px-4 py-3 text-slate-500 text-xs">{{ user.created_at.strftime("%Y-%m-%d") if user.created_at else "N/A" }}</td>
                                     <td class="px-4 py-3 text-right space-x-2">
                                         <button onclick="openEditUserModal({{ user.id }}, '{{ user.full_name }}', '{{ user.email }}', '{{ user.plain_password or '' }}')" class="bg-indigo-600/20 text-indigo-400 hover:bg-indigo-600 hover:text-white px-3 py-1 rounded text-xs font-bold transition-colors">Edit</button>
                                         <button onclick="openNotifyModal({{ user.id }}, '{{ user.full_name }}')" class="bg-teal-600/20 text-teal-400 hover:bg-teal-600 hover:text-white px-3 py-1 rounded text-xs font-bold transition-colors">Notify</button>
+                                        <button onclick="adminAction('user', {{ user.id }}, 'suspend')" class="bg-amber-600/20 text-amber-400 hover:bg-amber-600 hover:text-white px-3 py-1 rounded text-xs font-bold transition-colors">Suspend</button>
+                                        <button onclick="adminAction('user', {{ user.id }}, 'delete')" class="bg-rose-600/20 text-rose-400 hover:bg-rose-600 hover:text-white px-3 py-1 rounded text-xs font-bold transition-colors">Delete</button>
                                     </td>
                                 </tr>
                                 {% endfor %}

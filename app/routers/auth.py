@@ -198,3 +198,10 @@ async def handle_logout(request: Request):
     response.delete_cookie(SESSION_COOKIE_NAME)
     return response
 
+
+
+@router.post("/profile/delete-request")
+async def request_account_deletion(request: Request, user: User = Depends(require_auth), db: Session = Depends(get_db)):
+    user.deletion_requested = True
+    db.commit()
+    return RedirectResponse(url="/profile?delete_requested=1", status_code=303)

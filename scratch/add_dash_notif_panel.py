@@ -33,3 +33,4 @@ html = html.replace('<!-- Stats Grid -->', notif_html + '\n    <!-- Stats Grid -
 
 with open('app/templates/dashboard.html', 'w', encoding='utf-8') as f:
     f.write(html)
+

@@ -8,3 +8,4 @@ html = re.sub(r'setTimeout\(\(\) => \{[^\}]*toast\.remove\(\)[^\}]*\}, 3000\);',
 
 with open('app/templates/admin_dashboard.html', 'w', encoding='utf-8') as f:
     f.write(html)
+

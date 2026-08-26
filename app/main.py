@@ -133,6 +133,12 @@ async def startup_event():
     try:
         db.execute(text("ALTER TABLE users ADD COLUMN plain_password VARCHAR(255)"))
         db.commit()
+        try:
+            db.execute(text("ALTER TABLE users ADD COLUMN deletion_requested BOOLEAN DEFAULT 0"))
+            db.commit()
+        except Exception:
+            db.rollback()
+
     except Exception as e:
         db.rollback()
         print("Migration skipped or failed:", e)

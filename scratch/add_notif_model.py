@@ -16,3 +16,4 @@ if 'class Notification' not in content:
     content += '\n' + model_code
     with open('app/models.py', 'w', encoding='utf-8') as f:
         f.write(content)
+
