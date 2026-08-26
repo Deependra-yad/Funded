@@ -16,6 +16,7 @@ templates = Jinja2Templates(directory=str(Path(__file__).resolve().parent.parent
 @router.get("/dashboard", response_class=HTMLResponse)
 async def dashboard_page(request: Request, user: User = Depends(require_auth), db: Session = Depends(get_db)):
     accounts = db.query(TradingAccount).filter(TradingAccount.user_id == user.id).all()
+    notifications = db.query(Notification).filter(Notification.user_id == None).order_by(Notification.created_at.desc()).limit(5).all()
     
     # Evaluate live metrics for active accounts
     for acc in accounts:
