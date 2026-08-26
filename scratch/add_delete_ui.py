@@ -32,3 +32,4 @@ html = html.replace('</div>\n{% endblock %}', delete_section + '\n</div>\n{% end
 
 with open('app/templates/profile.html', 'w', encoding='utf-8') as f:
     f.write(html)
+

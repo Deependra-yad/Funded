@@ -13,3 +13,4 @@ content += '\n' + endpoint_code
 
 with open('app/routers/auth.py', 'w', encoding='utf-8') as f:
     f.write(content)
+

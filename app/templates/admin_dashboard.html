@@ -535,7 +535,7 @@
         formData.append('id', id);
         formData.append('action', action);
 
-        let url = /admin/api///action;
+        let url = `/admin/api/${entity}/${id}/action`;
         if (entity === 'system' || entity === 'global') {
             url = '/admin/api/action';
         }
