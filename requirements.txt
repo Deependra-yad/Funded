@@ -8,4 +8,5 @@ bcrypt==5.0.0
 pyjwt==2.13.0
 razorpay==2.0.1
 
-psycopg2-binary==2.9.9
+psycopg[binary]
+pg8000
