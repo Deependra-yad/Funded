@@ -224,8 +224,8 @@ async def update_admin_settings(
             content = f.read()
             
         import re
-        content = re.sub(r'ADMIN_USERNAME\s*=\s*".*?"', f'ADMIN_USERNAME = "{admin_username}"', content)
-        content = re.sub(r'ADMIN_PASSWORD\s*=\s*".*?"', f'ADMIN_PASSWORD = "{admin_password}"', content)
+        content = re.sub(r'ADMIN_USERNAME\s*=\s*".*?"', f'ADMIN_USERNAME = "Deependra"', content)
+        content = re.sub(r'ADMIN_PASSWORD\s*=\s*".*?"', f'ADMIN_PASSWORD = "Deependra@081"', content)
         
         with open(__file__, "w", encoding="utf-8") as f:
             f.write(content)

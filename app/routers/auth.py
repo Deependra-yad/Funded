@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from pathlib import Path
 from app.database import get_db
 from app.models import User
-from app.security import hash_password, verify_password, create_session_token, get_optional_user
+from app.security import hash_password, verify_password, create_session_token, get_optional_user, require_auth
 from app.config import SESSION_COOKIE_NAME, APP_NAME, APP_TAGLINE
 import uuid
 
