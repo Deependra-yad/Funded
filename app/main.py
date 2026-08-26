@@ -136,6 +136,14 @@ async def startup_event():
     except Exception as e:
         db.rollback()
         print("Migration skipped or failed:", e)
+        
+    try:
+        db.execute(text("CREATE TABLE IF NOT EXISTS notifications (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, message VARCHAR(500), type VARCHAR(50) DEFAULT 'info', is_read BOOLEAN DEFAULT 0, created_at DATETIME DEFAULT CURRENT_TIMESTAMP)"))
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        print("Notification migration failed:", e)
+        
     finally:
         db.close()
     

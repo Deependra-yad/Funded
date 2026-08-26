@@ -1,3 +1,4 @@
+from app.models import Notification
 from fastapi import APIRouter, Depends, Request, Form
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -38,7 +39,7 @@ async def dashboard_page(request: Request, user: User = Depends(require_auth), d
             "app_tagline": APP_TAGLINE,
             "active_page": "dashboard",
             "user": user,
-            "accounts": accounts,
+            "accounts": accounts, "notifications": notifications,
             "active_accounts": active_accounts,
             "passed_accounts": passed_accounts,
             "breached_accounts": breached_accounts,

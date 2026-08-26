@@ -310,7 +310,7 @@
         toast.className = 'toast ' + (type || 'success');
         toast.innerText = message;
         container.appendChild(toast);
-        setTimeout(() => { toast.style.animation = 'slideOut 0.3s ease forwards'; setTimeout(() => toast.remove(), 300); }, 3000);
+        setTimeout(() => { toast.style.animation = 'slideOut 0.3s ease forwards'; setTimeout(() => toast.remove(), 300); }, 8000);
     }
 
     function initTVWidget(containerId, sym, interval) {

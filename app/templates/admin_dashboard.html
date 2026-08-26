@@ -135,7 +135,7 @@
             <div class="flex items-center gap-6">
                 <div class="flex items-center gap-2 text-xs font-mono bg-slate-900/50 px-3 py-1.5 rounded border border-slate-700">
                     <span class="text-slate-400">Total Simulated AUM:</span>
-                    <span class="text-emerald-400 font-bold">${{ "{:,.0f}".format(stats.total_aum) }}</span>
+                    <span class="text-emerald-400 font-bold">₹{{ "{:,.0f}".format(stats.total_aum) }}</span>
                 </div>
                 <div class="flex items-center gap-2 text-xs font-mono">
                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -183,8 +183,8 @@
                     <h3 class="text-sm font-bold text-slate-100 mb-4 uppercase tracking-wider flex items-center gap-2"><i data-lucide="zap" class="w-4 h-4 text-amber-400"></i> Super Admin Quick Actions</h3>
                     <div class="flex flex-wrap gap-3">
                         <button onclick="adminAction('global', 'BROADCAST: Important platform update!', 'broadcast')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg shadow-indigo-500/20">Broadcast Platform Message</button>
-                        <button onclick="showToast('Market Sync Forced', 'success')" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-slate-600">Force Market Sync</button>
-                        <button onclick="showToast('Master Promo Generated: PROMO2026', 'success')" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-slate-600">Generate Master Promo</button>
+                        <button onclick="adminAction('global', '0', 'force_sync')" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-slate-600">Force Market Sync</button>
+                        <button onclick="adminAction('global', '0', 'generate_promo')" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-slate-600">Generate Master Promo</button>
                         <button onclick="adminAction('global', '0', 'halt_trading')" class="bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-rose-500/20">Emergency Stop Trading</button>
                     </div>
                 </div>
@@ -239,6 +239,8 @@
                                     <th class="px-4 py-4">Status</th>
                                     <th class="px-4 py-4 text-right">Balance</th>
                                     <th class="px-4 py-4 text-right">Equity</th>
+                                    <th class="px-4 py-4 text-center">Days</th>
+                                    <th class="px-4 py-4 text-center">Loss Limits</th>
                                     <th class="px-4 py-4 text-center">God Controls</th>
                                 </tr>
                             </thead>
@@ -256,8 +258,8 @@
                                             <div class="text-[9px] text-rose-500 mt-1 max-w-[150px] truncate">{{ acc.breach_reason }}</div>
                                         {% endif %}
                                     </td>
-                                    <td class="px-4 py-4 text-right font-mono font-medium">${{ "{:,.2f}".format(acc.current_balance) }}</td>
-                                    <td class="px-4 py-4 text-right font-mono font-medium">${{ "{:,.2f}".format(acc.current_equity) }}</td>
+                                    <td class="px-4 py-4 text-right font-mono font-medium">₹{{ "{:,.2f}".format(acc.current_balance) }}</td>
+                                    <td class="px-4 py-4 text-right font-mono font-medium">₹{{ "{:,.2f}".format(acc.current_equity) }}</td>
                                     <td class="px-4 py-4 text-center">
                                         <div class="flex items-center justify-center gap-2">
                                             <button onclick="adminAction('account', {{ acc.id }}, 'pass_phase')" class="text-[10px] bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white px-2.5 py-1 rounded transition-colors font-bold border border-emerald-500/20">PASS</button>
@@ -425,7 +427,7 @@
     function showToast(msg, type='success') {
         const container = document.getElementById('toast-container');
         const t = document.createElement('div');
-        t.className = `px-4 py-3 rounded-lg text-sm font-bold text-white shadow-lg transform transition-all duration-300 translate-x-full ${type==='success' ? 'bg-emerald-600' : 'bg-rose-600'}`;
+        t.className = `px-4 py-3 rounded-lg text-sm font-bold text-white shadow-lg transform transition-all duration-300 translate-x-full ₹{type==='success' ? 'bg-emerald-600' : 'bg-rose-600'}`;
         t.innerText = msg;
         container.appendChild(t);
         
@@ -519,15 +521,20 @@
     }
 
     async function adminAction(entity, id, action) {
-        if(!confirm(`EXECUTE: '${{action}}' on ${{entity}} #${{id}}?`)) return;
+        if(!confirm(`EXECUTE: '₹{{action}}' on ₹{{entity}} #₹{{id}}?`)) return;
         
         const formData = new FormData();
         formData.append('entity', entity);
         formData.append('id', id);
         formData.append('action', action);
 
+        let url = /admin/api///action;
+        if (entity === 'system' || entity === 'global') {
+            url = '/admin/api/action';
+        }
+
         try {
-            const res = await fetch('/admin/api/action', {
+            const res = await fetch(url, {
                 method: 'POST',
                 body: formData
             });

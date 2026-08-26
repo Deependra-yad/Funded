@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+</head>
+<body>
+    <div id="tv1" style="height:300px;"></div>
+    <div id="tv2" style="height:300px;"></div>
+    <div id="tv3" style="height:300px;"></div>
+    <script>
+        new TradingView.widget({"container_id": "tv1", "symbol": "NSE:NIFTY", "interval": "D"});
+        new TradingView.widget({"container_id": "tv2", "symbol": "BSE:SENSEX", "interval": "D"});
+        new TradingView.widget({"container_id": "tv3", "symbol": "NSE:RELIANCE", "interval": "D"});
+    </script>
+</body>
+</html>
+
