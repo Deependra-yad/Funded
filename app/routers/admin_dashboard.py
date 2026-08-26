@@ -4,9 +4,9 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from pathlib import Path
-from app.database import get_db
-from app.models import User, TradingAccount, TradePosition, ChallengePackage
-from app.config import APP_NAME
+from ..database import get_db
+from ..models import User, TradingAccount, TradePosition, ChallengePackage
+from ..config import APP_NAME
 
 router = APIRouter()
 templates = Jinja2Templates(directory=str(Path(__file__).resolve().parent.parent / "templates"))
@@ -184,7 +184,7 @@ async def admin_update_user(
     db: Session = Depends(get_db)
 ):
     require_super_admin(request)
-    from app.security import hash_password
+    from ..security import hash_password
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         return JSONResponse(status_code=404, content={"error": "User not found"})
@@ -206,7 +206,7 @@ async def admin_notify_user(
     message: str = Form(...)
 ):
     require_super_admin(request)
-    from app.engine.market_data import admin_notifications
+    from ..engine.market_data import admin_notifications
     if user_id not in admin_notifications:
         admin_notifications[user_id] = []
     admin_notifications[user_id].append(message)
@@ -250,9 +250,9 @@ async def admin_generic_action(
     elif action == "force_reset":
         return JSONResponse({"success": True, "message": "Drawdowns forcefully reset."})
     elif action == "broadcast":
-        from app.engine.market_data import admin_notifications
-        from app.database import get_db, SessionLocal
-        from app.models import User, TradingAccount, TradePosition, ChallengePackage
+        from ..engine.market_data import admin_notifications
+        from ..database import get_db, SessionLocal
+        from ..models import User, TradingAccount, TradePosition, ChallengePackage
         db = SessionLocal()
         users = db.query(User).all()
         for u in users:
