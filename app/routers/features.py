@@ -1,20 +1,15 @@
-from fastapi import APIRouter, Depends, Request
-from fastapi.responses import HTMLResponse
+from fastapi import APIRouter, Depends, Request, Form, HTTPException, Query
+from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from pathlib import Path
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
-from app.models import User, TradingAccount
-from app.security import require_auth
+from app.models import User, TradingAccount, ChatMessage
+from app.security import require_auth, get_current_user_from_request
 from app.database import get_db
 from app.config import APP_NAME
 
 router = APIRouter()
-
-from fastapi import Form, HTTPException
-from fastapi.responses import JSONResponse
-from app.models import ChatMessage
-from app.security import get_current_user_from_request
 
 ADMIN_SESSION_TOKEN = "super_admin_token_secure_9921"
 
