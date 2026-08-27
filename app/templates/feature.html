@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}{{ feature.title }} - {{ app_name }}{% endblock %}
+
+{% block breadcrumb %}
+    <span class="opacity-50">App</span> <span class="mx-2">/</span> <strong>{{ feature.title }}</strong>
+{% endblock %}
+
+{% block content %}
+<div class="h-full flex flex-col">
+    <div class="mb-6">
+        <h1 class="text-3xl font-black text-slate-900 dark:text-white flex items-center gap-3">
+            <i data-lucide="{{ feature.icon }}" class="w-8 h-8 text-emerald-500"></i>
+            {{ feature.title }}
+        </h1>
+        <p class="text-slate-500 dark:text-slate-400 mt-2">{{ feature.desc }}</p>
+    </div>
+    
+    <div class="flex-1 bg-white dark:bg-darkpanel border border-slate-200 dark:border-darkborder rounded-2xl overflow-hidden shadow-lg p-2 min-h-[500px]">
+        {{ feature.widget | safe }}
+    </div>
+</div>
+{% endblock %}
