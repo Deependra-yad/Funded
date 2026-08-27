@@ -314,7 +314,7 @@ async def admin_create_package(
     )
     db.add(pkg)
     db.commit()
-    return RedirectResponse(url="/admin-dashboard", status_code=302)
+    return RedirectResponse(url="/admin", status_code=302)
 
 @router.post("/admin/api/package/{pkg_id}/delete")
 async def admin_delete_package(
@@ -325,4 +325,4 @@ async def admin_delete_package(
     if pkg:
         db.delete(pkg)
         db.commit()
-    return RedirectResponse(url="/admin-dashboard", status_code=302)
+    return RedirectResponse(url="/admin", status_code=302)

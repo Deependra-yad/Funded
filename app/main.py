@@ -27,6 +27,21 @@ from app.routers import (
 Base.metadata.create_all(bind=engine)
 seed_database()
 
+
+    # Auto-delete users pending deletion for 15+ days
+    try:
+        from datetime import datetime, timedelta
+        db = SessionLocal()
+        cutoff_date = datetime.utcnow() - timedelta(days=15)
+        users_to_delete = db.query(User).filter(User.deletion_requested == True, User.deletion_requested_at <= cutoff_date).all()
+        for u in users_to_delete:
+            db.delete(u)
+        db.commit()
+    except Exception as e:
+        print("Auto-delete failed:", e)
+    finally:
+        db.close()
+
 app = FastAPI(
     title="FundedDesk - India's Premier Quantitative Prop Firm",
     description="Production-Ready Proprietary Trading Evaluation & Capital Funding Platform",
@@ -143,6 +158,13 @@ async def startup_event():
     except Exception:
         db.rollback()
         
+
+    try:
+        db.execute(text("ALTER TABLE users ADD COLUMN deletion_requested_at TIMESTAMP"))
+        db.commit()
+    except Exception:
+        db.rollback()
+
     try:
         db.execute(text("ALTER TABLE users ADD COLUMN deletion_reason VARCHAR(500)"))
         db.commit()

@@ -204,3 +204,4 @@ content = re.sub(r'FEATURE_CONTENT\s*=\s*\{.*?\n}', detailed_features, content, 
 
 with open('app/routers/features.py', 'w', encoding='utf-8') as f:
     f.write(content)
+

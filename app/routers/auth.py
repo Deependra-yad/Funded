@@ -41,6 +41,7 @@ async def handle_login(
     email_clean = email.strip().lower()
     user = db.query(User).filter(User.email == email_clean).first()
     
+    
     if not user:
         return templates.TemplateResponse(
             request=request,
@@ -48,10 +49,20 @@ async def handle_login(
             context={
                 "app_name": APP_NAME,
                 "next": next,
-                "error": "No account found with this email address.",
-                "email": email_clean
+                "error": "Invalid email or password."
             }
         )
+
+    if user.deletion_requested:
+        return templates.TemplateResponse(
+            request=request,
+            name="cancel_deletion.html",
+            context={
+                "app_name": APP_NAME,
+                "email": user.email
+            }
+        )
+
 
     # If user has no password set (e.g. from seed migration), set it now
     if not user.hashed_password:

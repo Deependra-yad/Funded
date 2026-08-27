@@ -319,7 +319,7 @@
             "symbol": sym,
             "interval": interval,
             "timezone": "Asia/Kolkata",
-            "theme": "light",
+            "theme": localStorage.getItem("theme") === "dark" ? "dark" : "light",
             "style": "1",
             "locale": "in",
             "enable_publishing": false,

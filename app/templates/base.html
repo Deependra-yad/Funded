@@ -37,7 +37,34 @@
         }
     </style>
     {% block extra_head %}{% endblock %}
+
+    <style>
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printableArea, #printableArea * {
+                visibility: visible;
+            }
+            #printableArea {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            .print\:hidden {
+                display: none !important;
+            }
+            @page {
+                size: landscape;
+                margin: 0;
+            }
+        }
+    </style>
 </head>
+
 <body class="bg-slate-50 text-slate-900 dark:bg-darkbg dark:text-slate-300 antialiased flex h-screen overflow-hidden transition-colors duration-200">
 
     <!-- Mobile sidebar overlay -->
