@@ -15,3 +15,4 @@ if 'def request_deletion' not in content:
 
 with open('app/routers/profile.py', 'w', encoding='utf-8') as f:
     f.write(content)
+

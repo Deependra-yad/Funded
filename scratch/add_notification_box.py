@@ -38,3 +38,4 @@ content = content.replace('<!-- Account Cards Section -->', notification_box + '
 
 with open('app/templates/dashboard.html', 'w', encoding='utf-8') as f:
     f.write(content)
+

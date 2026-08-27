@@ -22,3 +22,4 @@ if 'def get_notifications' not in content:
 
 with open('app/routers/dashboard.py', 'w', encoding='utf-8') as f:
     f.write(content)
+

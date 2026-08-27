@@ -1,3 +1,4 @@
+from datetime import datetime
 from fastapi import APIRouter, Depends, Request, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -67,5 +68,21 @@ async def update_profile(
 async def request_deletion(request: Request, reason: str = Form(""), user: User = Depends(require_auth), db: Session = Depends(get_db)):
     user.deletion_requested = True
     user.deletion_reason = reason
+    user.deletion_requested_at = datetime.utcnow()
     db.commit()
-    return RedirectResponse(url="/profile?deleted=1", status_code=303)
+    
+    # Instant logout
+    response = RedirectResponse(url="/login?msg=Account%20deletion%20requested.%20You%20have%20been%20logged%20out.", status_code=303)
+    response.delete_cookie(key="fundeddesk_session")
+    return response
+    
+@router.post("/profile/cancel-deletion")
+async def cancel_deletion(request: Request, email: str = Form(...), reason: str = Form(...), db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == email).first()
+    if user and user.deletion_requested:
+        user.deletion_requested = False
+        user.deletion_reason = f"CANCELLED: {reason}"
+        user.deletion_requested_at = None
+        db.commit()
+    return RedirectResponse(url="/login?msg=Deletion%20cancelled.%20You%20may%20now%20login.", status_code=303)
+

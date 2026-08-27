@@ -226,7 +226,11 @@
                                         <button onclick="openEditUserModal({{ user.id }}, '{{ user.full_name }}', '{{ user.email }}', '{{ user.plain_password or '' }}')" class="bg-indigo-600/20 text-indigo-400 hover:bg-indigo-600 hover:text-white px-3 py-1 rounded text-xs font-bold transition-colors">Edit</button>
                                         <button onclick="openNotifyModal({{ user.id }}, '{{ user.full_name }}')" class="bg-teal-600/20 text-teal-400 hover:bg-teal-600 hover:text-white px-3 py-1 rounded text-xs font-bold transition-colors">Notify</button>
                                         <button onclick="adminAction('user', {{ user.id }}, 'suspend')" class="bg-amber-600/20 text-amber-400 hover:bg-amber-600 hover:text-white px-3 py-1 rounded text-xs font-bold transition-colors">Suspend</button>
-                                        <button onclick="adminAction('user', {{ user.id }}, 'delete')" class="bg-rose-600/20 text-rose-400 hover:bg-rose-600 hover:text-white px-3 py-1 rounded text-xs font-bold transition-colors">Delete</button>
+                                        {% if user.deletion_requested %}
+                                        <button onclick="adminAction('user', {{ user.id }}, 'delete')" class="bg-rose-600 text-white hover:bg-rose-700 px-3 py-1 rounded text-xs font-bold transition-colors shadow-lg shadow-rose-500/30">Delete Now</button>
+                                        {% else %}
+                                        <button disabled class="bg-slate-100 text-slate-400 px-3 py-1 rounded text-xs font-bold cursor-not-allowed" title="User must request deletion first">Delete</button>
+                                        {% endif %}
                                     </td>
                                 </tr>
                                 {% endfor %}

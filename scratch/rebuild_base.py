@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="en" x-data="{ darkMode: localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches), sidebarOpen: false }" :class="{ 'dark': darkMode }">
+html = r'''<!DOCTYPE html>
+<html lang="en" x-data="{ darkMode: false, sidebarOpen: false }" :class="{ 'dark': darkMode }">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -178,7 +178,7 @@
             <!-- Right: Dark Mode & Profile -->
             <div class="flex items-center gap-3">
                 <!-- Action Icons -->
-                <button @click="darkMode = !darkMode; localStorage.setItem('theme', darkMode ? 'dark' : 'light')" class="p-2 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-colors" title="Toggle Dark Mode">
+                <button @click="darkMode = !darkMode" class="p-2 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-colors" title="Toggle Dark Mode">
                     <i data-lucide="moon" class="w-5 h-5" x-show="!darkMode"></i>
                     <i data-lucide="sun" class="w-5 h-5" x-show="darkMode" style="display:none;"></i>
                 </button>
@@ -274,3 +274,7 @@
     </script>
 </body>
 </html>
+'''
+
+with open('app/templates/base.html', 'w', encoding='utf-8') as f:
+    f.write(html)
