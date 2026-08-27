@@ -2,11 +2,41 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from pathlib import Path
-from app.models import User
+from sqlalchemy.orm import Session
+from sqlalchemy import desc
+from app.models import User, TradingAccount
 from app.security import require_auth
+from app.database import get_db
 from app.config import APP_NAME
 
 router = APIRouter()
+
+from fastapi import Form
+from fastapi.responses import JSONResponse
+from app.models import ChatMessage
+
+@router.post("/api/chat")
+async def send_chat(request: Request, message: str = Form(...), user: User = Depends(require_auth), db: Session = Depends(get_db)):
+    if not message.strip():
+        return JSONResponse({"success": False})
+    msg = ChatMessage(user_id=user.id, is_admin=user.is_super_admin, message=message.strip())
+    db.add(msg)
+    db.commit()
+    return JSONResponse({"success": True})
+
+@router.get("/api/chat")
+async def get_chat(request: Request, user: User = Depends(require_auth), db: Session = Depends(get_db)):
+    # If admin, fetch all chats. If user, fetch only their own chats.
+    if user.is_super_admin:
+        messages = db.query(ChatMessage).order_by(ChatMessage.created_at.desc()).limit(100).all()
+    else:
+        messages = db.query(ChatMessage).filter(ChatMessage.user_id == user.id).order_by(ChatMessage.created_at.desc()).limit(50).all()
+    
+    return JSONResponse([
+        {"id": m.id, "user_id": m.user_id, "is_admin": m.is_admin, "message": m.message, "created_at": m.created_at.isoformat()}
+        for m in reversed(messages)
+    ])
+
 templates = Jinja2Templates(directory=str(Path(__file__).resolve().parent.parent / "templates"))
 
 
@@ -84,15 +114,33 @@ FEATURE_CONTENT = {
         "icon": "life-buoy",
         "desc": "24/7 Priority Support for all our traders.",
         "widget": '''
-        <div class="p-6 text-center max-w-lg mx-auto py-12">
-            <div class="w-20 h-20 bg-blue-500/10 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                <i data-lucide="message-square" class="w-10 h-10"></i>
+        <div class="h-[500px] flex flex-col" x-data="{ messages: [], newMessage: '', fetchChat() { fetch('/api/chat').then(r=>r.json()).then(d=> { this.messages = d; setTimeout(()=>$refs.chatbox.scrollTop = $refs.chatbox.scrollHeight, 100); }); } }" x-init="fetchChat(); setInterval(()=>fetchChat(), 3000);">
+            <div class="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex justify-between items-center">
+                <div class="font-bold flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div> Live Support</div>
+                <div class="text-xs text-slate-500">Average response: 3 mins</div>
             </div>
-            <h3 class="text-xl font-bold text-white mb-2">Live Chat Support</h3>
-            <p class="text-slate-400 mb-8">Our average response time is under 3 minutes. Connect with a risk management specialist instantly.</p>
-            <button class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-8 rounded-xl w-full transition-colors">Start Conversation</button>
-            <div class="mt-6 text-sm text-slate-500">Alternatively, email us at support@fundeddesk.com</div>
-        </div>'''
+            <div x-ref="chatbox" class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 dark:bg-slate-900/50">
+                <template x-for="m in messages" :key="m.id">
+                    <div class="flex flex-col" :class="m.is_admin ? 'items-start' : 'items-end'">
+                        <div class="max-w-[80%] p-3 rounded-2xl" :class="m.is_admin ? 'bg-white dark:bg-slate-800 text-slate-800 dark:text-white rounded-tl-none border border-slate-200 dark:border-slate-700' : 'bg-blue-600 text-white rounded-tr-none shadow-md shadow-blue-500/20'">
+                            <div class="text-xs font-bold mb-1 opacity-50" x-text="m.is_admin ? 'Support Agent' : ('User ' + m.user_id)"></div>
+                            <p class="text-sm" x-text="m.message"></p>
+                        </div>
+                        <div class="text-[10px] text-slate-400 mt-1" x-text="new Date(m.created_at).toLocaleTimeString()"></div>
+                    </div>
+                </template>
+                <div x-show="messages.length === 0" class="text-center text-slate-500 text-sm mt-10">Send a message to start chatting with support.</div>
+            </div>
+            <div class="p-4 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900">
+                <form @submit.prevent="if(newMessage){ let fd = new FormData(); fd.append('message', newMessage); fetch('/api/chat', {method:'POST', body:fd}).then(()=>{ newMessage=''; fetchChat(); }); }">
+                    <div class="flex gap-2">
+                        <input type="text" x-model="newMessage" placeholder="Type your message..." class="flex-1 bg-slate-100 dark:bg-slate-800 border-none rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none text-slate-800 dark:text-white">
+                        <button type="submit" class="bg-blue-600 text-white p-2 rounded-xl hover:bg-blue-500 transition-colors"><i data-lucide="send" class="w-5 h-5"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+'''
     },
     "coupons": {
         "title": "Coupon Codes",
@@ -207,8 +255,9 @@ FEATURE_CONTENT = {
 }
 
 
+
 @router.get("/feature/{name}", response_class=HTMLResponse)
-async def view_feature(request: Request, name: str, user: User = Depends(require_auth)):
+async def view_feature(request: Request, name: str, user: User = Depends(require_auth), db: Session = Depends(get_db)):
     feature = FEATURE_CONTENT.get(name, {
         "title": name.replace("-", " ").title(),
         "icon": "box",
@@ -216,7 +265,56 @@ async def view_feature(request: Request, name: str, user: User = Depends(require
         "widget": "<div class='flex flex-col items-center justify-center h-64 text-slate-500'><i data-lucide='settings' class='w-12 h-12 mb-4 animate-spin-slow opacity-20'></i><p>Check back later.</p></div>"
     })
     
+    if name == "leaderboard":
+        top_accounts = db.query(TradingAccount).order_by(desc(TradingAccount.balance)).limit(10).all()
+        
+        rows = ""
+        for i, acc in enumerate(top_accounts):
+            rank = i + 1
+            trader_name = f"Trader {acc.user_id}"
+            
+            # Highlight top 3
+            if rank == 1:
+                rank_col = f'<td class="py-4 font-bold text-amber-500">{rank}</td>'
+            elif rank == 2:
+                rank_col = f'<td class="py-4 font-bold text-slate-300">{rank}</td>'
+            elif rank == 3:
+                rank_col = f'<td class="py-4 font-bold text-amber-700">{rank}</td>'
+            else:
+                rank_col = f'<td class="py-4 font-bold text-slate-500">{rank}</td>'
+                
+            rows += f'''
+            <tr class="border-t border-slate-800">
+                {rank_col}
+                <td class="py-4 flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-white">{acc.user_id}</div>
+                    {trader_name}
+                </td>
+                <td class="py-4 font-mono text-emerald-400">₹{acc.balance:,.2f}</td>
+                <td class="py-4 text-right">Funded</td>
+            </tr>
+            '''
+            
+        feature["widget"] = f'''
+        <div class="p-6">
+            <div class="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-4 flex items-center justify-between mb-6">
+                <div>
+                    <div class="text-indigo-400 font-bold">Your Global Rank</div>
+                    <div class="text-2xl font-black text-white">Top 10%</div>
+                </div>
+                <i data-lucide="award" class="w-10 h-10 text-indigo-500 opacity-50"></i>
+            </div>
+            <table class="w-full text-left">
+                <thead><tr class="text-xs text-slate-500 uppercase"><th class="pb-3">Rank</th><th class="pb-3">Trader</th><th class="pb-3">Balance</th><th class="pb-3 text-right">Status</th></tr></thead>
+                <tbody class="text-slate-300">
+                    {rows}
+                </tbody>
+            </table>
+        </div>
+        '''
+
     return templates.TemplateResponse(
+
         request=request,
         name="feature.html",
         context={

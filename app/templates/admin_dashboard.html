@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Super Admin Control - {{ app_name }}</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -642,7 +643,7 @@
         
         <div id="addPackageForm" class="p-6 bg-slate-800/20 border-b border-slate-800 hidden">
             <form action="/admin/api/package" method="POST" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div><label class="text-xs text-slate-400">Name</label><input type="text" name="name" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white" required placeholder="$50,000 Instant"></div>
+                <div><label class="text-xs text-slate-400">Name</label><input type="text" name="name" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white" required placeholder="₹50,000 Instant"></div>
                 <div>
                     <label class="text-xs text-slate-400">Model Type</label>
                     <select name="model_type" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white" required>
@@ -651,8 +652,8 @@
                         <option value="Instant">Instant</option>
                     </select>
                 </div>
-                <div><label class="text-xs text-slate-400">Account Size ($)</label><input type="number" name="account_size" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white" required></div>
-                <div><label class="text-xs text-slate-400">Price ($)</label><input type="number" name="price" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white" required></div>
+                <div><label class="text-xs text-slate-400">Account Size (₹)</label><input type="number" name="account_size" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white" required></div>
+                <div><label class="text-xs text-slate-400">Price (₹)</label><input type="number" name="price" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white" required></div>
                 
                 <div><label class="text-xs text-slate-400">Profit Target P1 (%)</label><input type="number" step="0.1" name="profit_target_p1" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white" value="8.0" required></div>
                 <div><label class="text-xs text-slate-400">Profit Target P2 (%)</label><input type="number" step="0.1" name="profit_target_p2" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white" value="5.0" required></div>
@@ -689,8 +690,8 @@
                         <td class="px-4 py-3 text-slate-300">
                             <span class="bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded text-xs font-bold">{{ pkg.model_type }}</span>
                         </td>
-                        <td class="px-4 py-3 font-mono text-emerald-400">${{ "{:,.0f}".format(pkg.account_size) }}</td>
-                        <td class="px-4 py-3 font-mono text-white">${{ "{:,.2f}".format(pkg.price) }}</td>
+                        <td class="px-4 py-3 font-mono text-emerald-400">₹{{ "{:,.0f}".format(pkg.account_size) }}</td>
+                        <td class="px-4 py-3 font-mono text-white">₹{{ "{:,.2f}".format(pkg.price) }}</td>
                         <td class="px-4 py-3 text-slate-400 text-xs">P1: {{ pkg.profit_target_p1 }}% | P2: {{ pkg.profit_target_p2 }}%</td>
                         <td class="px-4 py-3 text-rose-400 text-xs">Daily: {{ pkg.max_daily_loss }}% | Max: {{ pkg.max_total_loss }}%</td>
                         <td class="px-4 py-3 text-right">
@@ -702,6 +703,39 @@
                     {% endfor %}
                 </tbody>
             </table>
+        </div>
+    </div>
+
+
+    <!-- Admin Live Support Chat -->
+    <div class="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-2xl mb-8 mt-12 max-w-7xl mx-auto flex flex-col h-[500px]" x-data="{ messages: [], newMessage: '', fetchChat() { fetch('/api/chat').then(r=>r.json()).then(d=> { this.messages = d; setTimeout(()=>$refs.adminchatbox.scrollTop = $refs.adminchatbox.scrollHeight, 100); }); } }" x-init="fetchChat(); setInterval(()=>fetchChat(), 3000);">
+        <div class="p-6 border-b border-slate-800 bg-slate-800/50 flex justify-between items-center">
+            <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                <i data-lucide="message-square" class="w-6 h-6 text-blue-500"></i> Global Live Support Chat
+            </h3>
+            <span class="text-xs text-slate-400">Showing all user messages</span>
+        </div>
+        
+        <div x-ref="adminchatbox" class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-800/20">
+            <template x-for="m in messages" :key="m.id">
+                <div class="flex flex-col" :class="m.is_admin ? 'items-end' : 'items-start'">
+                    <div class="max-w-[80%] p-3 rounded-2xl" :class="m.is_admin ? 'bg-blue-600 text-white rounded-tr-none shadow-md shadow-blue-500/20' : 'bg-slate-800 text-white rounded-tl-none border border-slate-700'">
+                        <div class="text-xs font-bold mb-1 opacity-50" x-text="m.is_admin ? 'You (Admin)' : ('User ID: ' + m.user_id)"></div>
+                        <p class="text-sm" x-text="m.message"></p>
+                    </div>
+                    <div class="text-[10px] text-slate-500 mt-1" x-text="new Date(m.created_at).toLocaleTimeString()"></div>
+                </div>
+            </template>
+            <div x-show="messages.length === 0" class="text-center text-slate-500 text-sm mt-10">No chat messages yet.</div>
+        </div>
+        
+        <div class="p-4 border-t border-slate-800 bg-slate-900">
+            <form @submit.prevent="if(newMessage){ let fd = new FormData(); fd.append('message', newMessage); fetch('/api/chat', {method:'POST', body:fd}).then(()=>{ newMessage=''; fetchChat(); }); }">
+                <div class="flex gap-2">
+                    <input type="text" x-model="newMessage" placeholder="Reply as Admin..." class="flex-1 bg-slate-800 border-none rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none text-white">
+                    <button type="submit" class="bg-blue-600 text-white p-2 rounded-xl hover:bg-blue-500 transition-colors"><i data-lucide="send" class="w-5 h-5"></i></button>
+                </div>
+            </form>
         </div>
     </div>
 

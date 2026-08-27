@@ -217,3 +217,14 @@ class AppSetting(Base):
     id = Column(Integer, primary_key=True, index=True)
     key = Column(String(50), unique=True, index=True)
     value = Column(String(255))
+
+
+class ChatMessage(Base):
+    __tablename__ = "chat_messages"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    is_admin = Column(Boolean, default=False)
+    message = Column(String(1000))
+    created_at = Column(DateTime, default=utc_now)
+    
+    user = relationship("User")

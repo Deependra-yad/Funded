@@ -23,3 +23,4 @@ if 'users_to_delete' not in content:
     content = content.replace('app = FastAPI(', cleanup_logic + '\napp = FastAPI(')
     with open('app/main.py', 'w', encoding='utf-8') as f:
         f.write(content)
+
