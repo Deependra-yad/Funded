@@ -92,3 +92,40 @@ async def get_notifications(request: Request, user: User = Depends(require_auth)
         {"id": n.id, "message": n.message, "type": n.type if hasattr(n, 'type') else "info", "created_at": n.created_at.isoformat() if n.created_at else ""}
         for n in notifications
     ])
+
+
+@router.get("/accounts/{account_type}", response_class=HTMLResponse)
+async def view_accounts(request: Request, account_type: str, user: User = Depends(require_auth), db: Session = Depends(get_db)):
+    accounts_query = db.query(TradingAccount).filter(TradingAccount.user_id == user.id)
+    
+    if account_type == "challenge":
+        accounts_query = accounts_query.filter(TradingAccount.model_type != 'Instant')
+    elif account_type == "instant":
+        accounts_query = accounts_query.filter(TradingAccount.model_type == 'Instant')
+    elif account_type == "pending":
+        accounts_query = accounts_query.filter(TradingAccount.status == 'PENDING')
+        
+    accounts = accounts_query.all()
+    
+    # Calculate stats for these specific accounts
+    total_balance = sum(a.initial_balance for a in accounts)
+    total_equity = sum(a.current_equity for a in accounts)
+    total_profit = sum(a.current_profit for a in accounts)
+    active_accounts = [a for a in accounts if a.status == 'ACTIVE']
+    passed_accounts = [a for a in accounts if a.status == 'PASSED']
+
+    return templates.TemplateResponse(
+        request=request,
+        name="dashboard.html",
+        context={
+            "app_name": APP_NAME,
+            "user": user,
+            "accounts": accounts,
+            "total_balance": total_balance,
+            "total_equity": total_equity,
+            "total_profit": total_profit,
+            "active_accounts": active_accounts,
+            "passed_accounts": passed_accounts,
+            "filter_type": account_type.title()
+        }
+    )

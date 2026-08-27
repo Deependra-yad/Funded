@@ -23,10 +23,10 @@
                     <span class="text-xs font-bold ml-2 px-2.5 py-0.5 rounded-full {% if acc.status == 'ACTIVE' %}bg-blue-100 text-blue-700{% elif acc.status == 'PASSED' %}bg-emerald-100 text-emerald-700{% else %}bg-rose-100 text-rose-700{% endif %}">
                         {{ acc.status }}
                     </span>
-                    <span class="text-xs font-semibold ml-1 text-slate-500">({{ acc.phase }} &middot; ${{ acc.initial_balance|inr }})</span>
+                    <span class="text-xs font-semibold ml-1 text-slate-500">({{ acc.phase }} &middot; ₹{{ acc.initial_balance|inr }})</span>
                 </div>
                 <div class="text-xs font-mono font-bold text-slate-700">
-                    Equity: ${{ acc.current_equity|inr(2) }}
+                    Equity: ₹{{ acc.current_equity|inr(2) }}
                 </div>
             </div>
 

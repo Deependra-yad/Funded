@@ -232,8 +232,8 @@
                         <td class="px-4 py-3 text-slate-300">
                             <span class="bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded text-xs font-bold">{{ pkg.model_type }}</span>
                         </td>
-                        <td class="px-4 py-3 font-mono text-emerald-400">${{ "{:,.0f}".format(pkg.account_size) }}</td>
-                        <td class="px-4 py-3 font-mono text-white">${{ "{:,.2f}".format(pkg.price) }}</td>
+                        <td class="px-4 py-3 font-mono text-emerald-400">₹{{ "{:,.0f}".format(pkg.account_size) }}</td>
+                        <td class="px-4 py-3 font-mono text-white">₹{{ "{:,.2f}".format(pkg.price) }}</td>
                         <td class="px-4 py-3 text-slate-400 text-xs">P1: {{ pkg.profit_target_p1 }}% | P2: {{ pkg.profit_target_p2 }}%</td>
                         <td class="px-4 py-3 text-rose-400 text-xs">Daily: {{ pkg.max_daily_loss }}% | Max: {{ pkg.max_total_loss }}%</td>
                         <td class="px-4 py-3 text-right">
@@ -366,7 +366,7 @@
             <div class="flex items-center gap-6">
                 <div class="flex items-center gap-2 text-xs font-mono bg-slate-900/50 px-3 py-1.5 rounded border border-slate-700">
                     <span class="text-slate-400">Total Simulated AUM:</span>
-                    <span class="text-emerald-400 font-bold">${{ "{:,.0f}".format(stats.total_aum) }}</span>
+                    <span class="text-emerald-400 font-bold">₹{{ "{:,.0f}".format(stats.total_aum) }}</span>
                 </div>
                 <div class="flex items-center gap-2 text-xs font-mono">
                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -509,8 +509,8 @@
                                             <div class="text-[9px] text-rose-500 mt-1 max-w-[150px] truncate">{{ acc.breach_reason }}</div>
                                         {% endif %}
                                     </td>
-                                    <td class="px-4 py-4 text-right font-mono font-medium">${{ "{:,.2f}".format(acc.current_balance) }}</td>
-                                    <td class="px-4 py-4 text-right font-mono font-medium">${{ "{:,.2f}".format(acc.current_equity) }}</td>
+                                    <td class="px-4 py-4 text-right font-mono font-medium">₹{{ "{:,.2f}".format(acc.current_balance) }}</td>
+                                    <td class="px-4 py-4 text-right font-mono font-medium">₹{{ "{:,.2f}".format(acc.current_equity) }}</td>
                                     <td class="px-4 py-4 text-center">
                                         <div class="flex items-center justify-center gap-2">
                                             <button onclick="adminAction('account', {{ acc.id }}, 'pass_phase')" class="text-[10px] bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white px-2.5 py-1 rounded transition-colors font-bold border border-emerald-500/20">
@@ -847,7 +847,7 @@
     }
 
     async function adminAction(entity, id, action) {
-        if(!confirm(`EXECUTE: '${{action}}' on ${{entity}} #${{id}}?`)) return;
+        if(!confirm(`EXECUTE: '₹{{action}}' on ₹{{entity}} #₹{{id}}?`)) return;
         
         const formData = new FormData();
         formData.append('entity', entity);

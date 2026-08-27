@@ -51,8 +51,8 @@
             <label class="package-card cursor-pointer block border-2 rounded-xl p-3.5 text-center transition-all border-slate-200 hover:border-slate-300" data-model="{{ pkg.model_type }}" data-price="{{ pkg.price }}" data-size="{{ pkg.account_size }}" data-id="{{ pkg.id }}">
                 <input type="radio" name="package_id" value="{{ pkg.id }}" class="hidden" onchange="updateSummary()">
                 <div class="text-lg font-black text-slate-900 font-mono">{{ pkg.name }}</div>
-                <div class="text-xs text-slate-500 font-semibold mt-1">${{ pkg.account_size|inr }} Capital</div>
-                <div class="text-sm font-extrabold text-blue-600 mt-2 font-mono">${{ pkg.price|inr }}</div>
+                <div class="text-xs text-slate-500 font-semibold mt-1">₹{{ pkg.account_size|inr }} Capital</div>
+                <div class="text-sm font-extrabold text-blue-600 mt-2 font-mono">₹{{ pkg.price|inr }}</div>
             </label>
             {% endfor %}
         </div>

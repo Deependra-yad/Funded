@@ -313,7 +313,7 @@ async def view_feature(request: Request, name: str, user: User = Depends(require
         for i, acc in enumerate(top_accounts):
             rank = i + 1
             real_user = db.query(User).filter(User.id == acc.user_id).first()
-            trader_name = real_user.name if real_user else f"Trader {acc.user_id}"
+            trader_name = real_user.full_name if real_user else f"Trader {acc.user_id}"
             initials = "".join([n[0] for n in trader_name.split()[:2]]).upper()
             
             # Highlight top 3
