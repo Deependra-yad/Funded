@@ -21,3 +21,4 @@ content = re.sub(payouts_link_regex, billing_cert_links, content)
 
 with open('app/templates/base.html', 'w', encoding='utf-8') as f:
     f.write(content)
+

@@ -11,3 +11,4 @@ content = re.sub(r'<button class="p-2 text-slate-400[^>]+>\s*<i data-lucide="sho
 
 with open('app/templates/base.html', 'w', encoding='utf-8') as f:
     f.write(content)
+

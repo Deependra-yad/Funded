@@ -65,7 +65,7 @@
             <div>
                 <div class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-3">Main</div>
                 <nav class="space-y-1">
-                    <a href="/" class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white transition-colors font-medium text-sm">
+                    <a href="/dashboard" class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white transition-colors font-medium text-sm">
                         <i data-lucide="home" class="w-4 h-4"></i> Home
                     </a>
                     <a href="/trading" class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white transition-colors font-medium text-sm">
@@ -198,10 +198,12 @@
                 
                 <!-- Notifications -->
                 <div class="relative">
-                    <button class="p-2 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-colors">
+                    
+                    <a href="/dashboard" class="p-2 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-colors relative block">
                         <i data-lucide="bell" class="w-5 h-5"></i>
                         <span class="absolute top-1 right-1 w-4 h-4 bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border border-white dark:border-darkpanel">2</span>
-                    </button>
+                    </a>
+
                 </div>
                 
                 <!-- Profile Dropdown -->
@@ -221,9 +223,8 @@
                         <a href="/profile" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white">
                             <i data-lucide="user" class="w-4 h-4"></i> Profile
                         </a>
-                        <a href="/settings" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white">
-                            <i data-lucide="settings" class="w-4 h-4"></i> Settings
-                        </a>
+                            <a href="/profile" class="flex items-center gap-3 px-4 py-2 text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white transition-colors"><i data-lucide="settings" class="w-4 h-4"></i> Settings</a>
+                        
                         <div class="h-px bg-slate-100 dark:bg-darkborder my-1"></div>
                         <a href="/logout" class="flex items-center gap-2 px-4 py-2 text-sm text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-500/10">
                             <i data-lucide="log-out" class="w-4 h-4"></i> Logout

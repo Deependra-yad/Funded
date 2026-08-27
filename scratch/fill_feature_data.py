@@ -1,15 +1,7 @@
-from fastapi import APIRouter, Depends, Request
-from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
-from pathlib import Path
-from app.models import User
-from app.security import require_auth
-from app.config import APP_NAME
+with open('app/routers/features.py', 'r', encoding='utf-8') as f:
+    content = f.read()
 
-router = APIRouter()
-templates = Jinja2Templates(directory=str(Path(__file__).resolve().parent.parent / "templates"))
-
-
+detailed_features = """
 FEATURE_CONTENT = {
     "heatmap": {
         "title": "Market Heatmap",
@@ -205,24 +197,10 @@ FEATURE_CONTENT = {
         </div>'''
     }
 }
+"""
 
+import re
+content = re.sub(r'FEATURE_CONTENT\s*=\s*\{.*?\n}', detailed_features, content, flags=re.DOTALL)
 
-@router.get("/feature/{name}", response_class=HTMLResponse)
-async def view_feature(request: Request, name: str, user: User = Depends(require_auth)):
-    feature = FEATURE_CONTENT.get(name, {
-        "title": name.replace("-", " ").title(),
-        "icon": "box",
-        "desc": "This feature is currently being provisioned for your account.",
-        "widget": "<div class='flex flex-col items-center justify-center h-64 text-slate-500'><i data-lucide='settings' class='w-12 h-12 mb-4 animate-spin-slow opacity-20'></i><p>Check back later.</p></div>"
-    })
-    
-    return templates.TemplateResponse(
-        request=request,
-        name="feature.html",
-        context={
-            "app_name": APP_NAME,
-            "user": user,
-            "feature": feature
-        }
-    )
-
+with open('app/routers/features.py', 'w', encoding='utf-8') as f:
+    f.write(content)
