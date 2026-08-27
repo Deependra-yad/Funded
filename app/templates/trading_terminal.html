@@ -310,11 +310,11 @@
     // TradingView entirely blocks intraday (1m, 5m) on ALL Indian Exchanges (NSE/BSE) on free widgets.
     // We strictly use BINGX Perpetuals (which track NIFTY flawlessly 24/7 and allow 1m/5m charting).
     var tvSymbolMap = {
-        'NIFTY50': 'BINGX:NIFTY50USDT.P', 
-        'BANKNIFTY': 'BINGX:BTCUSDT', // BINGX doesn't have BankNifty, using BTC as fallback to ensure chart always loads
+        'NIFTY50': 'BINGX:NIFTY50INRT.P', 
+        'BANKNIFTY': 'BINGX:BTCINRT', // BINGX doesn't have BankNifty, using BTC as fallback to ensure chart always loads
         'SENSEX': 'BSE:SENSEX',       // Daily only
-        'FINNIFTY': 'BINGX:ETHUSDT',  // Fallback
-        'MIDCPNIFTY': 'BINGX:SOLUSDT', // Fallback
+        'FINNIFTY': 'BINGX:ETHINRT',  // Fallback
+        'MIDCPNIFTY': 'BINGX:SOLINRT', // Fallback
         'RELIANCE': 'BSE:RELIANCE',   // Daily only
         'HDFCBANK': 'BSE:HDFCBANK'
     };
@@ -749,7 +749,7 @@
     
     const searchInput = document.getElementById('symbol-search');
     const searchResults = document.getElementById('search-results');
-    const baseInstruments = ['NIFTY50', 'BANKNIFTY', 'SENSEX', 'CRUDEOIL', 'GOLD', 'EURUSD', 'BTCUSD'];
+    const baseInstruments = ['NIFTY50', 'BANKNIFTY', 'SENSEX', 'CRUDEOIL', 'GOLD', 'EURINR', 'BTCINR'];
 
     searchInput.addEventListener('input', function(e) {
         const query = this.value.toUpperCase().replace(/\s+/g, '');
@@ -763,7 +763,7 @@
             if (inst.includes(query)) suggestions.push(inst);
         });
 
-        const optMatch = query.match(/^([A-Z]+)(\d{2,})?(C|P|CE|PE)?$/);
+        const optMatch = query.match(/^([A-Z]+)(\d{2,})?(C|P|CE|PE)?₹/);
         if (optMatch) {
             const base = optMatch[1];
             const strikePart = optMatch[2] || '';

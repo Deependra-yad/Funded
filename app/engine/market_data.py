@@ -110,7 +110,7 @@ class MarketDataEngine:
                     res = client.get("https://api.binance.com/api/v3/ticker/24hr")
                     if res.status_code == 200:
                         data = res.json()
-                        crypto_map = {"BTCUSDT": "BTCUSD", "ETHUSDT": "ETHUSD", "SOLUSDT": "SOLUSD"}
+                        crypto_map = {"BTCINRT": "BTCINR", "ETHINRT": "ETHINR", "SOLINRT": "SOLINR"}
                         with self.lock:
                             for item in data:
                                 sym = item.get("symbol")

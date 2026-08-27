@@ -49,7 +49,7 @@
                 <span class="text-emerald-600">{{ account.profit_target_pct }}% Target</span>
             </div>
             <div class="text-xl font-extrabold font-mono {% if account.current_profit >= 0 %}text-emerald-600{% else %}text-rose-600{% endif %}">
-                {{ "+$" if account.current_profit >= 0 else "-$" }}{{ account.current_profit|abs|inr(2) }}
+                {{ "+₹" if account.current_profit >= 0 else "-₹" }}{{ account.current_profit|abs|inr(2) }}
             </div>
             <div class="text-xs text-slate-500 mt-1">
                 Goal: ${{ account.target_amount|inr(2) }} ({{ "{:.1f}".format(account.current_profit_pct) }}%)
@@ -162,7 +162,7 @@
                         <th class="py-3 px-4">Open Price</th>
                         <th class="py-3 px-4">Close Price</th>
                         <th class="py-3 px-4">Status</th>
-                        <th class="py-3 px-4">PnL ($)</th>
+                        <th class="py-3 px-4">PnL (₹)</th>
                         <th class="py-3 px-4">Time</th>
                     </tr>
                 </thead>
@@ -181,7 +181,7 @@
                             </span>
                         </td>
                         <td class="py-3 px-4 font-black {% if t.pnl >= 0 %}text-emerald-600{% else %}text-rose-600{% endif %}">
-                            {{ "+$" if t.pnl >= 0 else "-$" }}{{ t.pnl|abs|inr(2) }}
+                            {{ "+₹" if t.pnl >= 0 else "-₹" }}{{ t.pnl|abs|inr(2) }}
                         </td>
                         <td class="py-3 px-4 text-slate-400 font-sans text-[11px]">{{ t.open_time.strftime('%b %d, %H:%M') }}</td>
                     </tr>

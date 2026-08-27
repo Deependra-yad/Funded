@@ -210,7 +210,7 @@ async def close_trade(trade_id: int, user: User = Depends(require_auth), db: Ses
 
     return JSONResponse(content={
         "success": True,
-        "message": f"Trade {trade.ticket} closed at {cur_price} with PnL ${pnl:+.2f}",
+        "message": f"Trade {trade.ticket} closed at {cur_price} with PnL ₹{pnl:+.2f}",
         "account_state": state
     })
 

@@ -60,7 +60,7 @@
                 <div>
                     <div class="text-[11px] font-semibold text-slate-400">Net Profit</div>
                     <div class="text-base font-extrabold font-mono {% if acc.current_profit >= 0 %}text-emerald-600{% else %}text-rose-600{% endif %}">
-                        {{ "+$" if acc.current_profit >= 0 else "-$" }}{{ acc.current_profit|abs|inr(2) }}
+                        {{ "+₹" if acc.current_profit >= 0 else "-₹" }}{{ acc.current_profit|abs|inr(2) }}
                     </div>
                 </div>
 

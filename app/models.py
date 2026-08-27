@@ -34,7 +34,7 @@ class ChallengePackage(Base):
     __tablename__ = "challenge_packages"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(100)) # e.g. "$100,000 2-Step Evaluation"
+    name = Column(String(100)) # e.g. "₹100,000 2-Step Evaluation"
     model_type = Column(String(50)) # "1-Step", "2-Step", "Instant"
     account_size = Column(Float) # 5000, 10000, 25000, 50000, 100000, 200000
     profit_target_p1 = Column(Float, default=8.0) # 8% or 10%
@@ -43,7 +43,7 @@ class ChallengePackage(Base):
     max_total_loss = Column(Float, default=10.0) # 10% or 6%
     min_trading_days = Column(Integer, default=3) # 3 or 5 days
     leverage = Column(String(20), default="1:100")
-    price = Column(Float) # USD price
+    price = Column(Float) # INR price
     profit_split = Column(String(20), default="80/20")
     description = Column(Text, nullable=True)
     is_popular = Column(Boolean, default=False)
@@ -134,7 +134,7 @@ class TradePosition(Base):
     ticket = Column(String(50), unique=True, default=lambda: f"TK-{uuid.uuid4().hex[:8].upper()}")
     account_id = Column(Integer, ForeignKey("trading_accounts.id"))
     
-    symbol = Column(String(20)) # "EURUSD", "GBPUSD", "XAUUSD", "BTCUSD", "US30"
+    symbol = Column(String(20)) # "EURINR", "GBPINR", "XAUINR", "BTCINR", "US30"
     order_type = Column(String(10)) # "BUY", "SELL"
     volume_lots = Column(Float, default=1.0)
     

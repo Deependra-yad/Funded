@@ -38,7 +38,7 @@
         <div class="bg-white dark:bg-darkpanel rounded-2xl border border-slate-200 dark:border-darkborder p-5 shadow-sm">
             <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Total Profit</div>
             <div class="text-2xl font-black {% if total_profit >= 0 %}text-emerald-500{% else %}text-rose-500{% endif %} font-mono">
-                {{ "+$" if total_profit >= 0 else "-$" }}{{ total_profit|abs|inr }}
+                {{ "+₹" if total_profit >= 0 else "-₹" }}{{ total_profit|abs|inr }}
             </div>
             <div class="text-xs text-slate-500 font-medium mt-1">Combined PnL</div>
         </div>
@@ -169,7 +169,7 @@
                     <div class="bg-slate-50 dark:bg-darkbg p-3 rounded-xl border border-slate-100 dark:border-slate-800/50">
                         <div class="text-[10px] font-bold text-slate-400 uppercase">Net P&L</div>
                         <div class="text-sm font-extrabold font-mono mt-0.5 {% if acc.current_profit >= 0 %}text-emerald-600{% else %}text-rose-600{% endif %}">
-                            {{ "+$" if acc.current_profit >= 0 else "-$" }}{{ acc.current_profit|abs|inr(2) }}
+                            {{ "+₹" if acc.current_profit >= 0 else "-₹" }}{{ acc.current_profit|abs|inr(2) }}
                         </div>
                     </div>
                 </div>

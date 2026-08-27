@@ -73,7 +73,7 @@ async def sim_reset_account(account_id: int = Form(...), user: User = Depends(re
     return RedirectResponse(url=f"/challenges/{account_id}", status_code=303)
 
 @router.post("/admin/sim/market-spike")
-async def sim_market_spike(symbol: str = Form("XAUUSD"), pips: float = Form(50.0), user: User = Depends(require_auth)):
+async def sim_market_spike(symbol: str = Form("XAUINR"), pips: float = Form(50.0), user: User = Depends(require_auth)):
     if symbol in market_engine.prices:
         cfg = market_engine.prices[symbol]
         step = pips * 0.1

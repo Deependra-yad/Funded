@@ -81,7 +81,7 @@ FEATURE_CONTENT = {
         "title": "Economic Calendar",
         "icon": "calendar",
         "desc": "Track key economic events and data releases.",
-        "widget": '''<div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>{"colorTheme": "dark","isTransparent": true,"width": "100%","height": "100%","locale": "en","importanceFilter": "-1,0$"}</script></div>'''
+        "widget": '''<div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>{"colorTheme": "dark","isTransparent": true,"width": "100%","height": "100%","locale": "en","importanceFilter": "-1,0₹"}</script></div>'''
     },
     "leaderboard": {
         "title": "Leaderboard",
@@ -99,9 +99,9 @@ FEATURE_CONTENT = {
             <table class="w-full text-left">
                 <thead><tr class="text-xs text-slate-500 uppercase"><th class="pb-3">Rank</th><th class="pb-3">Trader</th><th class="pb-3">Payout</th><th class="pb-3 text-right">Win Rate</th></tr></thead>
                 <tbody class="text-slate-300">
-                    <tr class="border-t border-slate-800"><td class="py-4 font-bold text-amber-500">1</td><td class="py-4 flex items-center gap-2"><img src="https://i.pravatar.cc/150?u=1" class="w-6 h-6 rounded-full"> Alex R.</td><td class="py-4 font-mono text-emerald-400">$142,500</td><td class="py-4 text-right">82%</td></tr>
-                    <tr class="border-t border-slate-800"><td class="py-4 font-bold text-slate-300">2</td><td class="py-4 flex items-center gap-2"><img src="https://i.pravatar.cc/150?u=2" class="w-6 h-6 rounded-full"> Sarah M.</td><td class="py-4 font-mono text-emerald-400">$98,200</td><td class="py-4 text-right">79%</td></tr>
-                    <tr class="border-t border-slate-800"><td class="py-4 font-bold text-amber-700">3</td><td class="py-4 flex items-center gap-2"><img src="https://i.pravatar.cc/150?u=3" class="w-6 h-6 rounded-full"> John D.</td><td class="py-4 font-mono text-emerald-400">$84$00</td><td class="py-4 text-right">76%</td></tr>
+                    <tr class="border-t border-slate-800"><td class="py-4 font-bold text-amber-500">1</td><td class="py-4 flex items-center gap-2"><img src="https://i.pravatar.cc/150?u=1" class="w-6 h-6 rounded-full"> Alex R.</td><td class="py-4 font-mono text-emerald-400">₹142,500</td><td class="py-4 text-right">82%</td></tr>
+                    <tr class="border-t border-slate-800"><td class="py-4 font-bold text-slate-300">2</td><td class="py-4 flex items-center gap-2"><img src="https://i.pravatar.cc/150?u=2" class="w-6 h-6 rounded-full"> Sarah M.</td><td class="py-4 font-mono text-emerald-400">₹98,200</td><td class="py-4 text-right">79%</td></tr>
+                    <tr class="border-t border-slate-800"><td class="py-4 font-bold text-amber-700">3</td><td class="py-4 flex items-center gap-2"><img src="https://i.pravatar.cc/150?u=3" class="w-6 h-6 rounded-full"> John D.</td><td class="py-4 font-mono text-emerald-400">₹84₹00</td><td class="py-4 text-right">76%</td></tr>
                 </tbody>
             </table>
         </div>'''
@@ -115,7 +115,7 @@ FEATURE_CONTENT = {
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                 <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
                     <div class="text-xs text-slate-400 uppercase">Total Earned</div>
-                    <div class="text-2xl font-black text-emerald-400 mt-1">$0.00</div>
+                    <div class="text-2xl font-black text-emerald-400 mt-1">₹0.00</div>
                 </div>
                 <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
                     <div class="text-xs text-slate-400 uppercase">Active Referrals</div>
@@ -138,7 +138,7 @@ FEATURE_CONTENT = {
         "icon": "life-buoy",
         "desc": "24/7 Priority Support for all our traders.",
         "widget": '''
-        <div class="h-[500px] flex flex-col" x-data="{ messages: [], newMessage: '', fetchChat() { fetch('/api/chat').then(r=>r.json()).then(d=> { this.messages = d; setTimeout(()=>$refs.chatbox.scrollTop = $refs.chatbox.scrollHeight, 100); }); }, clearChat() { if(confirm('Clear history?')) { fetch('/api/chat/clear', {method:'POST'}).then(()=>this.fetchChat()); } } }" x-init="fetchChat(); setInterval(()=>fetchChat(), 3000);">
+        <div class="h-[500px] flex flex-col" x-data="{ messages: [], newMessage: '', fetchChat() { fetch('/api/chat').then(r=>r.json()).then(d=> { this.messages = d; setTimeout(()=>₹refs.chatbox.scrollTop = ₹refs.chatbox.scrollHeight, 100); }); }, clearChat() { if(confirm('Clear history?')) { fetch('/api/chat/clear', {method:'POST'}).then(()=>this.fetchChat()); } } }" x-init="fetchChat(); setInterval(()=>fetchChat(), 3000);">
             <div class="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex justify-between items-center">
                 <div class="font-bold flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div> Live Support</div>
                 <div class="flex items-center gap-4">
@@ -197,7 +197,7 @@ FEATURE_CONTENT = {
         "desc": "Participate to win free funded accounts.",
         "widget": '''
         <div class="p-6 text-center max-w-lg mx-auto py-12">
-            <h2 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 mb-4">Win a $100k Account</h2>
+            <h2 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600 mb-4">Win a ₹100k Account</h2>
             <p class="text-slate-400 mb-8">Join our monthly giveaway. Complete social tasks to earn entries!</p>
             <div class="grid grid-cols-3 gap-4 mb-8">
                 <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
@@ -333,7 +333,7 @@ async def view_feature(request: Request, name: str, user: User = Depends(require
                     <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-white">{initials}</div>
                     {trader_name}
                 </td>
-                <td class="py-4 font-mono text-emerald-400">${acc.current_balance:,.2f}</td>
+                <td class="py-4 font-mono text-emerald-400">₹{acc.current_balance:,.2f}</td>
                 <td class="py-4 text-right">Funded</td>
             </tr>
             '''
