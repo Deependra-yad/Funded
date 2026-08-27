@@ -282,3 +282,42 @@ async def admin_generic_action(
         return JSONResponse({"success": True, "message": f"Executed {action} on {entity}!"})
     finally:
         db.close()
+
+@router.post("/admin/api/package")
+async def admin_create_package(
+    request: Request,
+    name: str = Form(...),
+    model_type: str = Form(...),
+    account_size: float = Form(...),
+    profit_target_p1: float = Form(...),
+    profit_target_p2: float = Form(...),
+    max_daily_loss: float = Form(...),
+    max_total_loss: float = Form(...),
+    min_trading_days: int = Form(...),
+    leverage: str = Form(...),
+    price: float = Form(...),
+    profit_split: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    require_super_admin(request)
+    pkg = ChallengePackage(
+        name=name, model_type=model_type, account_size=account_size,
+        profit_target_p1=profit_target_p1, profit_target_p2=profit_target_p2,
+        max_daily_loss=max_daily_loss, max_total_loss=max_total_loss,
+        min_trading_days=min_trading_days, leverage=leverage,
+        price=price, profit_split=profit_split
+    )
+    db.add(pkg)
+    db.commit()
+    return RedirectResponse(url="/admin-dashboard", status_code=302)
+
+@router.post("/admin/api/package/{pkg_id}/delete")
+async def admin_delete_package(
+    pkg_id: int, request: Request, db: Session = Depends(get_db)
+):
+    require_super_admin(request)
+    pkg = db.query(ChallengePackage).filter(ChallengePackage.id == pkg_id).first()
+    if pkg:
+        db.delete(pkg)
+        db.commit()
+    return RedirectResponse(url="/admin-dashboard", status_code=302)

@@ -56,3 +56,4 @@ Fix responsive design issues, certificate printing, permanent notifications, fun
 - Print the certificate page and verify the layout.
 - Open `/terminal` and drag the chart, select an option chain strike, and verify it updates the TV chart.
 - Verify the admin can change the certificate name and broadcast custom messages.
+

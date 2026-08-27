@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+html_content = r'''<!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
@@ -457,3 +457,7 @@
     </script>
 </body>
 </html>
+'''
+
+with open('app/templates/landing.html', 'w', encoding='utf-8') as f:
+    f.write(html_content)
