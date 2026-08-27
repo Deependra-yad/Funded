@@ -307,13 +307,15 @@
     var pricesData = {};
 
     // TRADINGVIEW SYMBOL FIX (Intraday / Standard Compatible)
+    // NOTE: NSE spot indices (NSE:NIFTY) are blocked by exchange rules on free widgets.
+    // We use global CFD equivalents or futures (which are allowed) to ensure the chart loads!
     var tvSymbolMap = {
-        'NIFTY50': 'NSE:NIFTY', 
-        'BANKNIFTY': 'NSE:BANKNIFTY',
-        'SENSEX': 'BSE:SENSEX',
-        'FINNIFTY': 'NSE:FINNIFTY',
-        'MIDCPNIFTY': 'NSE:MIDCPNIFTY',
-        'RELIANCE': 'NSE:RELIANCE',
+        'NIFTY50': 'OANDA:IN50_INR',     // Guaranteed working NIFTY 50 CFD
+        'BANKNIFTY': 'NSE:BANKNIFTY1!',  // Futures contract usually allowed
+        'SENSEX': 'BSE:SENSEX',          // BSE is typically allowed
+        'FINNIFTY': 'NSE:FINNIFTY1!',
+        'MIDCPNIFTY': 'NSE:MIDCPNIFTY1!',
+        'RELIANCE': 'NSE:RELIANCE',      // Equities are allowed (15m delayed)
         'HDFCBANK': 'NSE:HDFCBANK'
     };
 
@@ -357,7 +359,7 @@
 
     function initCharts() {
         var tvSym = tvSymbolMap[activeSymbol] || ('NSE:' + activeSymbol);
-        var interval = "D"; 
+        var interval = (tvSym.includes('OANDA') || tvSym.includes('1!') || tvSym.includes('BINGX')) ? "5" : "D";
         tvWidget1 = initTVWidget("tv_chart_container_1", tvSym, interval);
         
         // Ensure active symbol is highlighted in watchlist
@@ -374,7 +376,7 @@
             if (!tvWidget2) {
                 // Initialize second chart to BankNifty equivalent
                 var tvSym2 = tvSymbolMap['BANKNIFTY'] || 'NSE:BANKNIFTY';
-                var interval = "D";
+                var interval = (tvSym2.includes('OANDA') || tvSym2.includes('1!') || tvSym2.includes('BINGX')) ? "5" : "D";
                 tvWidget2 = initTVWidget("tv_chart_container_2", tvSym2, interval);
             }
         } else {
@@ -867,7 +869,7 @@
             document.getElementById("tv_chart_container_1").style.display = "block";
             
             var tvSym = tvSymbolMap[sym] || ('NSE:' + sym);
-            var interval = "D"; 
+            var interval = (tvSym.includes('OANDA') || tvSym.includes('1!') || tvSym.includes('BINGX')) ? "5" : "D"; 
             
             document.getElementById("tv_chart_container_1").innerHTML = "";
             tvWidget1 = initTVWidget("tv_chart_container_1", tvSym, interval);
