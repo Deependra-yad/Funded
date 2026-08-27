@@ -164,6 +164,10 @@ async def admin_user_action(user_id: int, action: str = Form(...), _ = Depends(r
         for acc in accounts:
             db.query(TradePosition).filter(TradePosition.account_id == acc.id).delete()
             db.delete(acc)
+            
+        from ..models import Notification, ChatMessage
+        db.query(Notification).filter(Notification.user_id == user.id).delete()
+        db.query(ChatMessage).filter(ChatMessage.user_id == user.id).delete()
         db.delete(user)
         
     db.commit()

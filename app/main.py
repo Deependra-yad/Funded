@@ -143,6 +143,12 @@ async def startup_event():
         db.commit()
     except Exception:
         db.rollback()
+
+    try:
+        db.execute(text("ALTER TABLE users ADD COLUMN is_super_admin BOOLEAN DEFAULT FALSE"))
+        db.commit()
+    except Exception:
+        db.rollback()
         
 
 

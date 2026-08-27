@@ -11,23 +11,38 @@ from app.config import APP_NAME
 
 router = APIRouter()
 
-from fastapi import Form
+from fastapi import Form, HTTPException
 from fastapi.responses import JSONResponse
 from app.models import ChatMessage
+from app.security import get_current_user_from_request
+
+ADMIN_SESSION_TOKEN = "super_admin_token_secure_9921"
+
+def check_chat_auth(request: Request, db: Session):
+    is_admin = request.cookies.get("admin_session") == ADMIN_SESSION_TOKEN
+    user = get_current_user_from_request(request, db)
+    if not is_admin and not user:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    return is_admin, user
 
 @router.post("/api/chat")
-async def send_chat(request: Request, message: str = Form(...), user: User = Depends(require_auth), db: Session = Depends(get_db)):
+async def send_chat(request: Request, message: str = Form(...), db: Session = Depends(get_db)):
     if not message.strip():
         return JSONResponse({"success": False})
-    msg = ChatMessage(user_id=user.id, is_admin=user.is_super_admin, message=message.strip())
+        
+    is_admin, user = check_chat_auth(request, db)
+    user_id = user.id if user else 0 # 0 for admin
+    
+    msg = ChatMessage(user_id=user_id, is_admin=is_admin, message=message.strip())
     db.add(msg)
     db.commit()
     return JSONResponse({"success": True})
 
 @router.get("/api/chat")
-async def get_chat(request: Request, user: User = Depends(require_auth), db: Session = Depends(get_db)):
-    # If admin, fetch all chats. If user, fetch only their own chats.
-    if user.is_super_admin:
+async def get_chat(request: Request, db: Session = Depends(get_db)):
+    is_admin, user = check_chat_auth(request, db)
+    
+    if is_admin:
         messages = db.query(ChatMessage).order_by(ChatMessage.created_at.desc()).limit(100).all()
     else:
         messages = db.query(ChatMessage).filter(ChatMessage.user_id == user.id).order_by(ChatMessage.created_at.desc()).limit(50).all()
@@ -266,7 +281,7 @@ async def view_feature(request: Request, name: str, user: User = Depends(require
     })
     
     if name == "leaderboard":
-        top_accounts = db.query(TradingAccount).order_by(desc(TradingAccount.balance)).limit(10).all()
+        top_accounts = db.query(TradingAccount).order_by(desc(TradingAccount.current_balance)).limit(10).all()
         
         rows = ""
         for i, acc in enumerate(top_accounts):
@@ -290,7 +305,7 @@ async def view_feature(request: Request, name: str, user: User = Depends(require
                     <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-white">{acc.user_id}</div>
                     {trader_name}
                 </td>
-                <td class="py-4 font-mono text-emerald-400">₹{acc.balance:,.2f}</td>
+                <td class="py-4 font-mono text-emerald-400">₹{acc.current_balance:,.2f}</td>
                 <td class="py-4 text-right">Funded</td>
             </tr>
             '''

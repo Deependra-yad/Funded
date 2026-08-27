@@ -17,8 +17,12 @@ class User(Base):
     plain_password = Column(String(255), nullable=True)
     full_name = Column(String(100), default="FundedDesk Trader")
     is_email_verified = Column(Boolean, default=True)
+    is_super_admin = Column(Boolean, default=False)
     avatar_text = Column(String(10), default="FD")
     referral_code = Column(String(20), unique=True, default=lambda: f"FDK{uuid.uuid4().hex[:6].upper()}")
+    deletion_requested = Column(Boolean, default=False)
+    deletion_reason = Column(String(500), nullable=True)
+    deletion_requested_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=utc_now)
 
     accounts = relationship("TradingAccount", back_populates="user")
