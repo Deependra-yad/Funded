@@ -19,7 +19,8 @@ from app.routers import (
     billing,
     profile,
     admin_sim,
-    admin_dashboard
+    admin_dashboard,
+    features
 )
 
 # Initialize Database Schema & Seed Data

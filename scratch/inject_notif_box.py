@@ -35,3 +35,4 @@ if 'Platform Notifications' not in content:
     content = content.replace('    <!-- Trading Statistics Grid -->', notification_box + '\n    <!-- Trading Statistics Grid -->')
     with open('app/templates/dashboard.html', 'w', encoding='utf-8') as f:
         f.write(content)
+

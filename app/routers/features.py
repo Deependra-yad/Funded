@@ -54,3 +54,4 @@ async def view_feature(request: Request, name: str, user: User = Depends(require
             "feature": feature
         }
     )
+
