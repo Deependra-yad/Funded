@@ -25,6 +25,27 @@ from app.routers import (
 
 # Initialize Database Schema & Seed Data
 Base.metadata.create_all(bind=engine)
+
+# Auto-migrate: add any missing columns to existing tables
+from sqlalchemy import text, inspect
+with engine.connect() as conn:
+    inspector = inspect(engine)
+    if 'users' in inspector.get_table_names():
+        existing_cols = [c['name'] for c in inspector.get_columns('users')]
+        migrations = {
+            'verification_code': "ALTER TABLE users ADD COLUMN verification_code VARCHAR(10)",
+            'avatar_text': "ALTER TABLE users ADD COLUMN avatar_text VARCHAR(10) DEFAULT 'TR'",
+            'referral_code': "ALTER TABLE users ADD COLUMN referral_code VARCHAR(20)",
+        }
+        for col_name, sql in migrations.items():
+            if col_name not in existing_cols:
+                try:
+                    conn.execute(text(sql))
+                    conn.commit()
+                    print(f"[Migration] Added missing column: {col_name}")
+                except Exception as e:
+                    print(f"[Migration] Column {col_name} skipped: {e}")
+
 seed_database()
 
 

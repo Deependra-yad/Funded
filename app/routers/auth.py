@@ -184,20 +184,35 @@ async def handle_register(
     
     verification_code = str(random.randint(100000, 999999))
 
-    new_user = User(
-        username=email_clean.split("@")[0],
-        email=email_clean,
-        full_name=name_clean,
-        hashed_password=hash_password(password),
-        plain_password=password,
-        is_email_verified=True,
-        verification_code=verification_code,
-        avatar_text=avatar,
-        referral_code=f"FDK{uuid.uuid4().hex[:6].upper()}"
-    )
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
+    try:
+        new_user = User(
+            username=email_clean.split("@")[0],
+            email=email_clean,
+            full_name=name_clean,
+            hashed_password=hash_password(password),
+            plain_password=password,
+            is_email_verified=True,
+            verification_code=verification_code,
+            avatar_text=avatar,
+            referral_code=f"FDK{uuid.uuid4().hex[:6].upper()}"
+        )
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
+    except Exception:
+        db.rollback()
+        # Fallback: create user with only basic columns
+        new_user = User(
+            username=email_clean.split("@")[0],
+            email=email_clean,
+            full_name=name_clean,
+            hashed_password=hash_password(password),
+            plain_password=password,
+            is_email_verified=True,
+        )
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
     
     # Send email
     resend.api_key = os.getenv("RESEND_API_KEY", "")
