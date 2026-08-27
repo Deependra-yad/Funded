@@ -40,3 +40,4 @@ if 'CREATE TABLE IF NOT EXISTS chat_messages' not in main_content:
     main_content = main_content.replace('    try:\n        db.execute(text("ALTER TABLE users ADD COLUMN deletion_requested_at', chat_migration + '\n    try:\n        db.execute(text("ALTER TABLE users ADD COLUMN deletion_requested_at')
     with open('app/main.py', 'w', encoding='utf-8') as f:
         f.write(main_content)
+

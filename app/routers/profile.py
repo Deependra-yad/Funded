@@ -64,17 +64,18 @@ async def update_profile(
     db.commit()
     return RedirectResponse(url="/profile?saved=1", status_code=303)
 
+
 @router.post("/profile/delete-request")
 async def request_deletion(request: Request, reason: str = Form(""), user: User = Depends(require_auth), db: Session = Depends(get_db)):
     user.deletion_requested = True
-    user.deletion_reason = reason
+    user.deletion_reason = reason.strip() if reason.strip() else "User requested deletion without providing a reason."
     user.deletion_requested_at = datetime.utcnow()
     db.commit()
     
-    # Instant logout
     response = RedirectResponse(url="/login?msg=Account%20deletion%20requested.%20You%20have%20been%20logged%20out.", status_code=303)
     response.delete_cookie(key="fundeddesk_session")
     return response
+
     
 @router.post("/profile/cancel-deletion")
 async def cancel_deletion(request: Request, email: str = Form(...), reason: str = Form(...), db: Session = Depends(get_db)):

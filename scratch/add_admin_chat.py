@@ -41,3 +41,4 @@ if 'Global Live Support Chat' not in content:
     content = content.replace('<!-- Modals -->', chat_widget + '\n<!-- Modals -->')
     with open('app/templates/admin_dashboard.html', 'w', encoding='utf-8') as f:
         f.write(content)
+

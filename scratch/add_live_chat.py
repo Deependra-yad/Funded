@@ -72,3 +72,4 @@ content = re.sub(r'("support": \{.*?)"widget":.*?</div>\'\'\'', r'\1"widget": \'
 
 with open('app/routers/features.py', 'w', encoding='utf-8') as f:
     f.write(content)
+
