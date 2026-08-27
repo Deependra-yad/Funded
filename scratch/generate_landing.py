@@ -1,0 +1,671 @@
+html_content = r'''<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ app_name }} - {{ app_tagline }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Alpine Plugins -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+    <!-- Alpine Core -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif']
+                    },
+                    colors: {
+                        primary: '#0ea5e9',
+                        secondary: '#8b5cf6',
+                        dark: '#020617',
+                        darker: '#01030a',
+                    },
+                    animation: {
+                        'blob': 'blob 10s infinite alternate',
+                        'spin-slow': 'spin 15s linear infinite',
+                        'bounce-slow': 'bounce 3s infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '50%': { transform: 'translate(40px, -60px) scale(1.2)' },
+                            '100%': { transform: 'translate(-30px, 30px) scale(0.9)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #01030a;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+        
+        /* Advanced Glassmorphism */
+        .glass-heavy {
+            background: rgba(2, 6, 23, 0.7);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+        
+        .glass-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.2) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.05), transparent);
+            transform: skewX(-20deg);
+            transition: 0.5s;
+        }
+        
+        .glass-card:hover::before {
+            left: 150%;
+        }
+        
+        .glass-card:hover {
+            border-color: rgba(14, 165, 233, 0.3);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 20px rgba(14, 165, 233, 0.1);
+        }
+        
+        /* Gradients */
+        .text-gradient {
+            background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .text-gradient-gold {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Background Mesh */
+        .ambient-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -2;
+            background: #01030a;
+        }
+        .ambient-grid {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: 
+                linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+            mask-image: radial-gradient(circle at center, black 40%, transparent 80%);
+            -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 80%);
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #01030a; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #0ea5e9; }
+        
+        /* Timeline line */
+        .timeline-line::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, transparent, #0ea5e9, #8b5cf6, transparent);
+            transform: translateX(-50%);
+            z-index: 0;
+        }
+        @media (max-width: 768px) {
+            .timeline-line::after {
+                left: 20px;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-primary/30 selection:text-white">
+
+    <div class="ambient-bg"></div>
+    <div class="ambient-grid"></div>
+
+    <!-- Glowing Orbs -->
+    <div class="fixed top-0 left-1/4 w-[800px] h-[800px] bg-primary/10 rounded-full mix-blend-screen filter blur-[120px] animate-blob pointer-events-none z-[-1]"></div>
+    <div class="fixed bottom-0 right-1/4 w-[600px] h-[600px] bg-secondary/10 rounded-full mix-blend-screen filter blur-[120px] animate-blob animation-delay-2000 pointer-events-none z-[-1]"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 transition-all duration-500" id="navbar" x-data="{ scrolled: false }" @scroll.window="scrolled = (window.pageYOffset > 50)" :class="{'glass-heavy py-4': scrolled, 'py-6 bg-transparent': !scrolled}">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex justify-between items-center">
+                <a href="/" class="flex items-center gap-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-black text-xl group-hover:shadow-[0_0_20px_rgba(14,165,233,0.5)] transition-all duration-300">F</div>
+                    <span class="font-display font-black text-2xl tracking-tighter text-white">{{ app_name }}</span>
+                </a>
+                
+                <div class="hidden lg:flex items-center gap-10 text-sm font-semibold tracking-wide">
+                    <a href="#how-it-works" class="text-slate-300 hover:text-white transition-colors relative group">
+                        How it Works
+                        <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a href="#terminal" class="text-slate-300 hover:text-white transition-colors relative group">
+                        Terminal
+                        <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a href="#details" class="text-slate-300 hover:text-white transition-colors relative group">
+                        Detailed Rules
+                        <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                    <a href="#pricing" class="text-slate-300 hover:text-white transition-colors relative group">
+                        Pricing
+                        <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
+                    </a>
+                </div>
+
+                <div class="flex items-center gap-5">
+                    {% if user %}
+                        <a href="/dashboard" class="bg-white/10 border border-white/20 hover:bg-white/20 px-6 py-2.5 rounded-full text-sm font-bold text-white transition-all backdrop-blur-md">Dashboard</a>
+                    {% else %}
+                        <a href="/login" class="text-slate-300 hover:text-white text-sm font-bold hidden md:block transition-colors">Sign In</a>
+                        <a href="/register" class="bg-white text-slate-900 hover:scale-105 hover:shadow-[0_0_20px_rgba(255,255,255,0.4)] px-6 py-2.5 rounded-full text-sm font-black transition-all">Get Funded</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Ticker Tape -->
+    <div class="pt-[88px] relative z-40">
+        <div class="bg-slate-900/80 backdrop-blur-xl border-y border-white/10 h-10 flex items-center overflow-hidden">
+            <!-- TradingView Widget BEGIN -->
+            <div class="tradingview-widget-container" style="width: 100%; height: 100%;">
+                <div class="tradingview-widget-container__widget"></div>
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+                {
+                "symbols": [
+                    { "description": "Bitcoin", "proName": "BINANCE:BTCUSDT" },
+                    { "description": "Ethereum", "proName": "BINANCE:ETHUSDT" },
+                    { "description": "SENSEX", "proName": "BSE:SENSEX" },
+                    { "description": "Reliance", "proName": "BSE:RELIANCE" },
+                    { "proName": "FOREXCOM:SPXUSD", "title": "S&P 500" },
+                    { "proName": "FX_IDC:EURUSD", "title": "EUR/USD" },
+                    { "description": "Gold", "proName": "OANDA:XAUUSD" }
+                ],
+                "showSymbolLogo": true,
+                "isTransparent": true,
+                "displayMode": "adaptive",
+                "colorTheme": "dark",
+                "locale": "en"
+                }
+                </script>
+            </div>
+            <!-- TradingView Widget END -->
+        </div>
+    </div>
+
+    <!-- 1. HERO SECTION -->
+    <section class="relative min-h-[90vh] flex items-center justify-center pt-10 pb-20 z-10">
+        <div class="max-w-7xl mx-auto px-6 relative z-10 flex flex-col items-center text-center">
+            
+            <div data-aos="fade-down" data-aos-duration="1000" class="inline-flex items-center gap-3 px-5 py-2 rounded-full glass-heavy text-xs font-black text-primary mb-10 border border-primary/40 shadow-[0_0_30px_rgba(14,165,233,0.3)] backdrop-blur-2xl">
+                <span class="relative flex h-3 w-3">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+                </span>
+                <span class="uppercase tracking-widest text-[10px]">India's #1 Proprietary Firm</span>
+            </div>
+            
+            <h1 data-aos="zoom-in" data-aos-duration="1200" class="text-6xl md:text-8xl lg:text-[110px] font-display font-black tracking-tighter leading-[1.05] mb-8 drop-shadow-2xl">
+                Built for <span class="text-white">Traders.</span><br>
+                <span class="text-gradient">Funded by Us.</span>
+            </h1>
+            
+            <p data-aos="fade-up" data-aos-duration="1200" data-aos-delay="200" class="text-lg md:text-2xl text-slate-300 max-w-3xl mx-auto mb-12 font-medium leading-relaxed">
+                We provide up to <strong class="text-white">₹1,00,00,000</strong> in real capital. You keep <strong class="text-emerald-400">90% of the profits</strong>. No hidden rules. No excuses. Just pure trading.
+            </p>
+            
+            <div data-aos="fade-up" data-aos-duration="1200" data-aos-delay="400" class="flex flex-col sm:flex-row items-center justify-center gap-6 w-full sm:w-auto">
+                <a href="/register" class="w-full sm:w-auto px-12 py-5 bg-white text-slate-900 rounded-full font-black text-lg hover:scale-105 transition-all duration-300 shadow-[0_0_50px_rgba(255,255,255,0.4)] hover:shadow-[0_0_80px_rgba(255,255,255,0.6)]">
+                    Start Your Challenge
+                </a>
+                <a href="#how-it-works" class="w-full sm:w-auto px-12 py-5 glass-heavy rounded-full font-bold text-lg hover:bg-white/10 transition-all duration-300 flex items-center justify-center gap-3 group">
+                    See How It Works <i data-lucide="arrow-down" class="w-5 h-5 group-hover:translate-y-1 transition-transform"></i>
+                </a>
+            </div>
+
+            <!-- Stats Bar -->
+            <div data-aos="fade-up" data-aos-delay="600" class="mt-24 w-full grid grid-cols-2 md:grid-cols-4 gap-4 p-4 glass-heavy rounded-3xl">
+                <div class="text-center p-4 border-r border-white/10 last:border-0">
+                    <div class="text-3xl font-black text-white mb-1">₹50Cr+</div>
+                    <div class="text-xs text-slate-400 font-bold uppercase tracking-wider">Paid Out</div>
+                </div>
+                <div class="text-center p-4 border-r border-white/10 last:border-0">
+                    <div class="text-3xl font-black text-white mb-1">12hrs</div>
+                    <div class="text-xs text-slate-400 font-bold uppercase tracking-wider">Avg. Payout Time</div>
+                </div>
+                <div class="text-center p-4 border-r border-white/10 last:border-0">
+                    <div class="text-3xl font-black text-white mb-1">10k+</div>
+                    <div class="text-xs text-slate-400 font-bold uppercase tracking-wider">Active Traders</div>
+                </div>
+                <div class="text-center p-4">
+                    <div class="text-3xl font-black text-emerald-400 mb-1">90%</div>
+                    <div class="text-xs text-slate-400 font-bold uppercase tracking-wider">Profit Split</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2. DETAILED STEP-BY-STEP (How it works) -->
+    <section id="how-it-works" class="py-32 relative z-10">
+        <div class="max-w-7xl mx-auto px-6 relative">
+            <div class="text-center mb-24">
+                <h2 data-aos="fade-up" class="text-5xl md:text-7xl font-display font-black mb-6">Your Path to <span class="text-gradient-gold">Funding</span></h2>
+                <p data-aos="fade-up" data-aos-delay="100" class="text-slate-400 text-xl max-w-2xl mx-auto font-medium">A transparent, step-by-step process designed to identify and fund top tier trading talent.</p>
+            </div>
+
+            <div class="relative timeline-line space-y-24">
+                
+                <!-- Step 1 -->
+                <div class="relative z-10 flex flex-col md:flex-row items-center gap-12" data-aos="fade-up">
+                    <div class="md:w-1/2 flex justify-end md:pl-0 pl-16">
+                        <div class="glass-card p-10 rounded-[2.5rem] w-full max-w-lg md:text-right relative overflow-hidden group">
+                            <div class="absolute -right-10 -top-10 text-[150px] font-black text-white/5 group-hover:text-primary/10 transition-colors font-display hidden md:block">1</div>
+                            <div class="absolute -left-10 -top-10 text-[150px] font-black text-white/5 group-hover:text-primary/10 transition-colors font-display md:hidden">1</div>
+                            <h3 class="text-3xl font-black text-white mb-4">The Challenge</h3>
+                            <p class="text-slate-400 text-lg leading-relaxed">Prove your trading skills by hitting a realistic profit target (usually 8%) without breaching the drawdown limits. Trade at your own pace—there are absolutely no time limits.</p>
+                            <ul class="mt-6 space-y-3 flex flex-col md:items-end items-start">
+                                <li class="flex items-center gap-3 text-sm font-bold text-slate-300"><i data-lucide="check-circle-2" class="text-primary w-4 h-4"></i> No Time Limits</li>
+                                <li class="flex items-center gap-3 text-sm font-bold text-slate-300"><i data-lucide="check-circle-2" class="text-primary w-4 h-4"></i> Expert Advisors (EAs) Allowed</li>
+                                <li class="flex items-center gap-3 text-sm font-bold text-slate-300"><i data-lucide="check-circle-2" class="text-primary w-4 h-4"></i> Weekend Holding Allowed</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="absolute left-[20px] md:left-1/2 -translate-x-1/2 w-16 h-16 rounded-full bg-primary flex items-center justify-center shadow-[0_0_30px_rgba(14,165,233,0.5)] border-4 border-[#01030a] z-20">
+                        <i data-lucide="crosshair" class="text-white w-8 h-8"></i>
+                    </div>
+                    <div class="md:w-1/2"></div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="relative z-10 flex flex-col md:flex-row-reverse items-center gap-12" data-aos="fade-up">
+                    <div class="md:w-1/2 flex justify-start md:pl-0 pl-16">
+                        <div class="glass-card p-10 rounded-[2.5rem] w-full max-w-lg relative overflow-hidden group">
+                            <div class="absolute -left-10 -top-10 text-[150px] font-black text-white/5 group-hover:text-secondary/10 transition-colors font-display">2</div>
+                            <h3 class="text-3xl font-black text-white mb-4">Verification</h3>
+                            <p class="text-slate-400 text-lg leading-relaxed">Once you pass Phase 1, you enter a lighter verification stage. The profit target is slashed in half (usually 4%). This just proves your first pass wasn't a fluke.</p>
+                            <ul class="mt-6 space-y-3">
+                                <li class="flex items-center gap-3 text-sm font-bold text-slate-300"><i data-lucide="check-circle-2" class="text-secondary w-4 h-4"></i> Reduced 4% Profit Target</li>
+                                <li class="flex items-center gap-3 text-sm font-bold text-slate-300"><i data-lucide="check-circle-2" class="text-secondary w-4 h-4"></i> Same Drawdown Limits</li>
+                                <li class="flex items-center gap-3 text-sm font-bold text-slate-300"><i data-lucide="check-circle-2" class="text-secondary w-4 h-4"></i> Consistent Strategy Check</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="absolute left-[20px] md:left-1/2 -translate-x-1/2 w-16 h-16 rounded-full bg-secondary flex items-center justify-center shadow-[0_0_30px_rgba(139,92,246,0.5)] border-4 border-[#01030a] z-20">
+                        <i data-lucide="shield-check" class="text-white w-8 h-8"></i>
+                    </div>
+                    <div class="md:w-1/2"></div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="relative z-10 flex flex-col md:flex-row items-center gap-12" data-aos="fade-up">
+                    <div class="md:w-1/2 flex justify-end md:pl-0 pl-16">
+                        <div class="glass-card p-10 rounded-[2.5rem] w-full max-w-lg md:text-right relative overflow-hidden group border-emerald-500/30">
+                            <div class="absolute -right-10 -top-10 text-[150px] font-black text-white/5 group-hover:text-emerald-500/10 transition-colors font-display hidden md:block">3</div>
+                            <div class="absolute -left-10 -top-10 text-[150px] font-black text-white/5 group-hover:text-emerald-500/10 transition-colors font-display md:hidden">3</div>
+                            <h3 class="text-3xl font-black text-white mb-4">Funded Trader</h3>
+                            <p class="text-slate-400 text-lg leading-relaxed">You are now trading our live capital. There are no more profit targets. Just trade safely, generate profit, and request payouts directly to your bank account.</p>
+                            <ul class="mt-6 space-y-3 flex flex-col md:items-end items-start">
+                                <li class="flex items-center gap-3 text-sm font-bold text-slate-300"><i data-lucide="check-circle-2" class="text-emerald-400 w-4 h-4"></i> 90% Profit Split</li>
+                                <li class="flex items-center gap-3 text-sm font-bold text-slate-300"><i data-lucide="check-circle-2" class="text-emerald-400 w-4 h-4"></i> Bi-weekly Payouts</li>
+                                <li class="flex items-center gap-3 text-sm font-bold text-slate-300"><i data-lucide="check-circle-2" class="text-emerald-400 w-4 h-4"></i> Capital Scaling Plan</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="absolute left-[20px] md:left-1/2 -translate-x-1/2 w-16 h-16 rounded-full bg-emerald-500 flex items-center justify-center shadow-[0_0_30px_rgba(16,185,129,0.5)] border-4 border-[#01030a] z-20">
+                        <i data-lucide="banknote" class="text-white w-8 h-8"></i>
+                    </div>
+                    <div class="md:w-1/2"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. LIVE TRADING TERMINAL PREVIEW (Working Chart) -->
+    <section id="terminal" class="py-32 relative z-20 bg-slate-900/30 border-y border-white/5">
+        <div class="max-w-[90rem] mx-auto px-6">
+            <div class="text-center mb-16">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-500/10 text-rose-400 text-xs font-bold uppercase tracking-widest border border-rose-500/20 mb-6">
+                    <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span> Live Interactive Demo
+                </div>
+                <h2 data-aos="fade-up" class="text-5xl md:text-7xl font-display font-black mb-6">Try The Terminal</h2>
+                <p data-aos="fade-up" data-aos-delay="100" class="text-slate-400 text-xl max-w-3xl mx-auto">Don't just take our word for it. Interact with the actual TradingView Advanced Chart integration that powers our platform right now.</p>
+            </div>
+
+            <div class="glass-heavy rounded-[2.5rem] p-4 md:p-8 shadow-2xl border border-white/10" data-aos="zoom-in" data-aos-duration="1000">
+                <div class="flex items-center justify-between mb-6 px-4">
+                    <div class="flex items-center gap-4">
+                        <div class="flex gap-2">
+                            <div class="w-3 h-3 rounded-full bg-rose-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+                        </div>
+                        <span class="text-slate-400 font-mono text-sm">terminal.fundeddesk.com</span>
+                    </div>
+                    <div class="text-slate-500 text-sm font-medium">Fully Responsive Interface</div>
+                </div>
+                
+                <!-- Main Chart Area -->
+                <div class="w-full h-[600px] md:h-[700px] rounded-2xl overflow-hidden border border-white/5 relative bg-[#131722]">
+                    <!-- TradingView Widget BEGIN -->
+                    <div class="tradingview-widget-container" style="height:100%;width:100%">
+                        <div id="tradingview_demo" style="height:calc(100% - 32px);width:100%"></div>
+                        <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                        <script type="text/javascript">
+                        new TradingView.widget(
+                        {
+                        "autosize": true,
+                        "symbol": "BINANCE:BTCUSDT",
+                        "interval": "5",
+                        "timezone": "Asia/Kolkata",
+                        "theme": "dark",
+                        "style": "1",
+                        "locale": "en",
+                        "enable_publishing": false,
+                        "backgroundColor": "#131722",
+                        "gridColor": "rgba(255, 255, 255, 0.04)",
+                        "hide_top_toolbar": false,
+                        "hide_legend": false,
+                        "save_image": false,
+                        "container_id": "tradingview_demo",
+                        "toolbar_bg": "#131722",
+                        "studies": [
+                            "Volume@tv-basicstudies",
+                            "RSI@tv-basicstudies"
+                        ]
+                        }
+                        );
+                        </script>
+                    </div>
+                    <!-- TradingView Widget END -->
+                </div>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 mt-16">
+                <div class="text-center p-6" data-aos="fade-up" data-aos-delay="100">
+                    <div class="w-12 h-12 mx-auto rounded-full bg-white/5 flex items-center justify-center mb-4 text-white"><i data-lucide="zap"></i></div>
+                    <h4 class="text-xl font-bold mb-2 text-white">Ultra-Low Latency</h4>
+                    <p class="text-slate-400 text-sm">Direct market access simulation ensures your orders are executed in under 20ms with zero slippage.</p>
+                </div>
+                <div class="text-center p-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="w-12 h-12 mx-auto rounded-full bg-white/5 flex items-center justify-center mb-4 text-white"><i data-lucide="layout"></i></div>
+                    <h4 class="text-xl font-bold mb-2 text-white">Advanced Tools</h4>
+                    <p class="text-slate-400 text-sm">Over 100+ built in indicators, Fibonacci tools, and smart drawing features powered by TradingView.</p>
+                </div>
+                <div class="text-center p-6" data-aos="fade-up" data-aos-delay="300">
+                    <div class="w-12 h-12 mx-auto rounded-full bg-white/5 flex items-center justify-center mb-4 text-white"><i data-lucide="smartphone"></i></div>
+                    <h4 class="text-xl font-bold mb-2 text-white">Mobile Optimized</h4>
+                    <p class="text-slate-400 text-sm">Trade on the go. Our terminal is a highly responsive PWA that feels like a native app on iOS and Android.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. TINY DETAILS / DEEP DIVE SECTION -->
+    <section id="details" class="py-32 relative z-10">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="mb-20">
+                <h2 data-aos="fade-right" class="text-5xl font-display font-black mb-6">The Devil is in the <span class="text-gradient">Details.</span></h2>
+                <p data-aos="fade-right" data-aos-delay="100" class="text-slate-400 text-xl max-w-2xl font-medium">We built this firm because we were tired of hidden rules designed to make traders fail. Here is exactly how we operate.</p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-12">
+                <!-- Detailed Rule 1 -->
+                <div class="glass-card p-10 rounded-3xl" data-aos="fade-up">
+                    <div class="flex items-start gap-6">
+                        <div class="w-16 h-16 rounded-2xl bg-rose-500/10 flex items-center justify-center shrink-0 border border-rose-500/20">
+                            <i data-lucide="alert-octagon" class="w-8 h-8 text-rose-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white mb-3">Drawdown Calculation</h3>
+                            <p class="text-slate-400 mb-4 leading-relaxed">Most firms calculate daily drawdown based on floating equity, stopping you out unfairly. We calculate our 5% Daily Drawdown based on your <strong>Start of Day Balance OR Equity</strong> (whichever is higher). This protects you from intra-day massive swings.</p>
+                            <div class="bg-black/30 p-4 rounded-xl border border-white/5 font-mono text-sm text-slate-300">
+                                <span class="text-emerald-400">Example:</span> Start day with ₹1,00,000. Daily Loss Limit is ₹5,000. Your equity cannot drop below ₹95,000 at any point during that day.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Rule 2 -->
+                <div class="glass-card p-10 rounded-3xl" data-aos="fade-up" data-aos-delay="100">
+                    <div class="flex items-start gap-6">
+                        <div class="w-16 h-16 rounded-2xl bg-blue-500/10 flex items-center justify-center shrink-0 border border-blue-500/20">
+                            <i data-lucide="scale" class="w-8 h-8 text-blue-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white mb-3">Capital Scaling</h3>
+                            <p class="text-slate-400 mb-4 leading-relaxed">If you achieve a 10% profit on your funded account over a 4-month period (with at least 2 payouts), we will increase your account size by 30%. This scales infinitely up to ₹1,00,00,000.</p>
+                            <div class="bg-black/30 p-4 rounded-xl border border-white/5 font-mono text-sm text-slate-300">
+                                <span class="text-blue-400">Scale Process:</span> Automatic review every 4 months. No additional fees required to scale up.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Rule 3 -->
+                <div class="glass-card p-10 rounded-3xl" data-aos="fade-up">
+                    <div class="flex items-start gap-6">
+                        <div class="w-16 h-16 rounded-2xl bg-amber-500/10 flex items-center justify-center shrink-0 border border-amber-500/20">
+                            <i data-lucide="gavel" class="w-8 h-8 text-amber-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white mb-3">Trading Styles Allowed</h3>
+                            <p class="text-slate-400 leading-relaxed">We welcome ALL trading styles. Scalping? Yes. Day Trading? Yes. Swing Trading? Yes. Holding positions over the weekend is fully permitted. Trading during high-impact news releases is fully permitted. We do not restrict your edge.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Rule 4 -->
+                <div class="glass-card p-10 rounded-3xl" data-aos="fade-up" data-aos-delay="100">
+                    <div class="flex items-start gap-6">
+                        <div class="w-16 h-16 rounded-2xl bg-purple-500/10 flex items-center justify-center shrink-0 border border-purple-500/20">
+                            <i data-lucide="bot" class="w-8 h-8 text-purple-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white mb-3">Expert Advisors & Algos</h3>
+                            <p class="text-slate-400 leading-relaxed">Automated trading is the future. EAs and custom algorithms are 100% allowed as long as they are your own strategy. High-Frequency Trading (HFT) and latency arbitrage are the only restrictions.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. PRICING -->
+    <section id="pricing" class="py-32 relative z-20">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-24">
+                <h2 data-aos="fade-up" class="text-5xl md:text-7xl font-display font-black mb-6">Transparent <span class="text-gradient">Pricing</span></h2>
+                <p data-aos="fade-up" data-aos-delay="100" class="text-slate-400 text-xl max-w-2xl mx-auto">One-time fee. Fully refundable with your first payout.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {% for package in packages %}
+                <div class="glass-card rounded-[2.5rem] p-10 relative flex flex-col group hover:-translate-y-4 transition-all duration-500 {% if loop.index == 2 %}border-primary/50 shadow-[0_0_40px_rgba(14,165,233,0.2)]{% endif %}" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
+                    
+                    {% if loop.index == 2 %}
+                    <div class="absolute -top-5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-primary to-secondary text-white px-8 py-2.5 rounded-full text-xs font-black uppercase tracking-widest shadow-lg whitespace-nowrap">
+                        Most Popular Choice
+                    </div>
+                    {% endif %}
+                    
+                    <h3 class="text-2xl font-display font-black text-white group-hover:text-primary transition-colors">{{ package.name }}</h3>
+                    <div class="my-6 flex items-baseline gap-2">
+                        <span class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white to-slate-400">₹{{ package.price }}</span>
+                    </div>
+
+                    <div class="space-y-6 my-8 flex-grow">
+                        <div class="flex justify-between items-center pb-4 border-b border-white/5">
+                            <span class="text-slate-400 font-medium">Account Size</span>
+                            <span class="font-black text-white text-xl">₹{{ package.account_size }}</span>
+                        </div>
+                        <div class="flex justify-between items-center pb-4 border-b border-white/5">
+                            <span class="text-slate-400 font-medium text-sm">Profit Target (Phase 1)</span>
+                            <span class="font-bold text-emerald-400 bg-emerald-400/10 px-3 py-1 rounded-lg">{{ package.profit_target_p1 }}%</span>
+                        </div>
+                        <div class="flex justify-between items-center pb-4 border-b border-white/5">
+                            <span class="text-slate-400 font-medium text-sm">Profit Target (Phase 2)</span>
+                            <span class="font-bold text-emerald-400 bg-emerald-400/10 px-3 py-1 rounded-lg">{{ package.profit_target_p2 }}%</span>
+                        </div>
+                        <div class="flex justify-between items-center pb-4 border-b border-white/5">
+                            <span class="text-slate-400 font-medium text-sm">Max Daily Loss</span>
+                            <span class="font-bold text-rose-400 bg-rose-400/10 px-3 py-1 rounded-lg">{{ package.max_daily_loss }}%</span>
+                        </div>
+                        <div class="flex justify-between items-center pb-4 border-b border-white/5">
+                            <span class="text-slate-400 font-medium text-sm">Max Total Loss</span>
+                            <span class="font-bold text-rose-400 bg-rose-400/10 px-3 py-1 rounded-lg">{{ package.max_total_loss }}%</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2">
+                            <span class="text-slate-400 font-medium text-sm">Fee Refund</span>
+                            <span class="font-bold text-white"><i data-lucide="check" class="text-emerald-400 inline w-4 h-4 mr-1"></i> Yes, 100%</span>
+                        </div>
+                    </div>
+
+                    <a href="/register?package={{ package.id }}" class="w-full py-5 rounded-2xl font-black text-center transition-all text-lg {% if loop.index == 2 %}bg-white text-slate-900 hover:scale-[1.02] shadow-[0_0_30px_rgba(255,255,255,0.3)]{% else %}glass-panel text-white hover:bg-white/10 hover:scale-[1.02]{% endif %}">
+                        Select Plan
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. FAQ Section -->
+    <section class="py-32 relative z-10" x-data="{ active: null }">
+        <div class="max-w-4xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 data-aos="fade-up" class="text-4xl font-display font-black mb-4">Frequently Asked Questions</h2>
+            </div>
+            
+            <div class="space-y-4" data-aos="fade-up" data-aos-delay="100">
+                <!-- FAQ Item 1 -->
+                <div class="glass-card rounded-2xl overflow-hidden">
+                    <button @click="active = (active === 1 ? null : 1)" class="w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none">
+                        <span class="font-bold text-white text-lg">How does the evaluation work?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform duration-300" :class="{'rotate-180': active === 1}"></i>
+                    </button>
+                    <div x-show="active === 1" x-collapse class="px-6 pb-6 text-slate-400 leading-relaxed">
+                        It's a simple 2-step process. In Phase 1, you must reach an 8% profit target without violating the 5% daily or 10% total loss limits. In Phase 2, the profit target is reduced to 4%. Once passed, you are funded!
+                    </div>
+                </div>
+                
+                <!-- FAQ Item 2 -->
+                <div class="glass-card rounded-2xl overflow-hidden">
+                    <button @click="active = (active === 2 ? null : 2)" class="w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none">
+                        <span class="font-bold text-white text-lg">When can I withdraw my profits?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform duration-300" :class="{'rotate-180': active === 2}"></i>
+                    </button>
+                    <div x-show="active === 2" x-collapse class="px-6 pb-6 text-slate-400 leading-relaxed">
+                        Your first payout can be requested just 14 days after placing your first trade on the Funded account. Subsequent payouts can be requested bi-weekly. We process all payouts within 12-24 hours via Bank Transfer or Crypto.
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="glass-card rounded-2xl overflow-hidden">
+                    <button @click="active = (active === 3 ? null : 3)" class="w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none">
+                        <span class="font-bold text-white text-lg">Are there any hidden rules or consistency rules?</span>
+                        <i data-lucide="chevron-down" class="w-5 h-5 text-slate-400 transition-transform duration-300" :class="{'rotate-180': active === 3}"></i>
+                    </button>
+                    <div x-show="active === 3" x-collapse class="px-6 pb-6 text-slate-400 leading-relaxed">
+                        No! We absolutely despise hidden consistency rules. As long as you respect the Daily and Total Drawdown limits, you are fine. You can trade any lot size, hold over weekends, and trade news.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="glass-heavy border-t border-white/10 pt-24 pb-12 mt-20 relative z-20">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid lg:grid-cols-4 gap-16 mb-16">
+                <div class="lg:col-span-2">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-black text-2xl shadow-[0_0_20px_rgba(14,165,233,0.3)]">F</div>
+                        <span class="font-display font-black text-3xl tracking-tight text-white">{{ app_name }}</span>
+                    </div>
+                    <p class="text-slate-400 max-w-md leading-relaxed text-lg">
+                        India's premier proprietary trading firm. Empowering skilled traders with institutional capital, superior technology, and absolute transparency.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="font-black text-white mb-6 uppercase tracking-widest text-sm">Explore</h4>
+                    <ul class="space-y-4 text-slate-400 font-medium">
+                        <li><a href="#how-it-works" class="hover:text-primary transition-colors">How it Works</a></li>
+                        <li><a href="#pricing" class="hover:text-primary transition-colors">Pricing & Plans</a></li>
+                        <li><a href="#terminal" class="hover:text-primary transition-colors">Trading Platform</a></li>
+                        <li><a href="#details" class="hover:text-primary transition-colors">Trading Rules</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-black text-white mb-6 uppercase tracking-widest text-sm">Legal & Support</h4>
+                    <ul class="space-y-4 text-slate-400 font-medium">
+                        <li><a href="#" class="hover:text-primary transition-colors">Help Center / Support</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">Risk Disclosure</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6 pt-10 border-t border-white/10 text-slate-500 text-sm font-medium">
+                <div>&copy; 2026 {{ app_name }}. All rights reserved.</div>
+                <div class="flex gap-6">
+                    <a href="#" class="hover:text-white transition-transform hover:scale-110"><i data-lucide="twitter" class="w-6 h-6"></i></a>
+                    <a href="#" class="hover:text-white transition-transform hover:scale-110"><i data-lucide="instagram" class="w-6 h-6"></i></a>
+                    <a href="#" class="hover:text-white transition-transform hover:scale-110"><i data-lucide="youtube" class="w-6 h-6"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize AOS animations
+        AOS.init({
+            once: true,
+            offset: 100,
+            duration: 1000,
+            easing: 'ease-out-cubic',
+        });
+        
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
+'''
+
+with open('app/templates/landing.html', 'w', encoding='utf-8') as f:
+    f.write(html_content)
+

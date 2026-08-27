@@ -269,7 +269,9 @@
                                     <td class="px-4 py-4 text-right font-mono font-medium">₹{{ "{:,.2f}".format(acc.current_equity) }}</td>
                                     <td class="px-4 py-4 text-center">
                                         <div class="flex items-center justify-center gap-2">
-                                            <button onclick="adminAction('account', {{ acc.id }}, 'pass_phase')" class="text-[10px] bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white px-2.5 py-1 rounded transition-colors font-bold border border-emerald-500/20">PASS</button>
+                                            <button onclick="adminAction('account', {{ acc.id }}, 'pass_phase')" class="text-[10px] bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white px-2.5 py-1 rounded transition-colors font-bold border border-emerald-500/20">
+                                            {% if acc.phase == 'Phase 2' %}FUND{% else %}PASS{% endif %}
+                                        </button>
                                             <button onclick="adminAction('account', {{ acc.id }}, 'reset')" class="text-[10px] bg-amber-500/10 text-amber-400 hover:bg-amber-500 hover:text-white px-2.5 py-1 rounded transition-colors font-bold border border-amber-500/20">RESET</button>
                                             <button onclick="adminAction('account', {{ acc.id }}, 'force_breach')" class="text-[10px] bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white px-2.5 py-1 rounded transition-colors font-bold border border-rose-500/20">BREACH</button>
                                         </div>
@@ -428,7 +430,51 @@
         </div>
     </div>
 
-<script>
+
+    <script>
+        function openBroadcastModal() { document.getElementById('broadcastModal').classList.remove('hidden'); }
+        function closeBroadcastModal() { document.getElementById('broadcastModal').classList.add('hidden'); }
+        function sendBroadcast() {
+            const msg = document.getElementById('broadcastMessage').value;
+            if(!msg) return;
+            adminActionWithPayload('system', 'global', 'broadcast', msg);
+            closeBroadcastModal();
+        }
+        
+        function openSettingsModal() { document.getElementById('settingsModal').classList.remove('hidden'); }
+        function closeSettingsModal() { document.getElementById('settingsModal').classList.add('hidden'); }
+        function saveDirectorName() {
+            const name = document.getElementById('directorNameInput').value;
+            if(!name) return;
+            adminActionWithPayload('system', 'director_name', 'update_setting', name);
+            closeSettingsModal();
+        }
+        
+        async function adminActionWithPayload(entity, id, action, payload) {
+            try {
+                const formData = new FormData();
+                formData.append('entity', entity);
+                formData.append('id', id);
+                formData.append('action', action);
+                formData.append('payload', payload);
+                
+                const response = await fetch('/admin/api/action', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    setTimeout(() => window.location.reload(), 1500);
+                } else {
+                    showToast(data.error || 'Action failed', 'error');
+                }
+            } catch (err) {
+                showToast('Server error', 'error');
+            }
+        }
+
     lucide.createIcons();
 
     function showToast(msg, type='success') {
@@ -574,5 +620,28 @@
         }
     }
 </script>
+
+    <!-- Modals -->
+    <div id="broadcastModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-white/10 rounded-2xl p-6 w-full max-w-lg">
+            <h3 class="text-xl font-bold text-white mb-4">Broadcast Custom Message</h3>
+            <textarea id="broadcastMessage" rows="4" class="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-primary mb-4" placeholder="Type message here..."></textarea>
+            <div class="flex justify-end gap-3">
+                <button onclick="closeBroadcastModal()" class="px-4 py-2 rounded-xl text-slate-400 hover:bg-white/5 transition-colors">Cancel</button>
+                <button onclick="sendBroadcast()" class="px-4 py-2 rounded-xl bg-primary text-white font-bold hover:bg-primary/80 transition-colors">Send Broadcast</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="settingsModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-white/10 rounded-2xl p-6 w-full max-w-lg">
+            <h3 class="text-xl font-bold text-white mb-4">Update Certificate Director</h3>
+            <input type="text" id="directorNameInput" class="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-primary mb-4" placeholder="Dr. S. K. Vance">
+            <div class="flex justify-end gap-3">
+                <button onclick="closeSettingsModal()" class="px-4 py-2 rounded-xl text-slate-400 hover:bg-white/5 transition-colors">Cancel</button>
+                <button onclick="saveDirectorName()" class="px-4 py-2 rounded-xl bg-primary text-white font-bold hover:bg-primary/80 transition-colors">Save Name</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

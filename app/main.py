@@ -133,23 +133,33 @@ async def startup_event():
     try:
         db.execute(text("ALTER TABLE users ADD COLUMN plain_password VARCHAR(255)"))
         db.commit()
-        try:
-            db.execute(text("ALTER TABLE users ADD COLUMN deletion_requested BOOLEAN DEFAULT 0"))
-            db.commit()
-        except Exception:
-            db.rollback()
-
-    except Exception as e:
+    except Exception:
         db.rollback()
-        print("Migration skipped or failed:", e)
         
     try:
-        db.execute(text("CREATE TABLE IF NOT EXISTS notifications (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, message VARCHAR(500), type VARCHAR(50) DEFAULT 'info', is_read BOOLEAN DEFAULT 0, created_at DATETIME DEFAULT CURRENT_TIMESTAMP)"))
+        db.execute(text("ALTER TABLE users ADD COLUMN deletion_requested BOOLEAN DEFAULT FALSE"))
         db.commit()
-    except Exception as e:
+    except Exception:
         db.rollback()
-        print("Notification migration failed:", e)
         
+    try:
+        db.execute(text("ALTER TABLE users ADD COLUMN deletion_reason VARCHAR(500)"))
+        db.commit()
+    except Exception:
+        db.rollback()
+
+    try:
+        db.execute(text("CREATE TABLE IF NOT EXISTS notifications (id SERIAL PRIMARY KEY, user_id INTEGER, message VARCHAR(500), type VARCHAR(50) DEFAULT 'info', is_read BOOLEAN DEFAULT FALSE, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)"))
+        db.commit()
+    except Exception:
+        db.rollback()
+        try:
+            db.execute(text("CREATE TABLE IF NOT EXISTS notifications (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER, message VARCHAR(500), type VARCHAR(50) DEFAULT 'info', is_read BOOLEAN DEFAULT 0, created_at DATETIME DEFAULT CURRENT_TIMESTAMP)"))
+            db.commit()
+        except Exception as e:
+            db.rollback()
+            print("Notification migration failed:", e)
+
     finally:
         db.close()
     

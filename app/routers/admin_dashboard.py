@@ -122,7 +122,6 @@ async def admin_account_action(account_id: int, action: str = Form(...), _ = Dep
         if account.phase == "Phase 1":
             if account.model_type == "2-Step":
                 account.phase = "Phase 2"
-                # Update profit target to Phase 2 target if package exists
                 package = db.query(ChallengePackage).filter(ChallengePackage.id == account.package_id).first()
                 if package:
                     account.profit_target_pct = package.profit_target_p2
@@ -130,8 +129,16 @@ async def admin_account_action(account_id: int, action: str = Form(...), _ = Dep
                 account.phase = "Funded"
         elif account.phase == "Phase 2":
             account.phase = "Funded"
+            
         account.status = "ACTIVE"
         account.breach_reason = None
+        # Reset balance for the next phase
+        account.current_balance = account.initial_balance
+        account.current_equity = account.initial_balance
+        account.daily_starting_equity = account.initial_balance
+        account.highest_recorded_equity = account.initial_balance
+        # Delete old trades for the new phase
+        db.query(TradePosition).filter(TradePosition.account_id == account_id).delete()
         
     elif action == "force_breach":
         account.status = "BREACHED"
@@ -239,27 +246,39 @@ async def admin_generic_action(
     request: Request,
     entity: str = Form(...),
     id: str = Form(...),
-    action: str = Form(...)
+    action: str = Form(...),
+    payload: str = Form(None)
 ):
     require_super_admin(request)
+    from ..database import SessionLocal
+    from ..models import User, Notification, AppSetting
     
-    if action == "halt_trading":
-        return JSONResponse({"success": True, "message": "Global circuit breaker engaged! Trading halted."})
-    elif action == "wipe_liquidity":
-        return JSONResponse({"success": True, "message": "Liquidity wiped! Spreads expanded by 500%."})
-    elif action == "force_reset":
-        return JSONResponse({"success": True, "message": "Drawdowns forcefully reset."})
-    elif action == "broadcast":
-        from ..engine.market_data import admin_notifications
-        from ..database import get_db, SessionLocal
-        from ..models import User, TradingAccount, TradePosition, ChallengePackage
-        db = SessionLocal()
-        users = db.query(User).all()
-        for u in users:
-            if u.id not in admin_notifications:
-                admin_notifications[u.id] = []
-            admin_notifications[u.id].append(id) # `id` contains the message here for broadcasts
+    db = SessionLocal()
+    try:
+        if action == "halt_trading":
+            return JSONResponse({"success": True, "message": "Global circuit breaker engaged! Trading halted."})
+        elif action == "wipe_liquidity":
+            return JSONResponse({"success": True, "message": "Liquidity wiped! Spreads expanded by 500%."})
+        elif action == "force_reset":
+            return JSONResponse({"success": True, "message": "Drawdowns forcefully reset."})
+        elif action == "broadcast":
+            msg = payload if payload else "System Alert!"
+            new_notif = Notification(user_id=None, message=msg, type="info") # null user_id means global broadcast
+            db.add(new_notif)
+            db.commit()
+            return JSONResponse({"success": True, "message": "Custom broadcast sent to all users!"})
+        elif action == "update_setting":
+            key = id
+            val = payload
+            setting = db.query(AppSetting).filter(AppSetting.key == key).first()
+            if not setting:
+                setting = AppSetting(key=key, value=val)
+                db.add(setting)
+            else:
+                setting.value = val
+            db.commit()
+            return JSONResponse({"success": True, "message": f"Setting {key} updated successfully!"})
+            
+        return JSONResponse({"success": True, "message": f"Executed {action} on {entity}!"})
+    finally:
         db.close()
-        return JSONResponse({"success": True, "message": "Broadcast sent to all users!"})
-    
-    return JSONResponse({"success": True, "message": f"Executed {action} on {entity}!"})

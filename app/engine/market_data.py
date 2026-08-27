@@ -136,42 +136,58 @@ class MarketDataEngine:
 
     def _generate_initial_candles(self, symbol: str, count: int = 120) -> List[Dict[str, Any]]:
         is_option = symbol.endswith("CE") or symbol.endswith("PE")
+        candles = []
+        now = datetime.now(timezone.utc)
+        
         if is_option:
             underlying = "NIFTY50" if "NIFTY" in symbol else "BANKNIFTY"
-            cfg = INSTRUMENTS.get(underlying, {"volatility": 2.0, "digits": 2})
-            current_p = 150.0  # mock option base price
+            # Get underlying candles
+            if underlying not in self.candle_cache:
+                self.candle_cache[underlying] = self._generate_initial_candles(underlying, count)
+            
+            from .options_engine import calculate_option_price_live
+            
+            underlying_candles = self.candle_cache[underlying][-count:]
+            for uc in underlying_candles:
+                base_p = calculate_option_price_live(symbol, uc["close"])
+                if base_p is None: base_p = 150.0
+                
+                # Mock high/low around base_p
+                vol = base_p * 0.05
+                candles.append({
+                    "time": uc["time"],
+                    "open": round(base_p + random.uniform(-vol, vol), 2),
+                    "high": round(base_p + vol + random.uniform(0, vol), 2),
+                    "low": round(max(0.05, base_p - vol - random.uniform(0, vol)), 2),
+                    "close": round(base_p, 2),
+                    "volume": random.randint(100, 1000)
+                })
         else:
             cfg = INSTRUMENTS.get(symbol, {"base_price": 100.0, "volatility": 1.0, "digits": 2})
             current_p = cfg.get("base_price", 100.0)
             
-        candles = []
-        now = datetime.now(timezone.utc)
-
-        for i in range(count, 0, -1):
-            t = now - timedelta(minutes=i * 5)
-            timestamp = int(t.timestamp())
-            
-            vol = cfg["volatility"] * random.uniform(0.6, 1.8)
-            drift = random.uniform(-vol, vol)
-            open_p = current_p
-            close_p = open_p + drift
-            high_p = max(open_p, close_p) + abs(random.uniform(0, vol * 1.1))
-            low_p = min(open_p, close_p) - abs(random.uniform(0, vol * 1.1))
-            
-            candles.append({
-                "time": timestamp,
-                "open": round(open_p, cfg["digits"]),
-                "high": round(high_p, cfg["digits"]),
-                "low": round(low_p, cfg["digits"]),
-                "close": round(close_p, cfg["digits"]),
-                "volume": int(random.uniform(150, 4500))
-            })
-            current_p = close_p
-
-        if not is_option:
-            self.prices[symbol]["mid"] = round(current_p, cfg["digits"])
-            self.prices[symbol]["bid"] = round(current_p - cfg.get("spread", 0.5) / 2, cfg["digits"])
-            self.prices[symbol]["ask"] = round(current_p + cfg.get("spread", 0.5) / 2, cfg["digits"])
+            for i in range(count, 0, -1):
+                t = now - timedelta(minutes=i * 5)
+                timestamp = int(t.timestamp())
+                
+                volatility = cfg.get("volatility", 1.0)
+                change = random.uniform(-volatility, volatility)
+                
+                o = current_p
+                c = current_p + change
+                h = max(o, c) + random.uniform(0, volatility * 0.5)
+                l = min(o, c) - random.uniform(0, volatility * 0.5)
+                
+                candles.append({
+                    "time": timestamp,
+                    "open": round(o, cfg.get("digits", 2)),
+                    "high": round(h, cfg.get("digits", 2)),
+                    "low": round(l, cfg.get("digits", 2)),
+                    "close": round(c, cfg.get("digits", 2)),
+                    "volume": random.randint(100, 1000)
+                })
+                current_p = c
+                
         return candles
 
     def tick(self, symbol: str = None) -> Dict[str, Any]:

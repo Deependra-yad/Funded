@@ -67,3 +67,21 @@ async def request_payout(account_id: int = Form(...), user: User = Depends(requi
     db.commit()
     
     return RedirectResponse(url="/dashboard?payout_success=1", status_code=303)
+
+from fastapi.responses import JSONResponse
+
+@router.post("/api/notifications/{notif_id}/dismiss")
+async def dismiss_notification(notif_id: int, request: Request, db: Session = Depends(get_db)):
+    user = get_current_user(request, db)
+    if not user:
+        return JSONResponse({"success": False})
+    notif = db.query(Notification).filter(Notification.id == notif_id).first()
+    if not notif:
+        return JSONResponse({"success": False})
+    
+    # Simple fix: just delete the notification if it's personal, or hide it via JS for global
+    if notif.user_id == user.id:
+        db.delete(notif)
+        db.commit()
+    
+    return JSONResponse({"success": True})

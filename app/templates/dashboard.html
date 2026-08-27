@@ -1,7 +1,27 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard - FundedDesk{% endblock %}
-{% block breadcrumb %}Dashboard{% endblock %}
+{% block title %}Dashboard - FundedDesk
+<script>
+    async function dismissNotif(id) {
+        document.getElementById('notif-' + id).style.display = 'none';
+        try {
+            await fetch('/api/notifications/' + id + '/dismiss', { method: 'POST' });
+        } catch(e){}
+    }
+</script>
+{% endblock %}
+
+{% block breadcrumb %}Dashboard
+<script>
+    async function dismissNotif(id) {
+        document.getElementById('notif-' + id).style.display = 'none';
+        try {
+            await fetch('/api/notifications/' + id + '/dismiss', { method: 'POST' });
+        } catch(e){}
+    }
+</script>
+{% endblock %}
+
 
 {% block content %}
 <div class="max-w-6xl mx-auto space-y-6">
@@ -9,7 +29,7 @@
     <!-- Header Section -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-            <h1 class="text-3xl font-black text-slate-900 tracking-tight">Institutional Dashboard</h1>
+            <h1 class="text-2xl sm:text-3xl font-black text-slate-900 truncate tracking-tight">Institutional Dashboard</h1>
             <p class="text-slate-500 text-sm mt-0.5">Manage your active evaluations, funded accounts, and trading performance.</p>
         </div>
         <div>
@@ -23,25 +43,25 @@
 
     {% if accounts %}
     <!-- Trading Statistics Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm flex flex-col justify-between">
             <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Total Allocated Capital</div>
             <div class="text-2xl font-black text-slate-900 font-mono">₹{{ total_balance|inr }}</div>
             <div class="text-xs text-slate-500 font-medium mt-1">Across {{ accounts|length }} accounts</div>
         </div>
-        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm flex flex-col justify-between">
             <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Total Equity</div>
             <div class="text-2xl font-black text-blue-600 font-mono">₹{{ total_equity|inr }}</div>
             <div class="text-xs text-slate-500 font-medium mt-1">Live market value</div>
         </div>
-        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm flex flex-col justify-between">
             <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Total Profit</div>
             <div class="text-2xl font-black {% if total_profit >= 0 %}text-emerald-500{% else %}text-rose-500{% endif %} font-mono">
                 {{ "+₹" if total_profit >= 0 else "-₹" }}{{ total_profit|abs|inr }}
             </div>
             <div class="text-xs text-slate-500 font-medium mt-1">Combined PnL</div>
         </div>
-        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-5 shadow-sm flex flex-col justify-between">
             <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Active Evaluations</div>
             <div class="text-2xl font-black text-slate-900 font-mono">{{ active_accounts|length }}</div>
             <div class="text-xs text-emerald-600 font-bold mt-1">{{ passed_accounts|length }} Funded / Passed</div>
@@ -238,4 +258,14 @@
     </div>
 
 </div>
+
+<script>
+    async function dismissNotif(id) {
+        document.getElementById('notif-' + id).style.display = 'none';
+        try {
+            await fetch('/api/notifications/' + id + '/dismiss', { method: 'POST' });
+        } catch(e){}
+    }
+</script>
 {% endblock %}
+

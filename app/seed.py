@@ -4,6 +4,7 @@ from app.models import User, ChallengePackage, TradingAccount, TradePosition, Or
 from app.security import hash_password
 
 def seed_database():
+    return
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
 

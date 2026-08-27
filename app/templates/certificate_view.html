@@ -4,6 +4,18 @@
 {% block breadcrumb %}<a href="/passed-challenges" class="hover:underline">Certificates</a> / {{ cert.cert_id }}{% endblock %}
 
 {% block content %}
+
+    <style>
+        @media print {
+            body * { visibility: hidden; }
+            #certificate-container, #certificate-container * { visibility: visible; }
+            #certificate-container {
+                position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; box-shadow: none !important;
+            }
+            .print-hide { display: none !important; }
+        }
+    </style>
+
 <div class="max-w-4xl mx-auto space-y-6 pb-12">
 
     <!-- Action Bar -->
@@ -12,7 +24,7 @@
             <i data-lucide="arrow-left" class="w-4 h-4"></i>
             <span>Back to Certificates</span>
         </a>
-        <button onclick="window.print()" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-95 text-white font-bold text-xs py-2 px-4 rounded-xl flex items-center gap-2 shadow-sm transition-all">
+        <button onclick="window.print()" class="print-hide bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-95 text-white font-bold text-xs py-2 px-4 rounded-xl flex items-center gap-2 shadow-sm transition-all">
             <i data-lucide="printer" class="w-4 h-4"></i>
             <span>Print / Save PDF</span>
         </button>
@@ -74,7 +86,7 @@
 
                 <!-- Signature -->
                 <div class="text-right space-y-1">
-                    <div class="font-serif italic text-lg text-slate-800 font-bold -mb-1">Dr. S. K. Vance</div>
+                    <div class="font-serif italic text-lg text-slate-800 font-bold -mb-1">{{ director_name }}</div>
                     <div class="text-[10px] text-slate-400 font-bold uppercase border-t border-slate-300 pt-1 inline-block">Managing Director & Head of Risk</div>
                 </div>
             </div>
