@@ -26,24 +26,38 @@ def check_chat_auth(request: Request, db: Session):
     return is_admin, user
 
 @router.post("/api/chat")
-async def send_chat(request: Request, message: str = Form(...), db: Session = Depends(get_db)):
+async def send_chat(request: Request, message: str = Form(...), target_user_id: int = Form(None), db: Session = Depends(get_db)):
     if not message.strip():
         return JSONResponse({"success": False})
         
     is_admin, user = check_chat_auth(request, db)
-    user_id = user.id if user else 0 # 0 for admin
+    if is_admin and target_user_id:
+        room_user_id = target_user_id
+    else:
+        room_user_id = user.id if user else 0
     
-    msg = ChatMessage(user_id=user_id, is_admin=is_admin, message=message.strip())
+    msg = ChatMessage(user_id=room_user_id, is_admin=is_admin, message=message.strip())
     db.add(msg)
     db.commit()
     return JSONResponse({"success": True})
 
+@router.post("/api/chat/clear")
+async def clear_chat(request: Request, db: Session = Depends(get_db)):
+    is_admin, user = check_chat_auth(request, db)
+    if not is_admin and user:
+        db.query(ChatMessage).filter(ChatMessage.user_id == user.id).delete()
+        db.commit()
+    return JSONResponse({"success": True})
+
 @router.get("/api/chat")
-async def get_chat(request: Request, db: Session = Depends(get_db)):
+async def get_chat(request: Request, target_user_id: int = Query(None), db: Session = Depends(get_db)):
     is_admin, user = check_chat_auth(request, db)
     
     if is_admin:
-        messages = db.query(ChatMessage).order_by(ChatMessage.created_at.desc()).limit(100).all()
+        if target_user_id:
+            messages = db.query(ChatMessage).filter(ChatMessage.user_id == target_user_id).order_by(ChatMessage.created_at.desc()).limit(100).all()
+        else:
+            messages = db.query(ChatMessage).order_by(ChatMessage.created_at.desc()).limit(100).all()
     else:
         messages = db.query(ChatMessage).filter(ChatMessage.user_id == user.id).order_by(ChatMessage.created_at.desc()).limit(50).all()
     
@@ -72,7 +86,7 @@ FEATURE_CONTENT = {
         "title": "Economic Calendar",
         "icon": "calendar",
         "desc": "Track key economic events and data releases.",
-        "widget": '''<div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>{"colorTheme": "dark","isTransparent": true,"width": "100%","height": "100%","locale": "en","importanceFilter": "-1,0,1"}</script></div>'''
+        "widget": '''<div class="tradingview-widget-container"><div class="tradingview-widget-container__widget"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>{"colorTheme": "dark","isTransparent": true,"width": "100%","height": "100%","locale": "en","importanceFilter": "-1,0$"}</script></div>'''
     },
     "leaderboard": {
         "title": "Leaderboard",
@@ -92,7 +106,7 @@ FEATURE_CONTENT = {
                 <tbody class="text-slate-300">
                     <tr class="border-t border-slate-800"><td class="py-4 font-bold text-amber-500">1</td><td class="py-4 flex items-center gap-2"><img src="https://i.pravatar.cc/150?u=1" class="w-6 h-6 rounded-full"> Alex R.</td><td class="py-4 font-mono text-emerald-400">$142,500</td><td class="py-4 text-right">82%</td></tr>
                     <tr class="border-t border-slate-800"><td class="py-4 font-bold text-slate-300">2</td><td class="py-4 flex items-center gap-2"><img src="https://i.pravatar.cc/150?u=2" class="w-6 h-6 rounded-full"> Sarah M.</td><td class="py-4 font-mono text-emerald-400">$98,200</td><td class="py-4 text-right">79%</td></tr>
-                    <tr class="border-t border-slate-800"><td class="py-4 font-bold text-amber-700">3</td><td class="py-4 flex items-center gap-2"><img src="https://i.pravatar.cc/150?u=3" class="w-6 h-6 rounded-full"> John D.</td><td class="py-4 font-mono text-emerald-400">$84,100</td><td class="py-4 text-right">76%</td></tr>
+                    <tr class="border-t border-slate-800"><td class="py-4 font-bold text-amber-700">3</td><td class="py-4 flex items-center gap-2"><img src="https://i.pravatar.cc/150?u=3" class="w-6 h-6 rounded-full"> John D.</td><td class="py-4 font-mono text-emerald-400">$84$00</td><td class="py-4 text-right">76%</td></tr>
                 </tbody>
             </table>
         </div>'''
@@ -129,10 +143,13 @@ FEATURE_CONTENT = {
         "icon": "life-buoy",
         "desc": "24/7 Priority Support for all our traders.",
         "widget": '''
-        <div class="h-[500px] flex flex-col" x-data="{ messages: [], newMessage: '', fetchChat() { fetch('/api/chat').then(r=>r.json()).then(d=> { this.messages = d; setTimeout(()=>$refs.chatbox.scrollTop = $refs.chatbox.scrollHeight, 100); }); } }" x-init="fetchChat(); setInterval(()=>fetchChat(), 3000);">
+        <div class="h-[500px] flex flex-col" x-data="{ messages: [], newMessage: '', fetchChat() { fetch('/api/chat').then(r=>r.json()).then(d=> { this.messages = d; setTimeout(()=>$refs.chatbox.scrollTop = $refs.chatbox.scrollHeight, 100); }); }, clearChat() { if(confirm('Clear history?')) { fetch('/api/chat/clear', {method:'POST'}).then(()=>this.fetchChat()); } } }" x-init="fetchChat(); setInterval(()=>fetchChat(), 3000);">
             <div class="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/50 flex justify-between items-center">
                 <div class="font-bold flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div> Live Support</div>
-                <div class="text-xs text-slate-500">Average response: 3 mins</div>
+                <div class="flex items-center gap-4">
+                    <div class="text-xs text-slate-500">Average response: 3 mins</div>
+                    <button @click="clearChat()" title="Clear Chat History" class="text-slate-400 hover:text-rose-500 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                </div>
             </div>
             <div x-ref="chatbox" class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 dark:bg-slate-900/50">
                 <template x-for="m in messages" :key="m.id">
@@ -321,7 +338,7 @@ async def view_feature(request: Request, name: str, user: User = Depends(require
                     <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-white">{initials}</div>
                     {trader_name}
                 </td>
-                <td class="py-4 font-mono text-emerald-400">₹{acc.current_balance:,.2f}</td>
+                <td class="py-4 font-mono text-emerald-400">${acc.current_balance:,.2f}</td>
                 <td class="py-4 text-right">Funded</td>
             </tr>
             '''

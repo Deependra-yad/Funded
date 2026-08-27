@@ -165,9 +165,11 @@ async def admin_user_action(user_id: int, action: str = Form(...), _ = Depends(r
             db.query(TradePosition).filter(TradePosition.account_id == acc.id).delete()
             db.delete(acc)
             
-        from ..models import Notification, ChatMessage
+        from ..models import Notification, ChatMessage, Order, Certificate
         db.query(Notification).filter(Notification.user_id == user.id).delete()
         db.query(ChatMessage).filter(ChatMessage.user_id == user.id).delete()
+        db.query(Order).filter(Order.user_id == user.id).delete()
+        db.query(Certificate).filter(Certificate.user_id == user.id).delete()
         db.delete(user)
         
     db.commit()
@@ -355,3 +357,17 @@ async def admin_package_action(
             return JSONResponse({"success": False, "error": "Invalid price format"})
             
     return JSONResponse({"success": False, "error": "Unknown action"})
+
+@router.get("/admin/api/chat/users")
+async def admin_chat_users(_ = Depends(require_super_admin), db: Session = Depends(get_db)):
+    from ..models import ChatMessage, User
+    
+    user_ids = db.query(ChatMessage.user_id).distinct().filter(ChatMessage.user_id != 0).all()
+    user_ids = [uid[0] for uid in user_ids]
+    
+    users = db.query(User).filter(User.id.in_(user_ids)).all()
+    return JSONResponse([
+        {"id": u.id, "name": getattr(u, "name", None) or u.full_name or f"User {u.id}", "email": u.email}
+        for u in users
+    ])
+

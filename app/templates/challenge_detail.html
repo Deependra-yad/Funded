@@ -19,7 +19,7 @@
                 </span>
             </div>
             <p class="text-xs text-slate-500">
-                ₹{{ account.initial_balance|inr }} {{ account.model_type }} Evaluation &middot; Platform: {{ account.platform }} &middot; Created: {{ account.created_at.strftime('%b %d, %Y') }}
+                ${{ account.initial_balance|inr }} {{ account.model_type }} Evaluation &middot; Platform: {{ account.platform }} &middot; Created: {{ account.created_at.strftime('%b %d, %Y') }}
             </p>
         </div>
 
@@ -49,10 +49,10 @@
                 <span class="text-emerald-600">{{ account.profit_target_pct }}% Target</span>
             </div>
             <div class="text-xl font-extrabold font-mono {% if account.current_profit >= 0 %}text-emerald-600{% else %}text-rose-600{% endif %}">
-                {{ "+₹" if account.current_profit >= 0 else "-₹" }}{{ account.current_profit|abs|inr(2) }}
+                {{ "+$" if account.current_profit >= 0 else "-$" }}{{ account.current_profit|abs|inr(2) }}
             </div>
             <div class="text-xs text-slate-500 mt-1">
-                Goal: ₹{{ account.target_amount|inr(2) }} ({{ "{:.1f}".format(account.current_profit_pct) }}%)
+                Goal: ${{ account.target_amount|inr(2) }} ({{ "{:.1f}".format(account.current_profit_pct) }}%)
             </div>
             <div class="w-full bg-slate-100 rounded-full h-2 mt-3 overflow-hidden">
                 {% set p_pct = (account.current_profit / account.target_amount * 100) if account.target_amount > 0 else 0 %}
@@ -67,10 +67,10 @@
                 <span class="text-slate-600">{{ account.max_daily_loss_pct }}% Max</span>
             </div>
             <div class="text-xl font-extrabold font-mono text-slate-900">
-                ₹{{ account.daily_loss_amount|inr(2) }}
+                ${{ account.daily_loss_amount|inr(2) }}
             </div>
             <div class="text-xs text-slate-500 mt-1">
-                Max Allowed: ₹{{ account.max_daily_loss_limit|inr(2) }} ({{ "{:.1f}".format(account.daily_loss_pct) }}%)
+                Max Allowed: ${{ account.max_daily_loss_limit|inr(2) }} ({{ "{:.1f}".format(account.daily_loss_pct) }}%)
             </div>
             <div class="w-full bg-slate-100 rounded-full h-2 mt-3 overflow-hidden">
                 {% set d_pct = (account.daily_loss_pct / account.max_daily_loss_pct * 100) if account.max_daily_loss_pct > 0 else 0 %}
@@ -85,10 +85,10 @@
                 <span class="text-slate-600">{{ account.max_total_loss_pct }}% Max</span>
             </div>
             <div class="text-xl font-extrabold font-mono text-slate-900">
-                ₹{{ account.total_loss_amount|inr(2) }}
+                ${{ account.total_loss_amount|inr(2) }}
             </div>
             <div class="text-xs text-slate-500 mt-1">
-                Max Allowed: ₹{{ account.max_total_loss_limit|inr(2) }} ({{ "{:.1f}".format(account.total_loss_pct) }}%)
+                Max Allowed: ${{ account.max_total_loss_limit|inr(2) }} ({{ "{:.1f}".format(account.total_loss_pct) }}%)
             </div>
             <div class="w-full bg-slate-100 rounded-full h-2 mt-3 overflow-hidden">
                 {% set t_pct = (account.total_loss_pct / account.max_total_loss_pct * 100) if account.max_total_loss_pct > 0 else 0 %}
@@ -136,11 +136,11 @@
         </div>
         <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-xs">
             <div class="text-[11px] font-bold text-slate-400">Average Win</div>
-            <div class="text-lg font-black text-emerald-600 font-mono mt-0.5">₹{{ avg_win|inr(2) }}</div>
+            <div class="text-lg font-black text-emerald-600 font-mono mt-0.5">${{ avg_win|inr(2) }}</div>
         </div>
         <div class="bg-white rounded-xl border border-slate-200 p-4 shadow-xs">
             <div class="text-[11px] font-bold text-slate-400">Average Loss</div>
-            <div class="text-lg font-black text-rose-600 font-mono mt-0.5">₹{{ avg_loss|inr(2) }}</div>
+            <div class="text-lg font-black text-rose-600 font-mono mt-0.5">${{ avg_loss|inr(2) }}</div>
         </div>
     </div>
 
@@ -162,7 +162,7 @@
                         <th class="py-3 px-4">Open Price</th>
                         <th class="py-3 px-4">Close Price</th>
                         <th class="py-3 px-4">Status</th>
-                        <th class="py-3 px-4">PnL (₹)</th>
+                        <th class="py-3 px-4">PnL ($)</th>
                         <th class="py-3 px-4">Time</th>
                     </tr>
                 </thead>
@@ -181,7 +181,7 @@
                             </span>
                         </td>
                         <td class="py-3 px-4 font-black {% if t.pnl >= 0 %}text-emerald-600{% else %}text-rose-600{% endif %}">
-                            {{ "+₹" if t.pnl >= 0 else "-₹" }}{{ t.pnl|abs|inr(2) }}
+                            {{ "+$" if t.pnl >= 0 else "-$" }}{{ t.pnl|abs|inr(2) }}
                         </td>
                         <td class="py-3 px-4 text-slate-400 font-sans text-[11px]">{{ t.open_time.strftime('%b %d, %H:%M') }}</td>
                     </tr>

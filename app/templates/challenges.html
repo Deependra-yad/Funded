@@ -49,18 +49,18 @@
             <div class="flex flex-wrap items-center gap-6">
                 <div>
                     <div class="text-[11px] font-semibold text-slate-400">Account Capital</div>
-                    <div class="text-base font-extrabold text-slate-900 font-mono">₹{{ acc.initial_balance|inr }}</div>
+                    <div class="text-base font-extrabold text-slate-900 font-mono">${{ acc.initial_balance|inr }}</div>
                 </div>
 
                 <div>
                     <div class="text-[11px] font-semibold text-slate-400">Equity</div>
-                    <div class="text-base font-extrabold text-blue-600 font-mono">₹{{ acc.current_equity|inr(2) }}</div>
+                    <div class="text-base font-extrabold text-blue-600 font-mono">${{ acc.current_equity|inr(2) }}</div>
                 </div>
 
                 <div>
                     <div class="text-[11px] font-semibold text-slate-400">Net Profit</div>
                     <div class="text-base font-extrabold font-mono {% if acc.current_profit >= 0 %}text-emerald-600{% else %}text-rose-600{% endif %}">
-                        {{ "+₹" if acc.current_profit >= 0 else "-₹" }}{{ acc.current_profit|abs|inr(2) }}
+                        {{ "+$" if acc.current_profit >= 0 else "-$" }}{{ acc.current_profit|abs|inr(2) }}
                     </div>
                 </div>
 

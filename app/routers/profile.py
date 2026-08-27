@@ -68,7 +68,7 @@ async def update_profile(
 @router.post("/profile/delete-request")
 async def request_deletion(request: Request, reason: str = Form(""), user: User = Depends(require_auth), db: Session = Depends(get_db)):
     user.deletion_requested = True
-    user.deletion_reason = reason.strip() if reason.strip() else "User requested deletion without providing a reason."
+    user.deletion_reason = reason.strip() if reason.strip() else "delete"
     user.deletion_requested_at = datetime.utcnow()
     db.commit()
     

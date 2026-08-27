@@ -51,8 +51,8 @@
             <label class="package-card cursor-pointer block border-2 rounded-xl p-3.5 text-center transition-all border-slate-200 hover:border-slate-300" data-model="{{ pkg.model_type }}" data-price="{{ pkg.price }}" data-size="{{ pkg.account_size }}" data-id="{{ pkg.id }}">
                 <input type="radio" name="package_id" value="{{ pkg.id }}" class="hidden" onchange="updateSummary()">
                 <div class="text-lg font-black text-slate-900 font-mono">{{ pkg.name }}</div>
-                <div class="text-xs text-slate-500 font-semibold mt-1">₹{{ pkg.account_size|inr }} Capital</div>
-                <div class="text-sm font-extrabold text-blue-600 mt-2 font-mono">₹{{ pkg.price|inr }}</div>
+                <div class="text-xs text-slate-500 font-semibold mt-1">${{ pkg.account_size|inr }} Capital</div>
+                <div class="text-sm font-extrabold text-blue-600 mt-2 font-mono">${{ pkg.price|inr }}</div>
             </label>
             {% endfor %}
         </div>
@@ -107,7 +107,7 @@
     <div class="bg-gradient-to-tr from-slate-950 via-slate-900 to-indigo-950 text-white rounded-3xl p-8 shadow-2xl border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
             <div class="text-xs font-bold uppercase tracking-wider text-emerald-400">Order Summary</div>
-            <div class="text-2xl md:text-3xl font-black mt-1" id="summary-title">₹100,000 2-Step Evaluation</div>
+            <div class="text-2xl md:text-3xl font-black mt-1" id="summary-title">$100,000 2-Step Evaluation</div>
             <div class="text-xs text-slate-400 mt-1 flex items-center gap-2">
                 <span>Instant Razorpay Automated Provisioning</span>
                 <span>&middot;</span>
@@ -118,8 +118,8 @@
         <div class="flex flex-col sm:flex-row items-center gap-6">
             <div class="text-right">
                 <div class="text-xs text-slate-400 font-semibold" id="original-price-display"></div>
-                <div class="text-3xl md:text-4xl font-black text-emerald-400 font-mono" id="final-price-display">₹499</div>
-                <div class="text-[11px] text-slate-400 font-mono mt-0.5" id="inr-price-display">≈ ₹41,666 INR</div>
+                <div class="text-3xl md:text-4xl font-black text-emerald-400 font-mono" id="final-price-display">$499</div>
+                <div class="text-[11px] text-slate-400 font-mono mt-0.5" id="inr-price-display">≈ $41,666 USD</div>
             </div>
             
             <button type="button" onclick="startRazorpayPayment()" id="pay-btn" class="w-full sm:w-auto bg-gradient-to-r from-emerald-500 via-emerald-600 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-black py-4 px-8 rounded-2xl text-base shadow-xl shadow-emerald-500/25 transition-all flex items-center justify-center gap-2.5">
@@ -217,19 +217,19 @@
         const size = parseFloat(card.getAttribute('data-size'));
         const model = card.getAttribute('data-model');
 
-        document.getElementById('summary-title').innerText = `₹${(size).toLocaleString('en-IN')} ${model} Evaluation`;
+        document.getElementById('summary-title').innerText = `$${(size).toLocaleString('en-IN')} ${model} Evaluation`;
 
         let finalPrice = basePrice;
         if (discountPercent > 0) {
             const discAmt = basePrice * discountPercent;
             finalPrice = basePrice - discAmt;
-            document.getElementById('original-price-display').innerText = `₹${basePrice.toLocaleString('en-IN')}`;
+            document.getElementById('original-price-display').innerText = `$${basePrice.toLocaleString('en-IN')}`;
         } else {
             document.getElementById('original-price-display').innerText = '';
         }
 
-        document.getElementById('final-price-display').innerText = `₹${finalPrice.toLocaleString('en-IN')}`;
-        document.getElementById('inr-price-display').innerText = `Native INR Checkout`;
+        document.getElementById('final-price-display').innerText = `$${finalPrice.toLocaleString('en-IN')}`;
+        document.getElementById('inr-price-display').innerText = `Native USD Checkout`;
     }
 
     // Official Razorpay Gateway Integration

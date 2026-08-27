@@ -41,19 +41,19 @@
 
         <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
             <div class="text-xs font-bold text-slate-400 uppercase">Total Commissions</div>
-            <div class="text-2xl font-black text-slate-900 font-mono mt-1">₹{{ total_commission|inr(2) }}</div>
+            <div class="text-2xl font-black text-slate-900 font-mono mt-1">${{ total_commission|inr(2) }}</div>
             <div class="text-[11px] text-slate-400 font-semibold mt-0.5">Lifetime earned</div>
         </div>
 
         <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
             <div class="text-xs font-bold text-slate-400 uppercase">Paid Out</div>
-            <div class="text-2xl font-black text-emerald-600 font-mono mt-1">₹{{ paid_commission|inr(2) }}</div>
+            <div class="text-2xl font-black text-emerald-600 font-mono mt-1">${{ paid_commission|inr(2) }}</div>
             <div class="text-[11px] text-slate-400 font-semibold mt-0.5">Bank / Crypto Transfer</div>
         </div>
 
         <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
             <div class="text-xs font-bold text-slate-400 uppercase">Pending Payout</div>
-            <div class="text-2xl font-black text-blue-600 font-mono mt-1">₹{{ pending_commission|inr(2) }}</div>
+            <div class="text-2xl font-black text-blue-600 font-mono mt-1">${{ pending_commission|inr(2) }}</div>
             <div class="text-[11px] text-slate-400 font-semibold mt-0.5">Next payout: Friday</div>
         </div>
     </div>
@@ -80,8 +80,8 @@
                     <tr class="hover:bg-slate-50">
                         <td class="py-3 px-4 font-sans font-bold text-slate-900">{{ r.referred_name }}</td>
                         <td class="py-3 px-4 text-slate-700 font-sans">{{ r.challenge_purchased }}</td>
-                        <td class="py-3 px-4 text-slate-800">₹{{ r.order_amount|inr(2) }}</td>
-                        <td class="py-3 px-4 font-black text-emerald-600">+₹{{ r.commission_earned|inr(2) }}</td>
+                        <td class="py-3 px-4 text-slate-800">${{ r.order_amount|inr(2) }}</td>
+                        <td class="py-3 px-4 font-black text-emerald-600">+${{ r.commission_earned|inr(2) }}</td>
                         <td class="py-3 px-4">
                             <span class="text-[10px] font-bold px-2 py-0.5 rounded {% if r.status == 'PAID' %}bg-emerald-100 text-emerald-700{% else %}bg-amber-100 text-amber-700{% endif %}">
                                 {{ r.status }}

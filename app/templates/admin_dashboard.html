@@ -162,7 +162,7 @@
         
         <div id="addPackageForm" class="p-6 bg-slate-800/20 border-b border-slate-800 hidden">
             <form action="/admin/api/package" method="POST" class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div><label class="text-xs text-slate-400">Name</label><input type="text" name="name" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white" required placeholder="₹50,000 Instant"></div>
+                <div><label class="text-xs text-slate-400">Name</label><input type="text" name="name" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white" required placeholder="$50,000 Instant"></div>
                 <div>
                     <label class="text-xs text-slate-400">Model Type</label>
                     <select name="model_type" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white" required>
@@ -171,8 +171,8 @@
                         <option value="Instant">Instant</option>
                     </select>
                 </div>
-                <div><label class="text-xs text-slate-400">Account Size (₹)</label><input type="number" name="account_size" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white" required></div>
-                <div><label class="text-xs text-slate-400">Price (₹)</label><input type="number" name="price" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white" required></div>
+                <div><label class="text-xs text-slate-400">Account Size ($)</label><input type="number" name="account_size" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white" required></div>
+                <div><label class="text-xs text-slate-400">Price ($)</label><input type="number" name="price" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white" required></div>
                 
                 <div><label class="text-xs text-slate-400">Profit Target P1 (%)</label><input type="number" step="0.1" name="profit_target_p1" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white" value="8.0" required></div>
                 <div><label class="text-xs text-slate-400">Profit Target P2 (%)</label><input type="number" step="0.1" name="profit_target_p2" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-white" value="5.0" required></div>
@@ -209,8 +209,8 @@
                         <td class="px-4 py-3 text-slate-300">
                             <span class="bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded text-xs font-bold">{{ pkg.model_type }}</span>
                         </td>
-                        <td class="px-4 py-3 font-mono text-emerald-400">₹{{ "{:,.0f}".format(pkg.account_size) }}</td>
-                        <td class="px-4 py-3 font-mono text-white">₹{{ "{:,.2f}".format(pkg.price) }}</td>
+                        <td class="px-4 py-3 font-mono text-emerald-400">${{ "{:,.0f}".format(pkg.account_size) }}</td>
+                        <td class="px-4 py-3 font-mono text-white">${{ "{:,.2f}".format(pkg.price) }}</td>
                         <td class="px-4 py-3 text-slate-400 text-xs">P1: {{ pkg.profit_target_p1 }}% | P2: {{ pkg.profit_target_p2 }}%</td>
                         <td class="px-4 py-3 text-rose-400 text-xs">Daily: {{ pkg.max_daily_loss }}% | Max: {{ pkg.max_total_loss }}%</td>
                         <td class="px-4 py-3 text-right">
@@ -343,7 +343,7 @@
             <div class="flex items-center gap-6">
                 <div class="flex items-center gap-2 text-xs font-mono bg-slate-900/50 px-3 py-1.5 rounded border border-slate-700">
                     <span class="text-slate-400">Total Simulated AUM:</span>
-                    <span class="text-emerald-400 font-bold">₹{{ "{:,.0f}".format(stats.total_aum) }}</span>
+                    <span class="text-emerald-400 font-bold">${{ "{:,.0f}".format(stats.total_aum) }}</span>
                 </div>
                 <div class="flex items-center gap-2 text-xs font-mono">
                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -486,8 +486,8 @@
                                             <div class="text-[9px] text-rose-500 mt-1 max-w-[150px] truncate">{{ acc.breach_reason }}</div>
                                         {% endif %}
                                     </td>
-                                    <td class="px-4 py-4 text-right font-mono font-medium">₹{{ "{:,.2f}".format(acc.current_balance) }}</td>
-                                    <td class="px-4 py-4 text-right font-mono font-medium">₹{{ "{:,.2f}".format(acc.current_equity) }}</td>
+                                    <td class="px-4 py-4 text-right font-mono font-medium">${{ "{:,.2f}".format(acc.current_balance) }}</td>
+                                    <td class="px-4 py-4 text-right font-mono font-medium">${{ "{:,.2f}".format(acc.current_equity) }}</td>
                                     <td class="px-4 py-4 text-center">
                                         <div class="flex items-center justify-center gap-2">
                                             <button onclick="adminAction('account', {{ acc.id }}, 'pass_phase')" class="text-[10px] bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white px-2.5 py-1 rounded transition-colors font-bold border border-emerald-500/20">
@@ -727,7 +727,7 @@
     function showToast(msg, type='success') {
         const container = document.getElementById('toast-container');
         const t = document.createElement('div');
-        t.className = `px-4 py-3 rounded-lg text-sm font-bold text-white shadow-lg transform transition-all duration-300 translate-x-full ₹{type==='success' ? 'bg-emerald-600' : 'bg-rose-600'}`;
+        t.className = `px-4 py-3 rounded-lg text-sm font-bold text-white shadow-lg transform transition-all duration-300 translate-x-full ${type==='success' ? 'bg-emerald-600' : 'bg-rose-600'}`;
         t.innerText = msg;
         container.appendChild(t);
         
@@ -822,7 +822,7 @@
     }
 
     async function adminAction(entity, id, action) {
-        if(!confirm(`EXECUTE: '₹{{action}}' on ₹{{entity}} #₹{{id}}?`)) return;
+        if(!confirm(`EXECUTE: '${{action}}' on ${{entity}} #${{id}}?`)) return;
         
         const formData = new FormData();
         formData.append('entity', entity);
@@ -874,7 +874,7 @@
         <div class="bg-slate-900 border border-white/10 rounded-2xl p-6 w-full max-w-lg">
             <h3 class="text-xl font-bold text-white mb-4">Edit Capital Price</h3>
             <input type="hidden" id="editPkgId">
-            <label class="text-slate-400 text-sm mb-1 block">New Price (₹)</label>
+            <label class="text-slate-400 text-sm mb-1 block">New Price ($)</label>
             <input type="number" step="0.01" id="editPkgPrice" class="w-full bg-black/50 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-primary mb-4">
             <div class="flex justify-end gap-3">
                 <button onclick="closePackageEditModal()" class="px-4 py-2 rounded-xl text-slate-400 hover:bg-white/5 transition-colors">Cancel</button>
@@ -917,5 +917,167 @@
             </div>
         </div>
     </div>
+
+<script>
+// Make window-mode tabs draggable
+document.addEventListener('DOMContentLoaded', () => {
+    let isDragging = false;
+    let currentX;
+    let currentY;
+    let initialX;
+    let initialY;
+    let xOffset = 0;
+    let yOffset = 0;
+    let activeWindow = null;
+
+    document.querySelectorAll('.window-header').forEach(header => {
+        header.addEventListener('mousedown', dragStart);
+    });
+
+    document.addEventListener('mouseup', dragEnd);
+    document.addEventListener('mousemove', drag);
+
+    function dragStart(e) {
+        if (e.target.closest('button')) return; // ignore window controls
+        activeWindow = e.target.closest('.window-mode');
+        if (!activeWindow) return;
+        
+        // Bring to front
+        document.querySelectorAll('.window-mode').forEach(w => w.style.zIndex = '100');
+        activeWindow.style.zIndex = '101';
+
+        const style = window.getComputedStyle(activeWindow);
+        const matrix = new WebKitCSSMatrix(style.transform);
+        xOffset = matrix.m41;
+        yOffset = matrix.m42;
+
+        initialX = e.clientX - xOffset;
+        initialY = e.clientY - yOffset;
+        isDragging = true;
+    }
+
+    function dragEnd(e) {
+        initialX = currentX;
+        initialY = currentY;
+        isDragging = false;
+        activeWindow = null;
+    }
+
+    function drag(e) {
+        if (isDragging && activeWindow) {
+            e.preventDefault();
+            currentX = e.clientX - initialX;
+            currentY = e.clientY - initialY;
+            activeWindow.style.transform = `translate(${currentX}px, ${currentY}px)`;
+        }
+    }
+});
+</script>
+
+
+    <!-- Admin Floating Chat Widget -->
+    <div x-data="{ 
+        chatOpen: false, 
+        users: [], 
+        activeUser: null,
+        messages: [],
+        newMessage: '',
+        fetchUsers() {
+            fetch('/admin/api/chat/users').then(r=>r.json()).then(d => this.users = d);
+        },
+        fetchMessages() {
+            if(!this.activeUser) return;
+            fetch('/api/chat?target_user_id=' + this.activeUser.id).then(r=>r.json()).then(d => {
+                this.messages = d;
+                setTimeout(() => {
+                    const cb = document.getElementById('admin-chat-box');
+                    if(cb) cb.scrollTop = cb.scrollHeight;
+                }, 50);
+            });
+        },
+        sendMessage() {
+            if(!this.newMessage || !this.activeUser) return;
+            let fd = new FormData();
+            fd.append('message', this.newMessage);
+            fd.append('target_user_id', this.activeUser.id);
+            fetch('/api/chat', {method:'POST', body:fd}).then(() => {
+                this.newMessage = '';
+                this.fetchMessages();
+            });
+        }
+    }" 
+    x-init="setInterval(() => { if(chatOpen) fetchUsers(); if(chatOpen && activeUser) fetchMessages(); }, 3000);"
+    class="fixed bottom-6 right-6 z-[200]">
+        
+        <!-- Chat Button -->
+        <button @click="chatOpen = !chatOpen; if(chatOpen) fetchUsers();" class="w-14 h-14 bg-blue-600 hover:bg-blue-500 text-white rounded-full shadow-2xl flex items-center justify-center transition-transform hover:scale-110">
+            <i data-lucide="message-circle" class="w-7 h-7" x-show="!chatOpen"></i>
+            <i data-lucide="x" class="w-7 h-7" x-show="chatOpen" style="display:none;"></i>
+        </button>
+
+        <!-- Chat Window -->
+        <div x-show="chatOpen" style="display:none;" x-transition
+             class="absolute bottom-20 right-0 w-[600px] h-[500px] bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden flex shadow-blue-900/20">
+            
+            <!-- Left Pane: Users List -->
+            <div class="w-1/3 bg-slate-800 border-r border-slate-700 flex flex-col">
+                <div class="p-4 border-b border-slate-700 font-bold text-white bg-slate-900">Active Chats</div>
+                <div class="flex-1 overflow-y-auto">
+                    <template x-for="u in users" :key="u.id">
+                        <button @click="activeUser = u; fetchMessages();" 
+                                :class="activeUser && activeUser.id === u.id ? 'bg-blue-600/20 border-l-4 border-blue-500' : 'hover:bg-slate-700 border-l-4 border-transparent'"
+                                class="w-full text-left p-3 border-b border-slate-700 transition-colors">
+                            <div class="text-sm font-bold text-white truncate" x-text="u.name"></div>
+                            <div class="text-[10px] text-slate-400 truncate" x-text="u.email"></div>
+                        </button>
+                    </template>
+                    <div x-show="users.length === 0" class="text-center text-slate-500 text-xs p-4">No active chats</div>
+                </div>
+            </div>
+
+            <!-- Right Pane: Messages -->
+            <div class="w-2/3 flex flex-col bg-slate-900">
+                <template x-if="!activeUser">
+                    <div class="flex-1 flex flex-col items-center justify-center text-slate-500">
+                        <i data-lucide="message-square" class="w-12 h-12 mb-2 opacity-20"></i>
+                        <p class="text-sm">Select a user to start chatting</p>
+                    </div>
+                </template>
+                
+                <template x-if="activeUser">
+                    <div class="flex-1 flex flex-col h-full">
+                        <!-- Header -->
+                        <div class="p-4 border-b border-slate-700 bg-slate-800 flex items-center justify-between shadow-md z-10 shrink-0">
+                            <div class="font-bold text-white" x-text="'Chatting with ' + activeUser.name"></div>
+                        </div>
+                        
+                        <!-- Messages -->
+                        <div id="admin-chat-box" class="flex-1 overflow-y-auto p-4 space-y-4">
+                            <template x-for="m in messages" :key="m.id">
+                                <div class="flex flex-col" :class="m.is_admin ? 'items-end' : 'items-start'">
+                                    <div class="max-w-[80%] p-3 rounded-2xl" 
+                                         :class="m.is_admin ? 'bg-blue-600 text-white rounded-tr-none shadow-md shadow-blue-500/20' : 'bg-slate-800 text-slate-200 rounded-tl-none border border-slate-700'">
+                                        <div class="text-[10px] font-bold mb-1 opacity-50" x-text="m.is_admin ? 'You' : activeUser.name"></div>
+                                        <p class="text-sm whitespace-pre-wrap" x-text="m.message"></p>
+                                    </div>
+                                    <div class="text-[9px] text-slate-500 mt-1" x-text="new Date(m.created_at).toLocaleTimeString()"></div>
+                                </div>
+                            </template>
+                            <div x-show="messages.length === 0" class="text-center text-slate-500 text-xs mt-10">No messages yet.</div>
+                        </div>
+                        
+                        <!-- Input -->
+                        <div class="p-3 border-t border-slate-700 bg-slate-800 shrink-0">
+                            <form @submit.prevent="sendMessage()" class="flex gap-2">
+                                <input type="text" x-model="newMessage" placeholder="Type a reply..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                                <button type="submit" class="bg-blue-600 hover:bg-blue-500 text-white p-2 rounded-xl transition-colors"><i data-lucide="send" class="w-5 h-5"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>
