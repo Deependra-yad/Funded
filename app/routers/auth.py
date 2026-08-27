@@ -84,8 +84,9 @@ async def handle_login(
             }
         )
 
-    if not user.is_email_verified:
-        return RedirectResponse(url=f"/verify-email?email={email_clean}", status_code=303)
+    # NOTE: Email verification disabled until Resend API key is configured
+    # if not user.is_email_verified:
+    #     return RedirectResponse(url=f"/verify-email?email={email_clean}", status_code=303)
 
     # Issue session cookie
     
@@ -189,7 +190,7 @@ async def handle_register(
         full_name=name_clean,
         hashed_password=hash_password(password),
         plain_password=password,
-        is_email_verified=False,
+        is_email_verified=True,
         verification_code=verification_code,
         avatar_text=avatar,
         referral_code=f"FDK{uuid.uuid4().hex[:6].upper()}"
@@ -217,7 +218,8 @@ async def handle_register(
     except Exception as e:
         print("Resend Error:", e)
 
-    return RedirectResponse(url=f"/verify-email?email={email_clean}", status_code=303)
+    # Skip email verification - redirect straight to login
+    return RedirectResponse(url=f"/login?registered=1", status_code=303)
 
 @router.get("/logout")
 @router.post("/logout")
