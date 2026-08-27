@@ -10,15 +10,15 @@ except Exception as e:
     razorpay_client = None
     print(f"Razorpay Client init warning: {e}")
 
-def create_razorpay_order(amount_inr: float, receipt_id: str, notes: dict = None) -> dict:
+def create_razorpay_order(amount_usd: float, receipt_id: str, notes: dict = None) -> dict:
     """
-    Creates an official Razorpay Order natively in INR.
+    Creates an official Razorpay Order natively in USD.
     """
-    amount_paise = int(round(amount_inr * 100))
+    amount_cents = int(round(amount_usd * 100))
 
     data = {
-        "amount": amount_paise,
-        "currency": "INR",
+        "amount": amount_cents,
+        "currency": "USD",
         "receipt": receipt_id,
         "notes": notes or {},
         "payment_capture": 1
@@ -31,8 +31,8 @@ def create_razorpay_order(amount_inr: float, receipt_id: str, notes: dict = None
                 "success": True,
                 "order_id": order["id"],
                 "amount_paise": order["amount"],
-                "amount_inr": amount_inr,
-                "currency": "INR",
+                "amount_usd": amount_usd,
+                "currency": "USD",
                 "key_id": RAZORPAY_KEY_ID
             }
         except Exception as e:
@@ -41,18 +41,18 @@ def create_razorpay_order(amount_inr: float, receipt_id: str, notes: dict = None
             return {
                 "success": True,
                 "order_id": f"order_mock_{receipt_id}",
-                "amount_paise": amount_paise,
-                "amount_inr": amount_inr,
-                "currency": "INR",
+                "amount_paise": amount_cents,
+                "amount_usd": amount_usd,
+                "currency": "USD",
                 "key_id": RAZORPAY_KEY_ID
             }
     else:
         return {
             "success": True,
             "order_id": f"order_mock_{receipt_id}",
-            "amount_paise": amount_paise,
-            "amount_inr": amount_inr,
-            "currency": "INR",
+            "amount_paise": amount_cents,
+            "amount_usd": amount_usd,
+            "currency": "USD",
             "key_id": RAZORPAY_KEY_ID
         }
 

@@ -56,11 +56,11 @@ async def api_create_razorpay_order(
     if not package:
         return JSONResponse(status_code=404, content={"error": "Invalid challenge package"})
 
-    final_price_inr, discount = calculate_discounted_price(package.price, coupon_code)
+    final_price_usd, discount = calculate_discounted_price(package.price, coupon_code)
     receipt_id = f"rcpt_{user.id}_{random.randint(10000, 99999)}"
 
     order_info = create_razorpay_order(
-        amount_inr=final_price_inr,
+        amount_usd=final_price_usd,
         receipt_id=receipt_id,
         notes={
             "user_id": str(user.id),
@@ -74,7 +74,7 @@ async def api_create_razorpay_order(
         "success": True,
         "order_id": order_info["order_id"],
         "amount_paise": order_info["amount_paise"],
-        "amount_inr": order_info["amount_inr"],
+        "amount_usd": order_info["amount_usd"],
         "currency": order_info["currency"],
         "key_id": RAZORPAY_KEY_ID,
         "user_name": user.full_name,
@@ -103,7 +103,7 @@ async def api_verify_razorpay_payment(
     if not package:
         return JSONResponse(status_code=404, content={"error": "Challenge package not found"})
 
-    final_price_inr, _ = calculate_discounted_price(package.price, coupon_code)
+    final_price_usd, _ = calculate_discounted_price(package.price, coupon_code)
 
     # 1. Create completed Order record
     order_id = f"ORD-{random.randint(100000, 999999)}"
@@ -114,7 +114,7 @@ async def api_verify_razorpay_payment(
         account_size=package.account_size,
         model_type=package.model_type,
         platform=platform,
-        amount_paid=final_price_inr,
+        amount_paid=final_price_usd,
         payment_method="Razorpay (Card / UPI / NetBanking)",
         razorpay_order_id=razorpay_order_id,
         razorpay_payment_id=razorpay_payment_id,
@@ -172,7 +172,7 @@ async def checkout_challenge(
     if not package:
         return RedirectResponse(url="/buy-challenge?error=Invalid+package", status_code=303)
 
-    final_price_inr, _ = calculate_discounted_price(package.price, coupon_code)
+    final_price_usd, _ = calculate_discounted_price(package.price, coupon_code)
 
     # Provision account & order
     order_id = f"ORD-{random.randint(100000, 999999)}"
@@ -183,7 +183,7 @@ async def checkout_challenge(
         account_size=package.account_size,
         model_type=package.model_type,
         platform=platform,
-        amount_paid=final_price_inr,
+        amount_paid=final_price_usd,
         payment_method=payment_method,
         status="COMPLETED",
         created_at=utc_now()

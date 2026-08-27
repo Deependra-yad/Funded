@@ -114,3 +114,4 @@ if 'Admin Floating Chat Widget' not in content:
     with open('app/templates/admin_dashboard.html', 'w', encoding='utf-8') as f:
         f.write(content)
     print("CHAT WIDGET ADDED")
+
