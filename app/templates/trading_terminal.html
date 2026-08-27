@@ -52,7 +52,7 @@
         .wl-item.active { background: #f8fafc; border-left: 3px solid #2962ff; }
     </style>
 </head>
-<body class="h-screen w-screen overflow-hidden flex flex-col bg-white text-slate-800"
+<body class="h-screen w-screen overflow-y-auto md:overflow-hidden flex flex-col bg-white text-slate-800"
       data-active-symbol="{{ current_symbol | default('NIFTY50') }}" 
       data-account-id="{{ current_account.id if current_account else 'null' }}">
 
@@ -108,7 +108,7 @@
     </div>
 
     <!-- Main Workspace -->
-    <div class="flex-1 flex flex-col md:flex-row overflow-hidden bg-white">
+    <div class="flex-1 flex flex-col md:flex-row overflow-y-auto md:overflow-hidden bg-white">
         
         <!-- App Sidebar -->
         <div class="hidden md:flex w-14 border-r border-slate-200 bg-slate-50 flex flex-col items-center py-4 gap-6 shrink-0 z-40">
