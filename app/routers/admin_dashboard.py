@@ -324,11 +324,34 @@ async def admin_create_package(
 
 @router.post("/admin/api/package/{pkg_id}/delete")
 async def admin_delete_package(
-    pkg_id: int, request: Request, db: Session = Depends(get_db)
+    pkg_id: int,
+    _ = Depends(require_super_admin),
+    db: Session = Depends(get_db)
 ):
-    require_super_admin(request)
     pkg = db.query(ChallengePackage).filter(ChallengePackage.id == pkg_id).first()
     if pkg:
         db.delete(pkg)
         db.commit()
-    return RedirectResponse(url="/admin", status_code=302)
+    return RedirectResponse(url="/admin", status_code=303)
+
+@router.post("/admin/api/package/{pkg_id}/action")
+async def admin_package_action(
+    pkg_id: int,
+    action: str = Form(...),
+    payload: str = Form(None),
+    _ = Depends(require_super_admin),
+    db: Session = Depends(get_db)
+):
+    pkg = db.query(ChallengePackage).filter(ChallengePackage.id == pkg_id).first()
+    if not pkg:
+        return JSONResponse({"success": False, "error": "Package not found"})
+        
+    if action == "update_price":
+        try:
+            pkg.price = float(payload)
+            db.commit()
+            return JSONResponse({"success": True, "message": "Capital price updated successfully!"})
+        except ValueError:
+            return JSONResponse({"success": False, "error": "Invalid price format"})
+            
+    return JSONResponse({"success": False, "error": "Unknown action"})
