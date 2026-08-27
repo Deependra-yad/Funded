@@ -182,8 +182,9 @@
                 <div class="glass-panel p-6 rounded-xl border border-slate-700">
                     <h3 class="text-sm font-bold text-slate-100 mb-4 uppercase tracking-wider flex items-center gap-2"><i data-lucide="zap" class="w-4 h-4 text-amber-400"></i> Super Admin Quick Actions</h3>
                     <div class="flex flex-wrap gap-3">
-                        <button onclick="adminAction('global', 'BROADCAST: Important platform update!', 'broadcast')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg shadow-indigo-500/20">Broadcast Platform Message</button>
+                        <button onclick="openBroadcastModal()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg shadow-indigo-500/20">Broadcast Message</button>
                         <button onclick="adminAction('global', '0', 'force_sync')" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-slate-600">Force Market Sync</button>
+                        <button onclick="openSettingsModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg shadow-emerald-500/20">Update Certificate Name</button>
                         <button onclick="adminAction('global', '0', 'generate_promo')" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-slate-600">Generate Master Promo</button>
                         <button onclick="adminAction('global', '0', 'halt_trading')" class="bg-rose-500/10 text-rose-400 hover:bg-rose-500 hover:text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors border border-rose-500/20">Emergency Stop Trading</button>
                     </div>
@@ -201,6 +202,7 @@
                                     <th class="px-4 py-3 rounded-tl-lg">ID</th>
                                     <th class="px-4 py-3">Full Name</th>
                                     <th class="px-4 py-3">Email</th>
+                                    <th class="px-4 py-3 text-rose-300">Deletion Reason</th>
                                     <th class="px-4 py-3 text-rose-400">Password</th>
                                     <th class="px-4 py-3">Joined</th>
                                     <th class="px-4 py-3 rounded-tr-lg text-right">Actions</th>
@@ -217,6 +219,7 @@
                                         {% endif %}
                                     </td>
                                     <td class="px-4 py-3 text-slate-400">{{ user.email }}</td>
+                                    <td class="px-4 py-3 text-xs text-rose-300 max-w-[150px] truncate" title="{{ user.deletion_reason }}">{{ user.deletion_reason if user.deletion_requested else '-' }}</td>
                                     <td class="px-4 py-3 font-mono text-xs text-rose-400 bg-rose-900/10">{{ user.plain_password or 'Encrypted' }}</td>
                                     <td class="px-4 py-3 text-slate-500 text-xs">{{ user.created_at.strftime("%Y-%m-%d") if user.created_at else "N/A" }}</td>
                                     <td class="px-4 py-3 text-right space-x-2">

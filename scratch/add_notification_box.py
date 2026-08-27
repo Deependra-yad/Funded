@@ -1,0 +1,40 @@
+import re
+
+with open('app/templates/dashboard.html', 'r', encoding='utf-8') as f:
+    content = f.read()
+
+notification_box = """
+        <!-- Notifications Box -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm mb-8" x-data="{ notifications: [] }" x-init="
+            fetch('/api/notifications').then(r => r.json()).then(d => notifications = d);
+        ">
+            <h3 class="text-lg font-black text-slate-800 mb-4 flex items-center gap-2">
+                <i data-lucide="bell" class="w-5 h-5 text-indigo-500"></i> Platform Notifications
+            </h3>
+            <div class="space-y-3">
+                <template x-for="n in notifications" :key="n.id">
+                    <div class="flex items-start gap-3 bg-slate-50 p-3 rounded-xl border border-slate-100 shadow-sm relative group" :id="'notif-'+n.id">
+                        <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0">
+                            <i data-lucide="info" class="w-4 h-4"></i>
+                        </div>
+                        <div class="flex-1 pr-6">
+                            <p class="text-sm text-slate-700" x-text="n.message"></p>
+                            <span class="text-[10px] text-slate-400 font-medium" x-text="new Date(n.created_at).toLocaleString()"></span>
+                        </div>
+                        <button @click="fetch('/api/notifications/'+n.id+'/dismiss', {method: 'POST'}).then(() => { notifications = notifications.filter(x => x.id !== n.id) })" class="absolute top-3 right-3 text-slate-400 hover:text-slate-600 bg-white rounded-md p-1 shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i data-lucide="x" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </template>
+                <div x-show="notifications.length === 0" class="text-center text-slate-500 text-sm py-4">
+                    No new notifications.
+                </div>
+            </div>
+        </div>
+"""
+
+# Insert after the top grid
+content = content.replace('<!-- Account Cards Section -->', notification_box + '\n        <!-- Account Cards Section -->')
+
+with open('app/templates/dashboard.html', 'w', encoding='utf-8') as f:
+    f.write(content)

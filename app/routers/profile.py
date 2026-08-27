@@ -62,3 +62,10 @@ async def update_profile(
         user.avatar_text = (parts[0][0] + (parts[1][0] if len(parts) > 1 else parts[0][1:2])).upper()
     db.commit()
     return RedirectResponse(url="/profile?saved=1", status_code=303)
+
+@router.post("/profile/delete-request")
+async def request_deletion(request: Request, reason: str = Form(""), user: User = Depends(require_auth), db: Session = Depends(get_db)):
+    user.deletion_requested = True
+    user.deletion_reason = reason
+    db.commit()
+    return RedirectResponse(url="/profile?deleted=1", status_code=303)
