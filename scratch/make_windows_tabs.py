@@ -34,3 +34,4 @@ content = content.replace('class="tab-content active custom-scrollbar overflow-y
 
 with open('app/templates/admin_dashboard.html', 'w', encoding='utf-8') as f:
     f.write(content)
+

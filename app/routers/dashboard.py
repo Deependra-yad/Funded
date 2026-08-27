@@ -68,35 +68,27 @@ async def request_payout(account_id: int = Form(...), user: User = Depends(requi
     
     return RedirectResponse(url="/dashboard?payout_success=1", status_code=303)
 
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 
 @router.post("/api/notifications/{notif_id}/dismiss")
-async def dismiss_notification(notif_id: int, request: Request, db: Session = Depends(get_db)):
-    user = get_current_user(request, db)
-    if not user:
-        return JSONResponse({"success": False})
+async def dismiss_notification(notif_id: int, request: Request, user: User = Depends(require_auth), db: Session = Depends(get_db)):
     notif = db.query(Notification).filter(Notification.id == notif_id).first()
     if not notif:
         return JSONResponse({"success": False})
     
-    # Simple fix: just delete the notification if it's personal, or hide it via JS for global
-    if notif.user_id == user.id:
-        db.delete(notif)
-        db.commit()
+    # Delete the notification
+    db.delete(notif)
+    db.commit()
     
     return JSONResponse({"success": True})
 
 @router.get("/api/notifications")
-async def get_notifications(request: Request, db: Session = Depends(get_db)):
-    user = get_current_user(request, db)
-    if not user:
-        return JSONResponse([])
-    
+async def get_notifications(request: Request, user: User = Depends(require_auth), db: Session = Depends(get_db)):
     notifications = db.query(Notification).filter(
         (Notification.user_id == user.id) | (Notification.user_id.is_(None))
-    ).order_by(Notification.created_at.desc()).all()
+    ).order_by(Notification.created_at.desc()).limit(20).all()
     
     return JSONResponse([
-        {"id": n.id, "message": n.message, "created_at": n.created_at.isoformat()}
+        {"id": n.id, "message": n.message, "type": n.type if hasattr(n, 'type') else "info", "created_at": n.created_at.isoformat() if n.created_at else ""}
         for n in notifications
     ])

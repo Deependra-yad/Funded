@@ -76,6 +76,7 @@ async def admin_dashboard(request: Request, _ = Depends(require_super_admin), db
     users = db.query(User).order_by(User.created_at.desc()).limit(100).all()
     accounts = db.query(TradingAccount).order_by(TradingAccount.created_at.desc()).limit(200).all()
     positions = db.query(TradePosition).order_by(TradePosition.open_time.desc()).limit(100).all()
+    packages = db.query(ChallengePackage).order_by(ChallengePackage.price.asc()).all()
     
     user_map = {u.id: u for u in db.query(User).all()}
     
@@ -97,6 +98,7 @@ async def admin_dashboard(request: Request, _ = Depends(require_super_admin), db
             "users": users,
             "accounts": accounts,
             "positions": positions,
+            "packages": packages,
             "user_map": user_map
         }
     )

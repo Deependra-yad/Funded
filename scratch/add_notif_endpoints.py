@@ -25,3 +25,4 @@ if '/api/notifications' not in content:
     content = content.replace('router = APIRouter()', 'router = APIRouter()\n' + notif_endpoints)
     with open('app/routers/dashboard.py', 'w', encoding='utf-8') as f:
         f.write(content)
+
