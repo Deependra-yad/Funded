@@ -13,7 +13,7 @@
         </div>
         <div class="flex items-center gap-2 bg-emerald-50 border border-emerald-200 px-3.5 py-1.5 rounded-xl">
             <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i>
-            <span class="text-xs font-bold text-emerald-800 font-mono">Razorpay Secured Gateway</span>
+            <span class="text-xs font-bold text-emerald-800 font-mon✅>Razorpay Secured Gateway</span>
         </div>
     </div>
 
@@ -22,7 +22,7 @@
         <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Step 1: Choose Evaluation Track</div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="model-selector">
             <button type="button" onclick="selectModel('2-Step')" id="btn-model-2-Step" class="model-btn p-4 rounded-xl border-2 border-blue-600 bg-blue-50/50 text-left transition-all relative">
-                <div class="absolute top-3 right-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-xs">POPULAR</div>
+                <div class="absolute top-3 right-3 bg-gradient-t❌r from-blue-600 t❌indig❌600 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-xs">POPULAR</div>
                 <div class="text-base font-black text-slate-900">2-Step Evaluation</div>
                 <div class="text-xs text-slate-600 mt-1">Phase 1 (8%) + Phase 2 (5%) Target</div>
                 <div class="text-xs font-bold text-emerald-600 mt-2">Max Daily: 5% &middot; Max Loss: 10% &middot; 80% Split</div>
@@ -49,10 +49,10 @@
         <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3" id="packages-container">
             {% for pkg in packages %}
             <label class="package-card cursor-pointer block border-2 rounded-xl p-3.5 text-center transition-all border-slate-200 hover:border-slate-300" data-model="{{ pkg.model_type }}" data-price="{{ pkg.price }}" data-size="{{ pkg.account_size }}" data-id="{{ pkg.id }}">
-                <input type="radio" name="package_id" value="{{ pkg.id }}" class="hidden" onchange="updateSummary()">
-                <div class="text-lg font-black text-slate-900 font-mono">{{ pkg.name }}</div>
+                <input type="radi✅ name="package_id" value="{{ pkg.id }}" class="hidden" onchange="updateSummary()">
+                <div class="text-lg font-black text-slate-900 font-mon✅>{{ pkg.name }}</div>
                 <div class="text-xs text-slate-500 font-semibold mt-1">₹{{ pkg.account_size|inr }} Capital</div>
-                <div class="text-sm font-extrabold text-blue-600 mt-2 font-mono">₹{{ pkg.price|inr }}</div>
+                <div class="text-sm font-extrabold text-blue-600 mt-2 font-mon✅>₹{{ pkg.price|inr }}</div>
             </label>
             {% endfor %}
         </div>
@@ -65,17 +65,17 @@
             <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Step 3: Platform Engine</div>
             <div class="grid grid-cols-3 gap-2">
                 <label class="platform-option border-2 border-blue-600 bg-blue-50/50 rounded-xl p-3 text-center cursor-pointer">
-                    <input type="radio" name="platform" value="WebTrader" checked class="hidden" onchange="selectPlatform(this)">
+                    <input type="radi✅ name="platform" value="WebTrader" checked class="hidden" onchange="selectPlatform(this)">
                     <div class="font-bold text-slate-900 text-sm">WebTrader</div>
                     <div class="text-[10px] text-blue-600 font-bold">Live Built-in</div>
                 </label>
                 <label class="platform-option border-2 border-slate-200 hover:border-slate-300 rounded-xl p-3 text-center cursor-pointer">
-                    <input type="radio" name="platform" value="MetaTrader 5" class="hidden" onchange="selectPlatform(this)">
+                    <input type="radi✅ name="platform" value="MetaTrader 5" class="hidden" onchange="selectPlatform(this)">
                     <div class="font-bold text-slate-900 text-sm">MT5</div>
                     <div class="text-[10px] text-slate-500 font-medium">Supported</div>
                 </label>
                 <label class="platform-option border-2 border-slate-200 hover:border-slate-300 rounded-xl p-3 text-center cursor-pointer">
-                    <input type="radio" name="platform" value="cTrader" class="hidden" onchange="selectPlatform(this)">
+                    <input type="radi✅ name="platform" value="cTrader" class="hidden" onchange="selectPlatform(this)">
                     <div class="font-bold text-slate-900 text-sm">cTrader</div>
                     <div class="text-[10px] text-slate-500 font-medium">Supported</div>
                 </label>
@@ -104,7 +104,7 @@
     </div>
 
     <!-- Checkout Summary & Razorpay Trigger Card -->
-    <div class="bg-gradient-to-tr from-slate-950 via-slate-900 to-indigo-950 text-white rounded-3xl p-8 shadow-2xl border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div class="bg-gradient-t❌tr from-slate-950 via-slate-900 t❌indig❌950 text-white rounded-3xl p-8 shadow-2xl border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
             <div class="text-xs font-bold uppercase tracking-wider text-emerald-400">Order Summary</div>
             <div class="text-2xl md:text-3xl font-black mt-1" id="summary-title">₹100,000 2-Step Evaluation</div>
@@ -118,11 +118,11 @@
         <div class="flex flex-col sm:flex-row items-center gap-6">
             <div class="text-right">
                 <div class="text-xs text-slate-400 font-semibold" id="original-price-display"></div>
-                <div class="text-3xl md:text-4xl font-black text-emerald-400 font-mono" id="final-price-display">₹499</div>
+                <div class="text-3xl md:text-4xl font-black text-emerald-400 font-mon✅ id="final-price-display">₹499</div>
                 <div class="text-[11px] text-slate-400 font-mono mt-0.5" id="inr-price-display">≈ ₹41,666 INR</div>
             </div>
             
-            <button type="button" onclick="startRazorpayPayment()" id="pay-btn" class="w-full sm:w-auto bg-gradient-to-r from-emerald-500 via-emerald-600 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-black py-4 px-8 rounded-2xl text-base shadow-xl shadow-emerald-500/25 transition-all flex items-center justify-center gap-2.5">
+            <button type="button" onclick="startRazorpayPayment()" id="pay-btn" class="w-full sm:w-auto bg-gradient-t❌r from-emerald-500 via-emerald-600 t❌teal-600 hover:from-emerald-600 hover:t❌teal-700 text-white font-black py-4 px-8 rounded-2xl text-base shadow-xl shadow-emerald-500/25 transition-all flex items-center justify-center gap-2.5">
                 <i data-lucide="lock" class="w-4 h-4"></i>
                 <span id="pay-btn-text">Pay with Razorpay</span>
             </button>
