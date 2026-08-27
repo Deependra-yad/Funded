@@ -278,6 +278,41 @@
     </div>
 
 
+    
+        <div id="tab-content" class="tab-content window-mode space-y-6">
+            <div class="window-header">
+                <h2 class="text-sm font-bold flex items-center gap-2 text-white"><i data-lucide="edit-3" class="w-4 h-4 text-pink-400"></i> Content Management</h2>
+                <div class="flex gap-2">
+                    <button onclick="this.closest('.tab-content').classList.remove('window-mode'); document.getElementById('window-overlay').classList.add('hidden')" title="Minimize" class="w-3.5 h-3.5 rounded-full bg-amber-500 hover:bg-amber-400 flex items-center justify-center"></button>
+                    <button onclick="this.closest('.tab-content').classList.toggle('window-mode')" title="Maximize" class="w-3.5 h-3.5 rounded-full bg-emerald-500 hover:bg-emerald-400 flex items-center justify-center"></button>
+                    <button onclick="this.closest('.tab-content').classList.remove('window-mode'); document.getElementById('window-overlay').classList.add('hidden')" title="Close" class="w-3.5 h-3.5 rounded-full bg-rose-500 hover:bg-rose-400 flex items-center justify-center"></button>
+                </div>
+            </div>
+            <div class="p-6 h-full flex flex-col">
+                <h3 class="text-xl font-bold text-white mb-4">Edit Dynamic Pages</h3>
+                <div class="grid grid-cols-1 gap-4 mb-4">
+                    <select id="content-page-select" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white focus:border-pink-500 outline-none">
+                        <option value="page_affiliate">Affiliate Program</option>
+                        <option value="page_support">Support Center</option>
+                        <option value="page_coupons">Coupon Codes</option>
+                        <option value="page_giveaway">FundedFirm Giveaway</option>
+                        <option value="page_comparison">Account Comparison</option>
+                        <option value="page_rules">Trading Rules</option>
+                        <option value="page_privacy">Data & Privacy</option>
+                    </select>
+                </div>
+                <div class="flex-1 flex flex-col gap-4">
+                    <input type="text" id="content-title" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white focus:border-pink-500 outline-none" placeholder="Page Title (e.g. Trading Rules)">
+                    <input type="text" id="content-desc" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white focus:border-pink-500 outline-none" placeholder="Description">
+                    <input type="text" id="content-icon" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white focus:border-pink-500 outline-none" placeholder="Lucide Icon name (e.g. clipboard-list)">
+                    <textarea id="content-html" class="flex-1 w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-white focus:border-pink-500 outline-none font-mono text-xs" placeholder="HTML Widget Code..."></textarea>
+                </div>
+                <div class="mt-4 flex justify-end">
+                    <button onclick="saveDynamicPage()" class="bg-pink-600 hover:bg-pink-500 text-white font-bold py-3 px-6 rounded-lg transition-colors">Save Page Content</button>
+                </div>
+            </div>
+        </div>
+
     <div id="window-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden"></div>
     <div id="notify-user-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[100] hidden flex items-center justify-center p-4">
         <div class="bg-slate-800 w-full max-w-md rounded-xl shadow-2xl overflow-hidden border border-slate-700">
@@ -724,7 +759,8 @@
             'rules': 'Prop Firm Rules Engine',
             'payouts': 'Payout Requests',
             'ops': 'Market Operations & Risk',
-            'settings': 'Platform Settings'
+            'settings': 'Platform Settings',
+            'content': 'Content Management'
         };
         document.getElementById('page-title').innerText = titles[tab];
     }

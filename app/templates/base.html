@@ -66,6 +66,7 @@
 </head>
 
 <body class="bg-slate-50 text-slate-900 dark:bg-darkbg dark:text-slate-300 antialiased flex h-screen overflow-hidden transition-colors duration-200">
+    <div id="toast-container" class="fixed top-20 right-4 z-[100] flex flex-col gap-2 w-80"></div>
 
     <!-- Mobile sidebar overlay -->
     <div x-show="sidebarOpen" class="fixed inset-0 bg-black/50 z-40 lg:hidden print-hide" @click="sidebarOpen = false" x-transition.opacity></div>
@@ -102,24 +103,7 @@
                         <i data-lucide="refresh-cw" class="w-4 h-4"></i> Update Dashboard
                     </a>
                     
-                    <!-- Accounts Dropdown -->
-                    <div x-data="{ open: true }" class="pt-1">
-                        <button @click="open = !open" class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white transition-colors font-medium text-sm">
-                            <div class="flex items-center gap-3"><i data-lucide="users" class="w-4 h-4"></i> Accounts</div>
-                            <i data-lucide="chevron-down" class="w-4 h-4 transition-transform" :class="open ? 'rotate-180' : ''"></i>
-                        </button>
-                        <div x-show="open" x-collapse class="pl-9 pr-3 py-1 space-y-1">
-                            <a href="/dashboard" class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors font-medium text-sm">
-                                <i data-lucide="trophy" class="w-4 h-4"></i> Challenge Accounts
-                            </a>
-                            <a href="/dashboard" class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors font-medium text-sm">
-                                <i data-lucide="zap" class="w-4 h-4"></i> Instant Accounts
-                            </a>
-                            <a href="/dashboard" class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors font-medium text-sm">
-                                <i data-lucide="clock" class="w-4 h-4"></i> Pending Accounts
-                            </a>
-                        </div>
-                    </div>
+                    
 
                     
                     <a href="/feature/payouts" class="flex items-center gap-3 px-3 py-2 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white transition-colors font-medium text-sm">
@@ -234,12 +218,27 @@
             fetch('/api/notifications').then(r => r.json()).then(d => { 
                 if (d.length > notifs.length) {
                     let audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
-                    audio.play().catch(e=>console.log(e));
+                    audio.play().catch(e=>console.log('Audio blocked:', e));
+                    
+                    // Show Toast Notification
+                    const newNotifs = d.filter(n => !notifs.some(old => old.id === n.id));
+                    newNotifs.forEach(n => {
+                        const toast = document.createElement('div');
+                        toast.className = 'bg-slate-900 border border-slate-700 text-white px-4 py-3 rounded-lg shadow-xl mb-2 transform transition-all duration-300 translate-x-full';
+                        toast.innerHTML = `<div class='font-bold text-sm flex items-center gap-2'><i data-lucide='bell' class='w-4 h-4 text-primary'></i> New Alert</div><div class='text-xs text-slate-300 mt-1'>${n.message}</div>`;
+                        document.getElementById('toast-container').appendChild(toast);
+                        lucide.createIcons({ root: toast });
+                        setTimeout(() => toast.style.transform = 'translateX(0)', 10);
+                        setTimeout(() => {
+                            toast.style.opacity = '0';
+                            setTimeout(() => toast.remove(), 300);
+                        }, 5000);
+                    });
                 }
                 notifs = d; 
                 unreadCount = d.length; 
             }).catch(e => console.log(e));
-        }, 10000);
+        }, 5000);
     ">
         <button @click="openNotifs = !openNotifs" class="p-2 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-white/5 rounded-full transition-colors relative block">
             <i data-lucide="bell" class="w-5 h-5"></i>

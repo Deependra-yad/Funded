@@ -25,12 +25,12 @@
 
     <!-- Trading Statistics Grid -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="bg-white dark:bg-darkpanel rounded-2xl border border-slate-200 dark:border-darkborder p-5 shadow-sm">
+        <div class="bg-white dark:bg-darkpanel rounded-2xl border border-slate-200 dark:border-darkborder p-5 shadow-sm hover:scale-105 transition-transform hover:shadow-xl duration-300">
             <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Total Allocated Capital</div>
             <div class="text-2xl font-black text-slate-900 dark:text-white font-mono">₹{{ total_balance|inr }}</div>
             <div class="text-xs text-slate-500 font-medium mt-1">Across {{ accounts|length }} accounts</div>
         </div>
-        <div class="bg-white dark:bg-darkpanel rounded-2xl border border-slate-200 dark:border-darkborder p-5 shadow-sm">
+        <div class="bg-white dark:bg-darkpanel rounded-2xl border border-slate-200 dark:border-darkborder p-5 shadow-sm hover:scale-105 transition-transform hover:shadow-xl duration-300">
             <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Total Equity</div>
             <div class="text-2xl font-black text-blue-600 font-mono">₹{{ total_equity|inr }}</div>
             <div class="text-xs text-slate-500 font-medium mt-1">Live market value</div>
@@ -136,7 +136,7 @@
         {% if accounts and accounts|length > 0 %}
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             {% for acc in accounts %}
-            <div class="bg-white dark:bg-darkpanel rounded-2xl border border-slate-200 dark:border-darkborder p-6 shadow-sm hover:border-slate-300 transition-all">
+            <div class="bg-white dark:bg-darkpanel rounded-2xl border border-slate-200 dark:border-darkborder p-6 shadow-sm hover:scale-[1.02] hover:shadow-xl transition-all duration-300">
                 <!-- Account Card Header -->
                 <div class="flex items-start justify-between pb-4 border-b border-slate-100 dark:border-slate-800/50">
                     <div>

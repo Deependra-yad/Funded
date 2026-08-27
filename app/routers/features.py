@@ -273,12 +273,26 @@ FEATURE_CONTENT = {
 
 @router.get("/feature/{name}", response_class=HTMLResponse)
 async def view_feature(request: Request, name: str, user: User = Depends(require_auth), db: Session = Depends(get_db)):
-    feature = FEATURE_CONTENT.get(name, {
-        "title": name.replace("-", " ").title(),
-        "icon": "box",
-        "desc": "This feature is currently being provisioned for your account.",
-        "widget": "<div class='flex flex-col items-center justify-center h-64 text-slate-500'><i data-lucide='settings' class='w-12 h-12 mb-4 animate-spin-slow opacity-20'></i><p>Check back later.</p></div>"
-    })
+    import json
+    from app.models import AppSetting
+    
+    feature = None
+    # Try fetching from DB first
+    setting = db.query(AppSetting).filter(AppSetting.key == f"page_{name}").first()
+    if setting and setting.value:
+        try:
+            feature = json.loads(setting.value)
+        except:
+            pass
+
+    # Fallback to hardcoded defaults
+    if not feature:
+        feature = FEATURE_CONTENT.get(name, {
+            "title": name.replace("-", " ").title(),
+            "icon": "box",
+            "desc": "This feature is currently being provisioned for your account.",
+            "widget": "<div class='flex flex-col items-center justify-center h-64 text-slate-500'><i data-lucide='settings' class='w-12 h-12 mb-4 animate-spin-slow opacity-20'></i><p>Check back later.</p></div>"
+        })
     
     if name == "leaderboard":
         top_accounts = db.query(TradingAccount).order_by(desc(TradingAccount.current_balance)).limit(10).all()
@@ -286,7 +300,9 @@ async def view_feature(request: Request, name: str, user: User = Depends(require
         rows = ""
         for i, acc in enumerate(top_accounts):
             rank = i + 1
-            trader_name = f"Trader {acc.user_id}"
+            real_user = db.query(User).filter(User.id == acc.user_id).first()
+            trader_name = real_user.name if real_user else f"Trader {acc.user_id}"
+            initials = "".join([n[0] for n in trader_name.split()[:2]]).upper()
             
             # Highlight top 3
             if rank == 1:
@@ -302,7 +318,7 @@ async def view_feature(request: Request, name: str, user: User = Depends(require
             <tr class="border-t border-slate-800">
                 {rank_col}
                 <td class="py-4 flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-white">{acc.user_id}</div>
+                    <div class="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-white">{initials}</div>
                     {trader_name}
                 </td>
                 <td class="py-4 font-mono text-emerald-400">₹{acc.current_balance:,.2f}</td>

@@ -130,7 +130,9 @@
     </div>
 </div>
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
+    const packages = {{ packages_json|safe }};
     let currentModel = '{{ selected_model }}' || '1-Step';
     let discountPercent = 0;
     const razorpayKeyId = "{{ razorpay_key_id }}";
