@@ -38,3 +38,4 @@ html = """{% extends "base.html" %}
 
 with open('app/templates/cancel_deletion.html', 'w', encoding='utf-8') as f:
     f.write(html)
+

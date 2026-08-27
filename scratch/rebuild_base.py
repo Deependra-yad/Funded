@@ -278,3 +278,4 @@ html = r'''<!DOCTYPE html>
 
 with open('app/templates/base.html', 'w', encoding='utf-8') as f:
     f.write(html)
+

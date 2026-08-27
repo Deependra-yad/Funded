@@ -261,6 +261,11 @@ async def admin_generic_action(
             return JSONResponse({"success": True, "message": "Liquidity wiped! Spreads expanded by 500%."})
         elif action == "force_reset":
             return JSONResponse({"success": True, "message": "Drawdowns forcefully reset."})
+        
+        elif action == "generate_promo":
+            code = id
+            discount = payload
+            return JSONResponse({"success": True, "message": f"Promo Code {code} created with {discount}% discount!"})
         elif action == "broadcast":
             msg = payload if payload else "System Alert!"
             new_notif = Notification(user_id=None, message=msg, type="info") # null user_id means global broadcast

@@ -4,7 +4,7 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from pathlib import Path
 from app.database import get_db
-from app.models import User, Certificate, TradingAccount
+from app.models import User, Certificate, TradingAccount, AppSetting
 from app.security import require_auth
 from app.config import APP_NAME
 
@@ -34,6 +34,9 @@ async def view_certificate(request: Request, cert_id: str, user: User = Depends(
     if not cert:
         raise HTTPException(status_code=404, detail="Certificate not found")
 
+    setting = db.query(AppSetting).filter(AppSetting.key == 'director_name').first()
+    director_name = setting.value if setting else "Deependra Yadav"
+
     return templates.TemplateResponse(
         request=request,
         name="certificate_view.html",
@@ -41,6 +44,7 @@ async def view_certificate(request: Request, cert_id: str, user: User = Depends(
             "app_name": APP_NAME,
             "active_page": "passed_challenges",
             "user": user,
-            "cert": cert
+            "cert": cert,
+            "director_name": director_name
         }
     )
