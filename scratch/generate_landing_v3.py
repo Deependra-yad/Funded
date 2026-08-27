@@ -461,3 +461,4 @@ html_content = r'''<!DOCTYPE html>
 
 with open('app/templates/landing.html', 'w', encoding='utf-8') as f:
     f.write(html_content)
+

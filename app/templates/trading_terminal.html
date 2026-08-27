@@ -108,10 +108,10 @@
     </div>
 
     <!-- Main Workspace -->
-    <div class="flex-1 flex overflow-hidden bg-white">
+    <div class="flex-1 flex flex-col md:flex-row overflow-hidden bg-white">
         
         <!-- App Sidebar -->
-        <div class="w-14 border-r border-slate-200 bg-slate-50 flex flex-col items-center py-4 gap-6 shrink-0 z-40">
+        <div class="hidden md:flex w-14 border-r border-slate-200 bg-slate-50 flex flex-col items-center py-4 gap-6 shrink-0 z-40">
             <a href="/trading" class="text-blue-600 bg-blue-50 p-2.5 rounded-xl cursor-pointer"><i data-lucide="line-chart" class="w-5 h-5"></i></a>
             <a href="/dashboard" class="text-slate-400 hover:text-slate-800 hover:bg-slate-100 p-2.5 rounded-xl cursor-pointer"><i data-lucide="layout-dashboard" class="w-5 h-5"></i></a>
             <div onclick="document.getElementById('bottom-panel').classList.toggle('collapsed')" class="text-slate-400 hover:text-slate-800 hover:bg-slate-100 p-2.5 rounded-xl cursor-pointer mt-auto"><i data-lucide="list" class="w-5 h-5"></i></div>
