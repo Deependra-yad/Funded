@@ -9,8 +9,39 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
+        .window-mode {
+            position: fixed !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            width: 85vw !important;
+            height: 85vh !important;
+            z-index: 100 !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
+            border-radius: 0.75rem !important;
+            background-color: #0f172a !important;
+            border: 1px solid #334155 !important;
+            resize: both;
+            overflow: auto;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+        .window-mode .window-header {
+            display: flex !important;
+        }
+        .window-header {
+            display: none; /* hidden by default in normal mode */
+            cursor: move;
+            background: #1e293b;
+            padding: 10px 16px;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #334155;
+            flex-shrink: 0;
+        }
         body { font-family: 'Inter', sans-serif; background: #0f172a; color: #f8fafc; }
-        .tab-content { display: none; }\n        .tab-content.window-mode { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; height: 80%; background: #0f172a; border-radius: 12px; border: 1px solid #334155; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); z-index: 100; overflow: auto; resize: both; min-width: 300px; min-height: 200px; }
+        .tab-content { display: none; }
+        .tab-content.window-mode { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; height: 80%; background: #0f172a; border-radius: 12px; border: 1px solid #334155; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); z-index: 100; overflow: auto; resize: both; min-width: 300px; min-height: 200px; }
         .tab-content.active { display: block; }
         .glass-panel { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
         .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }

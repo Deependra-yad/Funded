@@ -175,3 +175,4 @@ if 'id="packageEditModal"' not in content:
 with open('app/templates/admin_dashboard.html', 'w', encoding='utf-8') as f:
     f.write(content)
 print("INJECTED OK")
+
