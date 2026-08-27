@@ -249,6 +249,14 @@ async def update_admin_settings(
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": str(e)})
 
+@router.get("/admin/api/setting/{key}")
+async def admin_get_setting(request: Request, key: str, _ = Depends(require_super_admin), db: Session = Depends(get_db)):
+    from app.models import AppSetting
+    setting = db.query(AppSetting).filter(AppSetting.key == key).first()
+    if setting:
+        return JSONResponse({"success": True, "value": setting.value})
+    return JSONResponse({"success": False})
+
 @router.post("/admin/api/action")
 async def admin_generic_action(
     request: Request,

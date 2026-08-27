@@ -109,6 +109,15 @@
             <button onclick="switchTab('settings')" id="nav-settings" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors mt-2">
                 <i data-lucide="settings" class="w-4 h-4 text-indigo-400"></i> Platform Settings
             </button>
+            <button onclick="switchTab('packages')" id="nav-packages" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors mt-2">
+                <i data-lucide="package" class="w-4 h-4 text-emerald-400"></i> Challenge Packages
+            </button>
+            <button onclick="switchTab('chat')" id="nav-chat" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors mt-2">
+                <i data-lucide="message-circle" class="w-4 h-4 text-blue-400"></i> Support Chat 
+            </button>
+            <button onclick="switchTab('content')" id="nav-content" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-slate-400 hover:bg-slate-800 hover:text-white transition-colors mt-2">
+                <i data-lucide="edit-3" class="w-4 h-4 text-pink-400"></i> Content Management
+            </button>
         </nav>
 
         <div class="p-4 border-t border-slate-800 space-y-2">
@@ -774,6 +783,8 @@
             'payouts': 'Payout Requests',
             'ops': 'Market Operations & Risk',
             'settings': 'Platform Settings',
+            'packages': 'Challenge Packages',
+            'chat': 'Support Chat',
             'content': 'Content Management'
         };
         document.getElementById('page-title').innerText = titles[tab];
