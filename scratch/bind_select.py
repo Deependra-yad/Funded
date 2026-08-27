@@ -6,3 +6,4 @@ if "onchange=\"loadDynamicPage()\"" not in html:
     with open("app/templates/admin_dashboard.html", "w", encoding="utf-8") as f:
         f.write(html)
 print("Select bound")
+

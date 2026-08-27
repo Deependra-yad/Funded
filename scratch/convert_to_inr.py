@@ -18,3 +18,4 @@ for root, dirs, files in os.walk('app'):
                 with open(filepath, 'w', encoding='utf-8') as f:
                     f.write(new_content)
                 print(f"Updated {filepath}")
+
